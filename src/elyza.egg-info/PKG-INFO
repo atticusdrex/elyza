@@ -1,0 +1,22 @@
+Metadata-Version: 2.4
+Name: elyza
+Version: 0.1.0
+Summary: A library for efficient multifidelity surrogate modeling, inference, and uncertainty quantification.
+Author: Atticus Rex
+License-Expression: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.24
+Requires-Dist: jax>=0.4
+Requires-Dist: jaxlib>=0.4
+Requires-Dist: pydantic>=2.0
+Requires-Dist: tqdm>=4.0
+Provides-Extra: dev
+Requires-Dist: build; extra == "dev"
+Requires-Dist: twine; extra == "dev"
+Requires-Dist: pytest; extra == "dev"
+
+# Elyza
+*Atticus D. Rex*
+
+A library for efficient, general purpose multifidelity surrogate modeling and uncertainty quantification. 
