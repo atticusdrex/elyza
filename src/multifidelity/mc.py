@@ -1,11 +1,6 @@
 from util.imports import * 
 from core.evaluator import Evaluator
-
-# helper function for computing covariances
-def matrix_cov(Y1:jax.Array, Y2:jax.Array):
-    Y1c = Y1 - Y1.mean(axis=0).reshape(1,-1) 
-    Y2c = Y2 - Y2.mean(axis=0).reshape(1,-1) 
-    return Y1c.T @ Y2c  
+from util.helpers import matrix_cov 
 
 '''
 This is the multifidelity monte carlo base model. 
@@ -14,7 +9,7 @@ class MultifidelityMC(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True) 
 
     evaluators : list[Evaluator] = Field(default = [], description = "A list of multifidelity evaluators (0 is high-fidelity)")
-    Sigma : list[list[jax.Array]] | None = Field(default = None, description = "A 2d nested list of covariance matrices relating the levels of fidelity such that Sigma[level1][level2] = Cov{level1}{level2}")
+    covs : list[list[jax.Array]] | None = Field(default = None, description = "A 2d nested list of covariance matrices relating the levels of fidelity such that covs[level1][level2] = Cov{level1}{level2}")
 
     _K : int = PrivateAttr(default = 0)
 
@@ -38,7 +33,7 @@ class MultifidelityMC(BaseModel):
                         pilot_samples[level1],
                         pilot_samples[level2]))
 
-        self.Sigma = covs
+        self.covs = covs
 
     def single_level_eval(self, key, level, n_points, check_inputs = False):
         input_samples = [] 

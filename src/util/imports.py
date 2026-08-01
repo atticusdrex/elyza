@@ -26,10 +26,6 @@ try:
 except:
     print("Jax 64 bit is not available on your CPU!")
 
-# Defining a better least-squares function 
-def ls(A, B, rcond=None):
-    return jnp.linalg.lstsq(A,B, rcond=rcond)[0]
-
 # Pydantic imports
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator, computed_field, PrivateAttr, SkipValidation
