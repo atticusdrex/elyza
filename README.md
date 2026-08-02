@@ -1,4 +1,7 @@
-# Elyza
-*Atticus D. Rex*
+<img src="./misc/elyza_logo.PNG" width="400" />
 
-A library for efficient, general purpose multifidelity surrogate modeling and uncertainty quantification. 
+*"Build the things you wish existed"*
+
+# Description 
+
+This is an efficient analysis library for surrogate modeling and uncertainty quantification, written largely in Jax. 

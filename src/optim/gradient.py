@@ -3,12 +3,8 @@ from jax.tree_util import tree_map
 
 class GradientOptimizer(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
     loss_grad_fn : callable
-
     constraints: dict | None = None 
-    
-
 
 class ADAM(GradientOptimizer):
     beta1: float = 0.9 
