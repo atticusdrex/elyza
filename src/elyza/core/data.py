@@ -12,7 +12,7 @@ A set of classes defining model inputs
 class Input(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    name : int | str = Field(description = "Unique input name")
+    name : int | str = Field(default = "anonymous", description = "Unique input name")
     dim : int = Field(default = 1, description = "dimension of the input")
 
     sampling_func : SkipValidation[callable] | None = Field(default = None, description = "function which takes a PRNG key as an input and returns a single sample") 
@@ -22,7 +22,7 @@ class Input(BaseModel):
     '''
     def sample(self, key, n_points : int) -> jax.Array:        
         assert self.sampling_func is not None, "No sampling function provided!"
-        
+
         # splitting the jrand key into the number of points needed
         keys = jrand.split(key, n_points) 
 
@@ -38,8 +38,8 @@ class Input(BaseModel):
         ))
 
 class ScalarInput(Input):
-    minval : float = Field(description = "Minimum input value")
-    maxval : float = Field(description = "Maximum output value")
+    minval : float = Field(default = 0.0, description = "Minimum input value")
+    maxval : float = Field(default = 1.0, description = "Maximum output value")
 
     def model_post_init(self, __context):
         # enforcing dimension to 1 

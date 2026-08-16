@@ -8,8 +8,6 @@ from elyza.core.evaluator import Evaluator
 
 from elyza.util.imports import * 
 
-from matplotlib.pyplot import * 
-
 '''
 Hierarchical Surrogate Model base class 
 
