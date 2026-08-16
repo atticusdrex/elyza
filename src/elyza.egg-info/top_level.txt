@@ -1,6 +1,6 @@
+benchmarks
 core
 multifidelity
-pde
+optim
 surrogate
-uq
 util

@@ -16,7 +16,10 @@ Requires-Dist: build; extra == "dev"
 Requires-Dist: twine; extra == "dev"
 Requires-Dist: pytest; extra == "dev"
 
-# Elyza
-*Atticus D. Rex*
+<p align="center">
+  <img src="./misc/elyza_logo.PNG" width="400" />
+</p>
 
-A library for efficient, general purpose multifidelity surrogate modeling and uncertainty quantification. 
+# Description 
+
+This is an efficient analysis library for surrogate modeling and uncertainty quantification, written largely in Jax. 

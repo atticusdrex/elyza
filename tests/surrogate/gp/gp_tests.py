@@ -7,7 +7,6 @@ from util.imports import *
 
 from matplotlib.pyplot import * 
 
-
 def sinusoidal_test(n_points = 100):
     y = lambda x: jnp.sin(2*pi*x[0]) + jnp.cos(2*pi*x[1])
 
@@ -30,9 +29,9 @@ def sinusoidal_test(n_points = 100):
     )
 
     model.fit(
-        X, Y, solver = 'adam', 
+        X, Y, solver = 'batch_adam', 
         learning_rate = 1e-2, 
-        steps = 1000, 
+        epochs = 1000, 
         beta1 = 0.9, 
         beta2 = 0.999
     )
@@ -51,10 +50,5 @@ def sinusoidal_test(n_points = 100):
 
     return jnp.max(jnp.abs(Ymean - Y)) <= 0.1
 
-
-
-
-
-
 if __name__ == "__main__":
-    print("Sinusoidal Test: ", sinusoidal_test())
+    print("Sinusoidal Test: ", sinusoidal_test(n_points = 2000))

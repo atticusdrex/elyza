@@ -2,7 +2,7 @@ from util.imports import *
 from types import MethodType 
 
 '''
-A data registry class containing all the relevant inputs/outputs studied in the problem. 
+A data registry class containing all the relevant input functionality, sampling, etc.
 '''
 
 '''
@@ -15,7 +15,7 @@ class Input(BaseModel):
     name : int | str = Field(description = "Unique input name")
     dim : int = Field(default = 1, description = "dimension of the input")
 
-    sampling_func : SkipValidation[callable]
+    sampling_func : SkipValidation[callable] | None = Field(default = None, description = "function which takes a PRNG key and an integer as an input") 
 
     @abstractmethod 
     def check_valid(self, vals : jax.Array):
@@ -24,9 +24,9 @@ class Input(BaseModel):
     '''
     Function to sample from some distribution 
     '''
-    def sample(self, key, shape : tuple) -> jax.Array: 
-        assert self.sampling_func is not None, "No sampling functionality implemented!"
-        return self.sampling_func(key, shape)
+    def sample(self, key, n_points : int) -> jax.Array: 
+        assert self.sampling_func is not None, "No sampling function provided!"
+        return self.sampling_func(key, n_points)
 
     def print(self):
         print(" * Name: %s, Dimension: %d, Type: %s" % (
@@ -34,8 +34,8 @@ class Input(BaseModel):
         ))
     
 class ContinuousInput(Input):
-    minval : float = Field(description = "Minimum input value")
-    maxval : float = Field(description = "Maximum output value")
+    minval : float = Field(default = 0.0, description = "Minimum input value")
+    maxval : float = Field(default = 1.0, description = "Maximum output value")
 
     def check_valid(self, vals : jax.Array):
         assert (vals >= self.minval).all() and (vals <= self.maxval).all(), "At least one input is out of bounds!"
@@ -43,6 +43,14 @@ class ContinuousInput(Input):
     def print(self):
         super().print() 
         print("   - Min Value: %s, Max Value: %s" % (self.minval, self.maxval))
+
+'''
+Class for uniform random variables 
+'''
+class UniformRandomInput(ContinuousInput):
+    def sample(self, key, n_points: int) -> jax.Array: 
+        return jrand.uniform(key, shape = (n_points, self.dim), minval = self.minval, maxval = self.maxval)
+
 
 class ContinuousVectorInput(ContinuousInput):
     minval : jax.Array = Field(description = "Vector of minimum entry-wise values of inputs")
@@ -52,7 +60,7 @@ class ContinuousVectorInput(ContinuousInput):
     def model_post_init(self, __context):
         assert len(self.minval.shape) == 2, "minval must be 1d array"
         assert len(self.maxval.shape) == 2, "maxval must be 1d array"
-        assert self.dim > 1, "if passing a 1-d input use a continuous input" 
+        assert self.dim > 1, "if passing a 1-d input use the ContinuousInput class" 
         assert self.minval.shape[0] == self.dim, "minval is wrong dimension"
         assert self.maxval.shape[0] == self.dim, "maxval is wrong dimension"
 

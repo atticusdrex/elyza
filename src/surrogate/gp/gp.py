@@ -1,7 +1,7 @@
 from .util import *
 from .kernel import *
 from .mean import *
-from optim.gradient import ADAM
+from optim.gradient import ADAM, BatchADAM
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from surrogate.surrogate import Surrogate 
 from jax.scipy.linalg import solve_triangular 
@@ -68,12 +68,12 @@ class GaussianProcess(Surrogate):
         self._calibrated = True
 
         # store L value for the predict() function
-        self._L = self._get_L(self.p['kernel'], self.p['noise'])
+        self._L = self._get_L(X, self.p['kernel'], self.p['noise'])
         self._alpha = self._get_alpha(self._L, self.p['mean'])
 
     def _calibrate_noise(self, max_cond=1e5) -> None:
         '''Increase white noise variance to lower the kernel condition number.'''
-        L = self._get_L(self.p['kernel'], self.p['noise'])
+        L = self._get_L(self._X, self.p['kernel'], self.p['noise'])
         Kmat = L @ L.T
         cond_num = jnp.linalg.cond(Kmat)
         lambda_max = jnp.linalg.matrix_norm(Kmat)
@@ -84,9 +84,9 @@ class GaussianProcess(Surrogate):
 
         self.verbose and print("Calibrated white noise variance: %.4e" % (softplus(self.p['noise'])))
 
-    def _get_L(self, k_param, noise_var) -> jax.Array:
+    def _get_L(self, X, k_param, noise_var) -> jax.Array:
         '''Return lower-triangular Cholesky factor of the training kernel.'''
-        Ktrain = K(self._X, self._X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(self._X.shape[0])
+        Ktrain = K(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
         return cholesky(Ktrain, lower=True)
 
     def _get_alpha(self, L, m_param) -> jax.Array:
@@ -109,9 +109,9 @@ class GaussianProcess(Surrogate):
             cov_diag = Kaux - jnp.sum(Ktest * alpha.T, axis=1)
             return mu, cov_diag
 
-    def _score_function(self, X, Y, p) -> float:
+    def _objective(self, X, Y, p) -> float:
         # Getting cholesky factors and solve linear system
-        L = self._get_L(p['kernel'], p['noise'])
+        L = self._get_L(X, p['kernel'], p['noise'])
         Ytilde = Y - self._mean.eval(X, p['mean'])
         quad_term = jnp.inner(Ytilde, cho_solve((L, True), Ytilde))
         logdet_term = 2.0 * jnp.sum(jnp.log(jnp.diag(L)))
@@ -126,9 +126,12 @@ class GaussianProcess(Surrogate):
         solver: str = "adam",
         learning_rate: float = 1e-3,
         steps: int = 1000,
+        epochs: int = 1000, 
+        batch_size: int = 250, 
         beta1: float = 0.9,
         beta2: float = 0.999,
-        active_params: dict = None
+        active_params: dict = None, 
+        random_state = 42
     ):
         # converting training data to jax arrays
         X, Y = jnp.array(X), jnp.array(Y)
@@ -137,11 +140,12 @@ class GaussianProcess(Surrogate):
         if not self._calibrated:
             self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
-        # jit-compiled objective function
-        loss_grad_fn = jit(value_and_grad(lambda p: self._score_function(X, Y, p)))
+        
 
         # running the optimizer
         if solver == "adam":
+            # jit-compiled objective function
+            loss_grad_fn = jit(value_and_grad(lambda p: self._objective(X, Y, p)))
             self._optimizer = ADAM(
                 loss_grad_fn=loss_grad_fn,
                 constraints=None,
@@ -153,6 +157,26 @@ class GaussianProcess(Surrogate):
             new_params = self._optimizer.run(
                 lr=learning_rate,
                 steps=steps,
+                p_init=self.p,
+                active_params=active_params,
+                verbose=self.verbose
+            )
+        elif solver == "batch_adam":
+            loss_grad_fn = jit(value_and_grad(lambda p, Xbatch, Ybatch: self._objective(Xbatch, Ybatch, p)))
+            self._optimizer = BatchADAM(
+                loss_grad_fn=loss_grad_fn,
+                constraints=None,
+                beta1=beta1,
+                beta2=beta2,
+                lr=learning_rate,
+                eps=self.eps
+            )
+            new_params = self._optimizer.run(
+                key = jrand.PRNGKey(random_state), 
+                X = self._X, Y = self._Y, 
+                lr=learning_rate,
+                epochs=epochs,
+                batch_size = batch_size,
                 p_init=self.p,
                 active_params=active_params,
                 verbose=self.verbose
@@ -240,7 +264,7 @@ class DeltaGP(GaussianProcess):
         self._calibrated = True
 
         # store L value for the predict() function
-        self._L = self._get_L(self.p['kernel'], self.p['noise'])
+        self._L = self._get_L(X, self.p['kernel'], self.p['noise'])
         self._alpha = self._get_alpha(self._L, self.p['mean'], self.p['rho'])
 
     def _get_alpha(self, L, m_param, rho) -> jax.Array:
@@ -248,9 +272,9 @@ class DeltaGP(GaussianProcess):
         Ytilde = self._Y1 - rho * self._Y2 # output difference calculation 
         return cho_solve((L, True), Ytilde - self._mean.eval(self._X, m_param))
 
-    def _score_function(self, X, Y1, Y2, p) -> float:
+    def _objective(self, X, Y1, Y2, p) -> float:
         # Getting cholesky factors and solve linear system
-        L = self._get_L(p['kernel'], p['noise'])
+        L = self._get_L(X, p['kernel'], p['noise'])
         Ytilde = Y1 - p['rho'] * Y2 - self._mean.eval(X, p['mean'])
         quad_term = jnp.inner(Ytilde, cho_solve((L, True), Ytilde))
         logdet_term = 2.0 * jnp.sum(jnp.log(jnp.diag(L)))
@@ -278,7 +302,7 @@ class DeltaGP(GaussianProcess):
             self._calibrate(X, Y1, Y2, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
         # jit-compiled objective function
-        loss_grad_fn = jit(value_and_grad(lambda p: self._score_function(X, Y1, Y2, p)))
+        loss_grad_fn = jit(value_and_grad(lambda p: self._objective(X, Y1, Y2, p)))
 
         # running the optimizer
         if solver == "adam":
