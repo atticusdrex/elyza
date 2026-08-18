@@ -10,7 +10,7 @@ src/elyza.egg-info/top_level.txt
 src/elyza/benchmarks/multifidelity/magpi_analytical.py
 src/elyza/core/data.py
 src/elyza/core/evaluator.py
-src/elyza/multifidelity/mc.py
+src/elyza/multifidelity/montecarlo.py
 src/elyza/multifidelity/surrogate.py
 src/elyza/optim/__init__.py
 src/elyza/optim/gradient.py
