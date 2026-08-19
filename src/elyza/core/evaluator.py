@@ -45,7 +45,7 @@ class Evaluator(BaseModel):
     input_vals is a list of arrays of inputs assumed to be valid for the evaluator, where the shape of each list item is (# of data points, input dimension).
     '''
     def evaluate(self, *input_vals : list[jax.Array]):
-        return vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).reshape(-1,self.output_dim)
+        return vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim)
 
     def print(self):
         print("\n------------------------------------------------")
@@ -63,10 +63,11 @@ class Evaluator(BaseModel):
         self.cost = cost 
 
     def evaluate_timed(self, *input_vals : list[jax.Array], set_cost = True):
-        n_points = input_vals[0].shape[0] 
+        n_points = input_vals[0].shape[0]
         start_time = time.time()
         result = self.evaluate(*input_vals)
-        end_time = time.time() 
+        result.block_until_ready() # JAX dispatches asynchronously, so wait for the actual computation to finish before stopping the clock
+        end_time = time.time()
         print("Total time: %.4e (s)" % (end_time - start_time))
         print("Per-evaluation time: %.4e (s)" % ((end_time - start_time) / n_points))
         if set_cost: 
