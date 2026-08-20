@@ -1,3 +1,4 @@
+LICENSE
 MANIFEST.in
 README.md
 pyproject.toml
@@ -8,6 +9,7 @@ src/elyza.egg-info/dependency_links.txt
 src/elyza.egg-info/requires.txt
 src/elyza.egg-info/top_level.txt
 src/elyza/benchmarks/multifidelity/magpi_analytical.py
+src/elyza/benchmarks/pde/darcy2d.py
 src/elyza/core/data.py
 src/elyza/core/evaluator.py
 src/elyza/multifidelity/montecarlo.py

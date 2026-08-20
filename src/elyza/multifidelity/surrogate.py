@@ -1,6 +1,4 @@
-from elyza.surrogate.gp.gp import GaussianProcess, DeltaGP 
-from elyza.surrogate.gp.kernel import ARD
-from elyza.surrogate.gp.mean import Linear 
+from elyza.surrogate.gp import GaussianProcess, DeltaGP, ARD, Linear
 from elyza.surrogate.surrogate import Surrogate
 
 from elyza.core.data import Input
@@ -48,8 +46,7 @@ def HierarchicalSurrogate(BaseModel):
         # storing number of levels of fidelity 
         self._K = len(self.X)
 
-from elyza.surrogate.gp.kernel import BaseKernel, ARD
-from elyza.surrogate.gp.mean import BaseMean, Constant
+from elyza.surrogate.gp import BaseKernel, ARD, BaseMean, Constant
 
 
 def GPKennedyOHagan(HierarchicalSurrogate):
