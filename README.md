@@ -1,9 +1,6 @@
 <p align="center">
   <img src="./misc/elyza_logo.PNG" width="400" />
 </p>
-
-# elyza
-
 `elyza` is a [Jax](https://github.com/jax-ml/jax)-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, [Pydantic](https://docs.pydantic.dev/)-validated building blocks for defining simulation inputs and evaluators, fitting Gaussian process surrogates (including multifidelity/autoregressive models), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.
 
 ## Installation
