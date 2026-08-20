@@ -20,7 +20,9 @@ def build_image_source(path, grid_dim, inflation = 1.0):
     image = image[:,:,:3].mean(axis=2).astype(np.float64)
     image = image / np.max(image)
 
-    image[image < 1e-1] = -0.5
+    # negating and scaling to [-1,1] 
+    image = -image+1
+
 
     image *= inflation 
 
@@ -34,6 +36,11 @@ def build_image_source(path, grid_dim, inflation = 1.0):
     # ---------------------------------------------------------------------
 
     image = ndimage.zoom(image, (grid_dim/height, grid_dim/width), order=3)
+
+
+    image[image <= 0] = 0.0
+    image *= 2 
+    image = 1/(1+np.exp(-image))
 
     # zooming to make square 
     return image

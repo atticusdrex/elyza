@@ -195,9 +195,9 @@ markers = ['.', "D", "P", '*', 's', "^", ]
 # coefficients), while HFMC/MFMC/MLMC each get a distinct matplotlib default color
 colors = ['#7f7f7f', '#2ca02c', '#ff7f0e', '#08306b', '#4292c6', '#9ecae1']
 
-figure(figsize=(16,6), dpi = 200) 
+figure(figsize=(12,7), dpi = 300) 
 for i in range(estimator_vars.shape[0]):
-    semilogx(budgets, estimator_vars[i], linestyle = 'dashed', marker = markers[i], label = labels[i], markersize=12, color = colors[i])
+    loglog(budgets, estimator_vars[i], linestyle = 'dashed', marker = markers[i], label = labels[i], markersize=12, color = colors[i])
 
 legend() 
 xlabel("Computational budget")

@@ -23,7 +23,7 @@ class MultifidelityMonteCarlo(BaseModel):
     '''
     a function for storing and computing pilot 
     '''
-    def get_pilots(self, key, n_pilots:int, set_costs = False): 
+    def get_pilots(self, key, n_pilots:int, set_costs = False, noise_std = 0.0): 
         pilot_samples = []
 
         # iterating through and computing random pilot samples of each evaluator
@@ -35,6 +35,10 @@ class MultifidelityMonteCarlo(BaseModel):
 
             # timing each evaluator on the input samples
             pilot_samples.append(evaluator.evaluate_timed(*input_vals, set_cost = set_costs))
+
+            # adding random noise if desired (more for experimentation)
+            if noise_std != 0.0: 
+                pilot_samples[-1] += noise_std * jrand.normal(key, shape = pilot_samples[-1].shape)
 
         # computing the covariance for each fidelity pair
         covs, corrs = [], []  
