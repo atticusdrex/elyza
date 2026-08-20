@@ -1,6 +1,7 @@
 <p align="center">
   <img src="./misc/elyza_logo.PNG" width="400" />
 </p>
+
 `elyza` is a [Jax](https://github.com/jax-ml/jax)-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, [Pydantic](https://docs.pydantic.dev/)-validated building blocks for defining simulation inputs and evaluators, fitting Gaussian process surrogates (including multifidelity/autoregressive models), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.
 
 ## Installation
@@ -39,7 +40,7 @@ The library is organized into a few main packages under `src/elyza/`:
   - `HFMC` — plain high-fidelity-only Monte Carlo (baseline).
   - `MLMC` — multilevel Monte Carlo, telescoping sums across fidelity levels.
   - `MFMC` — multifidelity Monte Carlo with optimal control-variate coefficients.
-  - `RMFMC` — a regularized, more general variant of MFMC using least-squares control-variate coefficients.
+  - `RMFMC` — recursive multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients.
 
   These estimators use pilot samples to estimate cross-fidelity covariances, then allocate sampling budgets across fidelity levels to minimize estimator variance for a fixed computational cost.
 
