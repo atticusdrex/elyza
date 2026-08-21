@@ -1,95 +1,148 @@
-from elyza.surrogate.gp import GaussianProcess, DeltaGP, ARD, Linear
-from elyza.surrogate.surrogate import Surrogate
+from elyza.surrogate.gp import GaussianProcess, ARD, Linear
+from elyza.surrogate.surrogate import Surrogate, SupervisedDataset
 
 from elyza.core.data import Input
 from elyza.core.evaluator import Evaluator 
 
 from elyza.util.imports import * 
+from elyza.util.helpers import ensure_2d
+from elyza.util.preprocessing import StandardScaler
 
 '''
 Hierarchical Surrogate Model base class 
-
 '''
-def HierarchicalSurrogate(BaseModel):
-    mode_config = ConfigDict(arbitrary_types_allowed=True)
+class HierarchicalSurrogate(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     # public fields 
-    X : list[np.ndarray | jax.Array]
-    """list of 2d numpy/jax arrays of input data """
-    Y : list[np.ndarray | jax.Array] 
-    """list of 1d or 2d numpy/jax arrays of corresponding output data"""
-    evaluators : list[Evaluator] | None = Field(
-        default = None, 
-        description = "list of evaluators which determine each level of fidelity. if active learning is enabled, these can be called but do not have to be called"
-    )
-    noise_vars : list[float] | None = Field(default = None)
-    """list of noise variances at each level of fidelity"""
-    eps : float = Field(default = 1e-12) 
+    data : list[SupervisedDataset] = Field(default = None, description = "list of individual supervised datasets ")
+    evaluators : list[Evaluator] | None = Field(default = None, description = "list of evaluators in case we want to generate data on the fly")
 
     # private fields 
-    _K : int = Field(default = 1)
+    _K : int | None = PrivateAttr(default = None)
+    _surrogates : list[Surrogate] | None = PrivateAttr(default = None) 
+    _pred_kwargs : list[list] | None = PrivateAttr(default = None)
 
     def model_post_init(self, __context):
-        # checking that the number of levels of fidelity is consistent 
-        assert len(self.X) == len(self.Y), "X and Y have different numbers of levels of fidelities"
-        if self.evaluators is not None: 
-            assert len(self.X) == self.evaluators, "inconsistent number of fidelity levels"
+        assert len(self.evaluators) == len(self.data), "number of datasets doesn't match number of evaluators"
 
-        # asserting that n_obs for each level of fidelity is the same
-        for level, X_level, Y_level in enumerate(zip(self.X, self.Y)):
-            assert X_level.shape[0] == Y_level.shape[0], "level %d has inconsistent number of samples" % level 
-            assert len(X_level.shape) == 2, "X must be a 2d array" 
+        # setting the number of levels of fidelity 
+        self._K = len(self.evaluators)  
 
-        # storing the X and Y arrays as jax arrays 
-        self.X, self.Y = jnp.array(self.X), jnp.array(self.Y) 
+        # initializing the list of surrogates 
+        self._surrogates = [None] * self._K 
 
-        # storing number of levels of fidelity 
-        self._K = len(self.X)
+        # initializing prediction kwargs 
+        self._pred_kwargs = [[]] * self._K 
 
-from elyza.surrogate.gp import BaseKernel, ARD, BaseMean, Constant
-
-
-def GPKennedyOHagan(HierarchicalSurrogate):
-    kernel_cls : BaseKernel = Field(default = ARD)
-    mean_cls : BaseMean = Field(default = Constant)
-    verbose : bool = Field(default = True)
-    max_cond : float = Field(default = 1e5)
-    verbose : bool = Field(default = True)
-
-    _models : list[Surrogate] | None = PrivateAttr(default = None)
-    '''A list of the surrogate models used'''
-
+'''
+Multifidelity-augmented Gaussian Process inputs class
+'''
+class MAGPI(HierarchicalSurrogate):
     def model_post_init(self, __context):
-        super().model_post_init(__context)
+        super().model_post_init(__context) 
 
-        # initializing the lowest-fidelity GP 
-        self._models = [
-            GaussianProcess(
-                input_dim = self.X[-1].shape[1], 
-                kernel_cls = self.kernel_cls, 
-                mean_cls = self.mean_cls, 
-                calibrate_noise = True, 
-                noise_var = self.noise_vars[-1], 
-                eps = self.eps, 
-                max_cond = self.max_cond, 
-                verbose = self.verbose
+        # fitting standard scalers to everything
+        self._scalers = [None] * self._K 
+    '''
+    this is for setting a level-specific surrogate model. the surrogate must be declared ahead of time. pred_kwargs is the set of prediction keyword arguments 
+    '''
+    def set_surrogate(self, level : int, surrogate : Surrogate, **pred_kwargs):
+        # declaring the surrogate using the keyword arguments 
+        self._surrogates[level] = surrogate
+
+        # setting the prediction keyword arguments 
+        self._pred_kwargs[level] = pred_kwargs
+
+
+    '''
+    fitting level-specific surrogate models to data. requires making predictions at the lower-fidelity surrogate models so you have to make sure those surrogate models have been fit first. 
+    '''
+    def fit(self, level:int, **kwargs):
+        
+        # compute the level inputs 
+        features = self.data[level].concatenate_inputs() 
+        level_outputs = self.data[level].output_data 
+
+        # lower-fidelity outputs 
+        for lower_level in range(level):
+            # fitting the standard scaler if it's not initialized
+            if self._scalers[lower_level] is None: 
+                self._scalers[lower_level] = StandardScaler() 
+                self._scalers[lower_level].fit(features)
+            # standard-scale the level-specific features 
+            features = self._scalers[lower_level].transform(features)
+            outputs = self._surrogates[lower_level].predict(
+                features,  
+                **self._pred_kwargs[lower_level] 
             )
-        ]
 
-        # saving a delta-GP for until high-fidelity is reached
-        for level in range(0, self._K-1)[::-1]:
-            self._models.append(
-                DeltaGP(
-                    input_dim = self.X[level].shape[1], 
-                    kernel_cls = self.kernel_cls, 
-                    mean_cls = self.mean_cls, 
-                    calibrate_noise = True, 
-                    noise_var = self.noise_vars[level], 
-                    eps = self.eps, 
-                    max_cond = self.max_cond, 
-                    verbose = self.verbose
-                )
+            # if the model returns multiple outputs always take the first arguments
+            if type(outputs) is tuple: 
+                outputs = outputs[0] 
+
+            # append the model output to the lf_outputs 
+            features= jnp.concatenate(
+                (features, ensure_2d(outputs)), axis=1
             )
 
-        # reversing the order so it goes from highest to lowest-fidelity
-        self._models = self._models[::-1]
+        # calibrating standard scaler if hasn't been done already
+        if self._scalers[level] is None: 
+            self._scalers[level] = StandardScaler() 
+            self._scalers[level].fit(features) 
+
+        # transforming the features
+        features = self._scalers[level].transform(features)
+
+        # fitting the level-specific surrogate models 
+        self._surrogates[level].fit(
+            features, 
+            level_outputs, 
+            **kwargs 
+        )
+
+        
+
+    def update(self, new_data : SupervisedDataset, level : int, **kwargs):
+        # updating the data with new data 
+        self.data[level].update(*new_data.input_data, new_data.output_data)
+
+        # updating the surrogate model with the new data 
+        self._surrogates[level].update(
+            new_data.concatenate_inputs(), 
+            new_data.output_data, 
+            **kwargs
+        )
+
+    def predict(self, *new_inputs : jax.Array, level : int, **pred_kwargs) -> jax.Array | tuple[jax.Array]:
+        # compute the level inputs 
+        features = jnp.concatenate(new_inputs) 
+
+        # lower-fidelity outputs 
+        for lower_level in range(level):
+            # standard-scaling the features
+            features = self._scalers[lower_level].transform(features)
+
+            outputs = self._surrogates[lower_level].predict(
+                features,  
+                **self._pred_kwargs[lower_level] 
+            )
+
+
+            # if the model returns multiple outputs always take the first arguments
+            if type(outputs) is tuple: 
+                outputs = outputs[0] 
+
+            # append the model output to the lf_outputs 
+            features = jnp.concatenate((features, ensure_2d(outputs)), axis=1)
+
+        # standard scaling the features 
+        features = self._scalers[level].transform(features)
+
+        # making the prediction at this level 
+        return self._surrogates[level].predict(
+            features, **pred_kwargs 
+        )
+
+
+

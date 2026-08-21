@@ -1,4 +1,5 @@
 from elyza.util.imports import * 
+from elyza.util.helpers import ensure_2d
 from types import MethodType 
 
 '''
@@ -27,7 +28,7 @@ class Input(BaseModel):
         keys = jrand.split(key, n_points) 
 
         # using vmap to sample over the keys 
-        return vmap(self.sampling_func, in_axes=0)(keys)
+        return ensure_2d(vmap(self.sampling_func, in_axes=0)(keys))
 
     '''
     Function to print the contents of the input
@@ -60,4 +61,3 @@ class VectorInput(Input):
         # converting to jax arrays 
         self.minval = jnp.array(self.minval)
         self.maxval = jnp.array(self.maxval)
-        

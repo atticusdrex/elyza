@@ -1,11 +1,11 @@
 from elyza.util.imports import * 
-from elyza.core.data import ContinuousInput 
+from elyza.core.data import ScalarInput 
 from elyza.core.evaluator import Evaluator
 
-x = ContinuousInput(
+x = ScalarInput(
         name = "x", 
         dim = 1, 
-        sampling_func = lambda key, shape: jrand.uniform(key, shape = shape, minval=0, maxval=5), 
+        sampling_func = lambda key: jrand.uniform(key, minval=0, maxval=5), 
         minval = 0.0, 
         maxval = 5.0 
     )

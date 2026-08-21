@@ -20,3 +20,12 @@ def matrix_corr(Y1: jax.Array, Y2: jax.Array):
 # Defining a better least-squares function 
 def ls(A, B, rcond=None):
     return jnp.linalg.lstsq(A,B, rcond=rcond)[0]
+
+# ensures that X is a 2d array better than numpy's stupid built-in function
+def ensure_2d(X):
+    if len(X.shape) == 0: 
+        return X.reshape(1,1) 
+    elif len(X.shape) == 1: 
+        return X.reshape(-1,1) 
+    else: 
+        return X

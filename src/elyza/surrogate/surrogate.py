@@ -1,5 +1,6 @@
 from elyza.util.imports import * 
 from elyza.core.data import * 
+from elyza.util.helpers import ensure_2d
 
 '''
 ~---------------------------------~
@@ -79,7 +80,32 @@ class Surrogate(BaseModel):
         raise NotImplementedError("This feature is not implemented yet.")
 
 
-    
+'''
+wrapper class for working with supervised learning datasets 
+'''
+class SupervisedDataset(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    input_data : list[jax.Array] = Field(description = "list of in-order inputs and the data associated with those inputs")
+    output_data : jax.Array = Field(description = "an array of the corresponding model outputs associated with these inputs")
+    noise_var : float = Field(default = 0.0, description = "variance of Gaussian white noise in the output data")
+
+    # concatenate the inputs into one big array 
+    def concatenate_inputs(self):
+        return jnp.concatenate(self.input_data, axis=1) 
+
+    def model_post_init(self, __context):
+        self.output_data = ensure_2d(self.output_data)
+
+    def update(self, *new_inputs : list[jax.Array], new_outputs : jax.Array):
+        # adding the new inputs to the existing input 
+        for i, (existing_input, new_input) in enumerate(zip(self.input_data, new_inputs)):
+            self.input_data[i] = jnp.concatenate((existing_input, ensure_2d(new_input)), axis=0)
+
+        # adding the new outputs to the existing outputs 
+        self.output_data = jnp.concatenate((self.output_data, ensure_2d(new_outputs)), axis=0)
+
+
 
 
         
