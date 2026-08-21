@@ -57,13 +57,13 @@ mf_gp = GaussianProcess(
 mf_gp.set_optimizer(LBFGS, m=25, constraints = {'mean':lambda a: a.at[1:1+x.dim].set(0)})
 
 # 
-hf_inputs = x.sample(jrand.PRNGKey(42), 13)
+hf_inputs = x.sample(jrand.PRNGKey(42), 25)
 hf_outputs = hf_evaluator.evaluate(hf_inputs) 
 
 hf_data = SupervisedDataset(
     input_data = [hf_inputs], 
     output_data = hf_outputs, 
-    noise_var = 1e-4
+    noise_var = 1e-2
 )
 
 hf_gp = GaussianProcess(
@@ -78,7 +78,7 @@ hf_gp = GaussianProcess(
 )
 
 # constraint set to zero out the input part of the linear mean parameters 
-hf_gp.set_optimizer(LBFGS, m = 10, constraints = {'mean':lambda a: a.at[1:1+x.dim].set(0)})
+hf_gp.set_optimizer(LBFGS, m = 25, constraints = {'mean':lambda a: a.at[1:1+x.dim].set(0)})
 
 # 
 magpi = MAGPI(
@@ -152,8 +152,8 @@ magpi.fit(
     2, 
     p_init = magpi._surrogates[2].p,
     active_params = {'kernel':True, 'mean':True, 'noise':False}, 
-    lr = 1e-3, 
-    steps = 100, 
+    lr = 1.0, 
+    steps = 250, 
     verbose = True
 )
 
