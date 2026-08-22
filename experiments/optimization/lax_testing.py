@@ -6,7 +6,7 @@ from elyza.surrogate.gp import GaussianProcess, ARD, Constant
 from elyza.optim.adam import ADAM, ADAMOptions
 
 # %%
-n_train = 250 
+n_train = 25 
 input_data = x.sample(jrand.PRNGKey(42), n_train)
 output_data = hf_evaluator.evaluate(input_data) + 1e-2 * jrand.uniform(jrand.PRNGKey(42), shape = (n_train,1))
 
@@ -16,7 +16,7 @@ model = GaussianProcess(
     mean_cls = Constant, 
     calibrate_noise = True, 
     noise_var = 1e-6, 
-    eps = 1e-12, 
+    eps = 1e-12,
     max_cond = 1e5, 
     verbose = True
 )
@@ -25,7 +25,7 @@ model = GaussianProcess(
 adam_opts = ADAMOptions(
     p_init = model.p, 
     lr = 1e-1, 
-    epochs = 100, 
+    epochs = 1000, 
     batch_size = None, 
     beta1 = 0.9, 
     beta2 = 0.999, 
@@ -55,7 +55,7 @@ show()
 # %% 
 from elyza.optim.lbfgs import LBFGS, LBFGSOptions
 
-n_train = 250 
+n_train = 25 
 input_data = x.sample(jrand.PRNGKey(42), n_train)
 output_data = hf_evaluator.evaluate(input_data) + 1e-2 * jrand.uniform(jrand.PRNGKey(42), shape = (n_train,1))
 
@@ -74,7 +74,7 @@ model = GaussianProcess(
 lbfgs_opts = LBFGSOptions(
     p_init = model.p, 
     lr = 1e-1, 
-    epochs = 100, 
+    epochs = 1000, 
     batch_size = None, 
     m = 10, 
     max_backtracks = 30, 

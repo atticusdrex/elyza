@@ -1,11 +1,10 @@
-from .util import *
 from .kernel import *
 from .mean import *
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from elyza.util.imports import * 
 from elyza.surrogate.surrogate import Surrogate
 from elyza.optim.abstract import BatchGradientOptimizer, OptimizerOptions
-from jax.scipy.linalg import solve_triangular
-from elyza.util.helpers import ensure_2d, ls
+from elyza.util.helpers import ensure_2d, ls, softplus, inv_softplus, kernel_mat
+from jax.scipy.linalg import solve_triangular, cho_solve, cholesky
 
 '''
 ~---------------------------------------------~
@@ -128,7 +127,7 @@ class GaussianProcess(Surrogate):
 
     def _get_L(self, X, k_param, noise_var) -> jax.Array:
         '''Return lower-triangular Cholesky factor of the training kernel.'''
-        Ktrain = K(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
+        Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
         return cholesky(Ktrain, lower=True)
 
     def _get_alpha(self, L, m_param) -> jax.Array:
@@ -141,12 +140,12 @@ class GaussianProcess(Surrogate):
         Compute posterior mean and covariance (full or marginal variances).
         '''
         X = self._scale(jnp.array(X))
-        Ktest = K(X, self._X, self._kernel, self.p['kernel'])
+        Ktest = kernel_mat(X, self._X, self._kernel, self.p['kernel'])
         mean = ensure_2d(jnp.asarray(self._mean.eval(X, self.p['mean'])))
         mu = (Ktest @ self._alpha + mean).ravel()
 
         if full_cov:
-            cov = K(X, X, self._kernel, self.p['kernel']) - Ktest @ cho_solve((self._L, True), Ktest.T)
+            cov = kernel_mat(X, X, self._kernel, self.p['kernel']) - Ktest @ cho_solve((self._L, True), Ktest.T)
             return mu, cov
         else:
             Kaux = (jax.vmap(lambda x: self._kernel.eval(x, x, self.p['kernel']))(X)).ravel()
@@ -221,9 +220,9 @@ class GaussianProcess(Surrogate):
         n = self._X.shape[0]
         m = X.shape[0]
 
-        # cross-covariance block K(X, X) and new diagonal block K(X, X)
-        K12 = K(self._X, X, self._kernel, self.p['kernel'])                     # (n, m)
-        K22 = K(X, X, self._kernel, self.p['kernel']) \
+        # cross-covariance block kernel_mat(X, X) and new diagonal block kernel_mat(X, X)
+        K12 = kernel_mat(self._X, X, self._kernel, self.p['kernel'])                     # (n, m)
+        K22 = kernel_mat(X, X, self._kernel, self.p['kernel']) \
             + (self.eps + softplus(self.p['noise'])) * jnp.eye(m)
 
         # Solve L @ B = K12 so the augmented Cholesky factor remains consistent
