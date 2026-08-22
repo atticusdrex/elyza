@@ -1,6 +1,7 @@
-# figures 
-*/figs
+# other random gitignore stuff
+figs/
 .claude
+.DS_StoreW
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
