@@ -60,7 +60,7 @@ hf = Evaluator(
     name = "high-fidelity",
     inputs = [x],
     output_dim = 3,
-    evaluation_func = lambda x: jnp.array([P1(x) + P4(x), -P2(x) + P5(x), P1(x) + P5(x)]),
+    evaluation_func = lambda x: jnp.array([P1(x) + P4(x), -P2(x) + P5(x), P3(x) + P5(x)]),
     cost = 1.0
 )
 
@@ -189,7 +189,7 @@ rcParams.update(
     }
 )
 
-labels = ["HFMC (baseline)", "MLMC", "MFMC", "RMFMC w/ matrix coefs.", "RMFMC w/ vector coefs.", "RMFMC w/ scalar coefs." ]
+labels = ["HFMC (baseline)", "MLMC", "MFMC", "R-MFMC w/ matrix coefs.", "R-MFMC w/ vector coefs.", "R-MFMC w/ scalar coefs." ]
 markers = ['.', "D", "P", '*', 's', "^", ]
 # the three RMFMC variants share a blue family (dark -> light, richest -> simplest
 # coefficients), while HFMC/MFMC/MLMC each get a distinct matplotlib default color

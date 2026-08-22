@@ -1,10 +1,9 @@
 from .util import *
 from .kernel import *
 from .mean import *
-from elyza.optim.gradient import ADAM, BatchADAM
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from elyza.surrogate.surrogate import Surrogate
-from elyza.optim.gradient import GradientOptimizer
+from elyza.optim.abstract import BatchGradientOptimizer, OptimizerOptions
 from jax.scipy.linalg import solve_triangular
 from elyza.util.helpers import ensure_2d, ls
 
@@ -168,17 +167,19 @@ class GaussianProcess(Surrogate):
     '''
     function for setting an optimizer for the estimator 
     '''
-    def set_optimizer(self, optimizer : GradientOptimizer, **optimizer_kwargs):
-        self._optimizer = optimizer(**optimizer_kwargs)
+    def set_optimizer(self, optimizer : BatchGradientOptimizer, optimizer_opts : OptimizerOptions):
+        self._optimizer = optimizer(opts = optimizer_opts)
 
     def fit(
         self,
         X: np.ndarray | jax.Array,
         Y: np.ndarray | jax.Array,
-        **solver_kwargs
     ):
+        # making sure an optimizer has been declared 
+        assert self._optimizer is not None, "must declare an optimizer" 
+
         # converting training data to jax arrays
-        X, Y = jnp.array(X), ensure_2d(jnp.array(Y))
+        X, Y = ensure_2d(jnp.array(X)), ensure_2d(jnp.array(Y))
 
         # fit the input scaler once, from the first-ever training batch, and reuse it for
         # every later fit/predict/update call on this model
@@ -195,13 +196,13 @@ class GaussianProcess(Surrogate):
             # this makes sure that echoed value is actually the smart-initialized one. Runs
             # only this once: _calibrated flips True below and gates out every later fit() call.
             self._smart_init(X, Y)
-            solver_kwargs['p_init'] = self.p
+            self._optimizer.opts.p_init = self.p
             self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
-        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(X, Y, p), argnums=2))
+        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda p, X, Y: self._objective(p, X, Y), argnums=2))
 
         # run the optimizer
-        new_params = self._optimizer.run(X, Y, **solver_kwargs)
+        new_params = self._optimizer.run(X, Y)
 
         # setting the new params
         self.p = deepcopy(new_params)
