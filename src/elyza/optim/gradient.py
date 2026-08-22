@@ -33,7 +33,7 @@ class GradientOptimizer(BaseModel):
 
 class BatchGradientOptimizer(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    loss_grad_fn : SkipValidation[callable] 
+    loss_grad_fn : SkipValidation[callable] | None = Field(default = None)
     '''
     The main difference between the batch gradient optimizer is that the loss_grad_fn takes in Xbatch and Ybatch arguments such that a call should resemble: 
 
@@ -62,7 +62,7 @@ class BatchGradientOptimizer(BaseModel):
 class ADAM(GradientOptimizer):
     eps: float = 1e-8
 
-    def run(self, lr : float, steps : int, p_init : dict, beta1 : float = 0.9, beta2 : float = 0.999, active_params : dict | None = None, verbose = True) -> dict:
+    def run(self, X, Y, lr : float=1e-3, steps : int=100, p_init : dict={}, beta1 : float = 0.9, beta2 : float = 0.999, active_params : dict | None = None, verbose = True) -> dict:
         def param_update(active, constraint, param, m_val, s_val, step):
             # only updating the parameter if it's active 
             if active: 
@@ -93,7 +93,7 @@ class ADAM(GradientOptimizer):
         # main optimization loop
         for iter in iterator:
             # obtaining the loss function and gradient
-            loss, grad = self.loss_grad_fn(p)
+            loss, grad = self.loss_grad_fn(X, Y, p)
 
             # a non-finite objective/gradient (e.g. from a near-singular kernel matrix)
             # can't be trusted to produce a sane update -- reject the step and keep the
@@ -247,7 +247,7 @@ class LBFGS(GradientOptimizer):
     from Python" into one compiled call. Progress reporting (tqdm) still works via
     jax.debug.callback, which fires a host-side callback from inside the compiled loop.
     '''
-    def run(self, lr : float, steps : int, p_init : dict, active_params : dict | None = None, verbose = True):
+    def run(self, X, Y, lr : float, steps : int, p_init : dict, active_params : dict | None = None, verbose = True):
         # fill in identity constraints for any params not given an explicit constraint
         default_constraints = tree_map(lambda x: lambda y: y, p_init) # use identity constraints
         self.constraints = {**default_constraints, **(self.constraints or {})}
@@ -266,7 +266,7 @@ class LBFGS(GradientOptimizer):
 
         # evaluates the loss/gradient at a flattened parameter vector, masking out inactive parameters
         def _evaluate(vec):
-            loss, grad = self.loss_grad_fn(unravel_fn(vec))
+            loss, grad = self.loss_grad_fn(X, Y, unravel_fn(vec))
             grad_flat, _ = flatten_util.ravel_pytree(grad)
             return loss, grad_flat * mask_flat
 
@@ -377,12 +377,28 @@ class LBFGS(GradientOptimizer):
         # returning the final parameter estimates
         return unravel_fn(p_flat)
 
+class LaxBatchADAM(BatchGradientOptimizer):
+    eps : float = 1e-8 
 
-class BatchADAM(BatchGradientOptimizer):
-    eps: float = 1e-8
+    def _step(carry, data): 
+        pass 
 
-    def run(self, key, X, Y, lr : float, epochs : int, batch_size : int, p_init : dict, beta1 : float = 0.9, beta2 : float = 0.999, active_params : dict | None = None, verbose = True):
-        def param_update(active, constraint, param, m_val, s_val, step):
+
+    def run(self,
+            X,
+            Y,
+            key:jax.Array = jrand.PRNGKey(42), 
+            lr : float = 1e-3, 
+            epochs : int = 1, 
+            batch_size : int = 1, 
+            p_init : dict | None = None, 
+            beta1 : float = 0.9, 
+            beta2 : float = 0.999, 
+            active_params : dict | None = None, 
+            verbose : bool = True):
+
+        # helper function for updating single parameters 
+        def _param_update(active, constraint, param, m_val, s_val, step):
             # only updating the parameter if it's active 
             if active: 
                 m_hat = m_val / (1 - beta1 ** step)
@@ -390,7 +406,107 @@ class BatchADAM(BatchGradientOptimizer):
                 param -= lr * m_hat / (jnp.sqrt(s_hat) + self.eps)
 
             return constraint(param)
-        
+
+        # fill in identity constraints for any params not given an explicit constraint
+        default_constraints = tree_map(lambda x: lambda y: y, p_init) # use identity constraints
+        self.constraints = {**default_constraints, **(self.constraints or {})}
+
+        # determining which parameters are active
+        if active_params is None:
+            active_params = tree_map(lambda _: True, p_init)
+
+        # initialize parameters
+        p = deepcopy(p_init)
+
+        # initialize moment estimates
+        m, s = {}, {}
+        m, s = tree_map(lambda x: jnp.zeros_like(x), p), tree_map(lambda x: jnp.zeros_like(x), p)
+
+        # initializing iterator object
+        progress_bar = tqdm(range(epochs)) if verbose else range(epochs)
+        keys = jrand.split(key, epochs)
+
+        # initializing iterator object
+        iterator = tqdm(range(epochs)) if verbose else range(epochs)
+        keys = jrand.split(key, epochs)
+
+        # initializing the carry object
+        carry = {'p':p, 'm':m, 's':s, 'loss':0.0, 'iter_num':0}
+
+        # define the scan function
+        scan_fn = lambda carry, batch: _batch_adam_scan(
+            carry, batch, self.loss_grad_fn, lr, beta1, beta2, self.eps, active_params, self.constraints 
+        )
+
+        # main optimization loop
+        for iter in iterator:
+            batches = self._get_batches(keys[iter], X, Y, batch_size)
+
+            Xs, Ys = zip(*batches)                 # unzip list of tuples
+            Xs = jnp.stack(Xs)                     # shape (num_batches, batch_size, ...)
+            Ys = jnp.stack(Ys)                     # shape (num_batches, batch_size, ...)
+
+            # performing the lax scan
+            carry, batch_losses = jax.lax.scan(scan_fn, carry, xs=(Xs, Ys))
+
+            # displaying the loss
+            verbose and iterator.set_postfix_str(f"Mean Objective: {batch_losses.mean():.4e}")
+
+        # returning the final parameter estimates
+        return deepcopy(carry['p']) 
+
+
+def _adam_update(active, constraint, param, m_val, s_val, step, lr, beta1, beta2, eps):
+    # only updating the parameter if it's active 
+    if active: 
+        m_hat = m_val / (1 - beta1 ** step)
+        s_hat = s_val / (1 - beta2 ** step)
+        param -= lr * m_hat / (jnp.sqrt(s_hat) + eps)
+
+    return constraint(param)
+
+def _batch_adam_scan(carry, batch, loss_grad_fn : Callable, lr:float, beta1:float, beta2:float, eps:float, active_params:dict, constraints:dict):
+    # extract batches 
+    Xbatch, Ybatch = batch 
+
+    # obtaining the loss function and gradient
+    loss, grad = loss_grad_fn(Xbatch, Ybatch, carry['p'])
+
+    # setting the loss for this batch
+    carry['loss'] = loss
+
+    # setting the 
+
+    # updating the moment estimates
+    carry['m'] = tree_map(lambda m_val, grad_val: beta1 * m_val + (1 - beta1) * grad_val, carry['m'], grad)
+    carry['s'] = tree_map(lambda s_val, grad_val: beta2 * s_val + (1 - beta2) * grad_val**2, carry['s'], grad)
+
+    # updating the parameter estimates with constraints
+    carry['p'] = tree_map(
+        lambda active, constraint, param, m_val, s_val: _adam_update(
+            active, constraint, param, m_val, s_val, carry['iter_num']+1, lr, beta1, beta2, eps
+        ),
+        active_params, constraints, carry['p'], carry['m'], carry['s'])
+
+    # updating the iter number 
+    carry['iter_num'] += 1
+
+    # displaying the loss
+    return carry, carry['loss']
+
+class BatchADAM(BatchGradientOptimizer):
+    eps: float = 1e-8
+
+    def run(self, X, Y, key : jax.Array = jrand.PRNGKey(42), lr : float = 1e-3, epochs : int = 1, batch_size : int = 1, p_init : dict | None = None, beta1 : float = 0.9, beta2 : float = 0.999, active_params : dict | None = None, verbose = True):
+        def param_update(active, constraint, param, m_val, s_val, step):
+            # only updating the parameter if it's active
+            if active:
+                m_hat = m_val / (1 - beta1 ** step)
+                s_hat = s_val / (1 - beta2 ** step)
+                param -= lr * m_hat / (jnp.sqrt(s_hat) + self.eps)
+
+            return constraint(param)
+
         # fill in identity constraints for any params not given an explicit constraint
         default_constraints = tree_map(lambda x: lambda y: y, p_init) # use identity constraints
         self.constraints = {**default_constraints, **(self.constraints or {})}
@@ -410,16 +526,14 @@ class BatchADAM(BatchGradientOptimizer):
         iterator = tqdm(range(epochs)) if verbose else range(epochs)
         keys = jrand.split(key, epochs)
 
-
-
         # main optimization loop
         for iter in iterator:
-            batches = self._get_batches(keys[iter], X, Y, batch_size) 
+            batches = self._get_batches(keys[iter], X, Y, batch_size)
 
             batch_losses = np.zeros(len(batches))
             for i, (Xbatch, Ybatch) in enumerate(batches):
                 # obtaining the loss function and gradient
-                loss, grad = self.loss_grad_fn(p, Xbatch, Ybatch)
+                loss, grad = self.loss_grad_fn(Xbatch, Ybatch, p)
 
                 # setting the loss for this batch
                 batch_losses[i] = float(loss)
@@ -456,14 +570,14 @@ class BatchADAM(BatchGradientOptimizer):
 class BatchSGD(BatchGradientOptimizer):
     lr: float = 1e-3
 
-    def run(self, key, X, Y, lr : float, epochs : int, batch_size : int, p_init : dict, active_params : dict | None = None, verbose = True):
+    def run(self, X, Y, key : jax.Array = jrand.PRNGKey(42), lr : float = 1e-3, epochs : int = 1, batch_size : int = 1, p_init : dict | None = None, active_params : dict | None = None, verbose = True):
         def param_update(active, constraint, param, grad_val):
-            # only updating the parameter if it's active 
-            if active: 
+            # only updating the parameter if it's active
+            if active:
                 param -= lr * grad_val
 
             return constraint(param)
-        
+
         # fill in identity constraints for any params not given an explicit constraint
         default_constraints = tree_map(lambda x: lambda y: y, p_init) # use identity constraints
         self.constraints = {**default_constraints, **(self.constraints or {})}
@@ -486,7 +600,7 @@ class BatchSGD(BatchGradientOptimizer):
             batch_losses = np.zeros(len(batches))
             for i, (Xbatch, Ybatch) in enumerate(batches):
                 # obtaining the loss function and gradient
-                loss, grad = self.loss_grad_fn(p, Xbatch, Ybatch)
+                loss, grad = self.loss_grad_fn(Xbatch, Ybatch, p)
 
                 # setting the loss for this batch
                 batch_losses[i] = float(loss)
@@ -527,7 +641,7 @@ class BatchLBFGS(BatchGradientOptimizer):
     m: int = 10
     eps: float = 1e-8
 
-    def run(self, key, X, Y, lr : float, epochs : int, batch_size : int, p_init : dict, active_params : dict | None = None, verbose = True):
+    def run(self, X, Y, key : jax.Array = jrand.PRNGKey(42), lr : float = 1e-3, epochs : int = 1, batch_size : int = 1, p_init : dict | None = None, active_params : dict | None = None, verbose = True):
         # fill in identity constraints for any params not given an explicit constraint
         default_constraints = tree_map(lambda x: lambda y: y, p_init) # use identity constraints
         self.constraints = {**default_constraints, **(self.constraints or {})}
@@ -546,7 +660,7 @@ class BatchLBFGS(BatchGradientOptimizer):
 
         # evaluates the loss/gradient at a flattened parameter vector on a given batch
         def _evaluate(vec, Xbatch, Ybatch):
-            loss, grad = self.loss_grad_fn(unravel_fn(vec), Xbatch, Ybatch)
+            loss, grad = self.loss_grad_fn(Xbatch, Ybatch, unravel_fn(vec))
             grad_flat, _ = flatten_util.ravel_pytree(grad)
             return loss, grad_flat * mask_flat
 

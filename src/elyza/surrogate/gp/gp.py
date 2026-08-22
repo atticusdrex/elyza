@@ -198,10 +198,10 @@ class GaussianProcess(Surrogate):
             solver_kwargs['p_init'] = self.p
             self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
-        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda p: self._objective(X, Y, p)))
+        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(X, Y, p), argnums=2))
 
         # run the optimizer
-        new_params = self._optimizer.run(**solver_kwargs)
+        new_params = self._optimizer.run(X, Y, **solver_kwargs)
 
         # setting the new params
         self.p = deepcopy(new_params)
@@ -245,3 +245,4 @@ class GaussianProcess(Surrogate):
         self._Y = jnp.concatenate([self._Y, Y], axis=0)
         self._L = L_new
         self._alpha = self._get_alpha(self._L, self.p['mean'])
+

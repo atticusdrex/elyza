@@ -125,7 +125,7 @@ ytrue = lf_evaluator.evaluate(x_test)
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(lf_inputs.ravel(), lf_outputs.ravel())
-
+show()
 
 # %% training the medium-fidelity surrogate
 magpi.fit(
@@ -146,7 +146,7 @@ ytrue = mf_evaluator.evaluate(x_test)
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(mf_inputs.ravel(), mf_outputs.ravel())
-
+show() 
 # %% training the medium-fidelity surrogate
 magpi.fit(
     2, 
@@ -167,4 +167,5 @@ ytrue = hf_evaluator.evaluate(x_test)
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(hf_inputs.ravel(), hf_outputs.ravel())
+show()
 # %%
