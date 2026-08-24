@@ -44,8 +44,11 @@ class Evaluator(BaseModel):
     '''
     input_vals is a list of arrays of inputs assumed to be valid for the evaluator, where the shape of each list item is (# of data points, input dimension).
     '''
-    def evaluate(self, *input_vals):
-        return vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim)
+    def evaluate(self, *input_vals, jit_compile = False):
+        if jit_compile:
+            return jit(vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim))
+        else:
+            return vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim)
 
     def print(self):
         print("\n------------------------------------------------")

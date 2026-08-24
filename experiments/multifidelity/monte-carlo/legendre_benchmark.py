@@ -85,7 +85,7 @@ from tqdm import tqdm
 
 budgets = jnp.logspace(jnp.log10(5), jnp.log10(300), num = 8) 
 
-estimator_vars = np.zeros((6, budgets.shape[0]))
+estimator_vars = np.zeros((7, budgets.shape[0]))
 
 l2_reg, rcond = 1e-6, 1e-8 
 
@@ -165,6 +165,14 @@ for i, budget in tqdm(enumerate(budgets), total = budgets.shape[0]):
     ms = rmfmc._budget_fractional_alloc(budget)
     vars.append(rmfmc._get_variance(ms)) 
 
+    # rmfmc with matrix coefs and integer sample allocations 
+    rmfmc.covs = pilot_covs  
+    rmfmc.get_matrix_coefs()
+    rmfmc.covs = true_covs 
+    rmfmc._get_info_coefs() 
+    # ms = rmfmc.budget_alloc(budget, warm_start = False) 
+    ms = rmfmc.budget_alloc(budget, warm_start = False) 
+    vars.append(rmfmc._get_variance(ms)) 
 
 
     # storing the estimator variances for the specific budget
@@ -173,7 +181,6 @@ for i, budget in tqdm(enumerate(budgets), total = budgets.shape[0]):
 
 # %% plotting 
 from matplotlib.pyplot import * 
-
 
 rcParams.update(
     {
@@ -189,15 +196,15 @@ rcParams.update(
     }
 )
 
-labels = ["HFMC (baseline)", "MLMC", "MFMC", "R-MFMC w/ matrix coefs.", "R-MFMC w/ vector coefs.", "R-MFMC w/ scalar coefs." ]
-markers = ['.', "D", "P", '*', 's', "^", ]
+labels = ["HFMC (baseline)", "MLMC", "MFMC", "R-MFMC w/ matrix coefs.", "R-MFMC w/ vector coefs.", "R-MFMC w/ scalar coefs.", "R-MFMC w/ greedy sample alloc."]
+markers = ['.', "D", "P", '*', 's', "^", (6,2,0)]
 # the three RMFMC variants share a blue family (dark -> light, richest -> simplest
 # coefficients), while HFMC/MFMC/MLMC each get a distinct matplotlib default color
-colors = ['#7f7f7f', '#2ca02c', '#ff7f0e', '#08306b', '#4292c6', '#9ecae1']
+colors = ['#7f7f7f', '#2ca02c', '#ff7f0e', '#08306b', '#4292c6', '#9ecae1', "#870000"]
 
-figure(figsize=(12,7), dpi = 300) 
+figure(figsize=(12,8), dpi = 300) 
 for i in range(estimator_vars.shape[0]):
-    loglog(budgets, estimator_vars[i], linestyle = 'dashed', marker = markers[i], label = labels[i], markersize=12, color = colors[i])
+    loglog(budgets, estimator_vars[i], linestyle = 'dashed', marker = markers[i], label = labels[i], markersize=12, color = colors[i], markeredgewidth=2.5)
 
 legend() 
 xlabel("Computational budget")

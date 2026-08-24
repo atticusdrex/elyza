@@ -10,19 +10,19 @@ from matplotlib.pyplot import *
 
 
 # declaring the permeability fields
-HF_DIM, MF_DIM, LF_DIM = 64, 24, 12
+REFERENCE_DIM, HF_DIM, MF_DIM, LF_DIM = 64, 64, 32, 16
 LENGTH_SCALE, KL_TERMS, GRF_MEAN, GRF_STD = 0.15, 64, 0.0, 1.0 
 
-lf_perm = GRFInput(name='permeability', grid_dim=LF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=HF_DIM)
-mf_perm = GRFInput(name='permeability', grid_dim=MF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=HF_DIM)
-hf_perm = GRFInput(name='permeability', grid_dim=HF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=HF_DIM)
+lf_perm = GRFInput(name='permeability', grid_dim=LF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=REFERENCE_DIM)
+mf_perm = GRFInput(name='permeability', grid_dim=MF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=REFERENCE_DIM)
+hf_perm = GRFInput(name='permeability', grid_dim=HF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=REFERENCE_DIM)
 
 # declaring the darcy field 
 lf_darcy = DarcyFlowEvaluator(name='low-fidelity darcy flow', inputs=[lf_perm], grid_dim=LF_DIM, cost=1.4149e-04, source_term = "figs/Pi2.png")
 
 mf_darcy = DarcyFlowEvaluator(name='medium-fidelity darcy flow', inputs=[mf_perm], grid_dim=MF_DIM, cost=2.8317e-03, source_term = "figs/Pi2.png")
 
-hf_darcy = DarcyFlowEvaluator(name='medium-fidelity darcy flow', inputs=[hf_perm], grid_dim=HF_DIM, cost=4.4440e-02, source_term = "figs/Pi2.png")
+hf_darcy = DarcyFlowEvaluator(name='high-fidelity darcy flow', inputs=[hf_perm], grid_dim=HF_DIM, cost=4.4440e-02, source_term = "figs/Pi2.png")
 
 
 # visualizing the permeability, forcing, and pressure
@@ -55,7 +55,7 @@ perm_norm = dict(vmin = float(perm_hf.min()), vmax = float(perm_hf.max()))
 force_norm = dict(vmin = float(force_hf.min()), vmax = float(force_hf.max()))
 press_norm = dict(vmin = float(press_hf.min()), vmax = float(press_hf.max()))
 
-fig, axes = subplots(3, 3, figsize=(14,12), dpi = 200)
+fig, axes = subplots(3, 3, figsize=(14,12), dpi = 300)
 
 im_perm = axes[0,0].imshow(perm_hf, cmap = 'viridis', **perm_norm)
 axes[0,0].set_title("Random sample of $\\kappa(\\boldsymbol{x}; \\xi)$")
@@ -120,58 +120,62 @@ rmfmc = RMFMC(
     rcond = 1e-8
 )
 
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 2000, set_costs = True)
+rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 200, set_costs = True)
 true_covs = rmfmc.covs 
 
 #%%
-rmfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 200, set_costs = False, noise_std = 1e-14)
+rmfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 175, set_costs = False, noise_std = 1e-10)
 bad_covs = rmfmc.covs 
-rmfmc.get_matrix_coefs() 
-rmfmc.covs = true_covs
-rmfmc._get_info_coefs() 
 
-# %%
+# %% examining regularized least squares solve
 budget = 1.0
 
 rmfmc.l2_reg, rmfmc.rcond = 1e-8, 1e-8
 rmfmc.covs = bad_covs
 rmfmc.get_matrix_coefs() 
+rmfmc._get_info_coefs()
+good_ms = rmfmc.budget_alloc(budget, warm_start = False)
 
-ms = rmfmc.budget_alloc(budget, warm_start = False)
-rmfmc.covs = true_covs
+rmfmc.covs = true_covs 
 rmfmc._get_info_coefs() 
-print(ms)
+rmfmc_var = rmfmc.get_entry_variance(good_ms).reshape(HF_DIM, HF_DIM)
+print(good_ms)
 
-rmfmc_var = rmfmc.get_entry_variance(ms).reshape(HF_DIM, HF_DIM)
-
-# examining unregularized least squares solve 
-
-rmfmc.l2_reg, rmfmc.rcond = 0.0, 1e-300
+#%%  examining unregularized least squares solve 
+rmfmc.l2_reg, rmfmc.rcond = 3e-16, 1e-300
 rmfmc.covs = bad_covs
 rmfmc.get_matrix_coefs() 
+rmfmc._get_info_coefs()
 bad_ms = rmfmc.budget_alloc(budget, warm_start = False)
-
-
+print(bad_ms) 
 rmfmc.covs = true_covs
 rmfmc._get_info_coefs() 
-unreg_var = rmfmc.get_entry_variance(ms).reshape(HF_DIM, HF_DIM)
+unreg_var = rmfmc.get_entry_variance(bad_ms).reshape(HF_DIM, HF_DIM)
 
 
 
 hfmc = HFMC(
     evaluators = [lf_darcy, hf_darcy]
 )
+hfmc._costs = jnp.copy(rmfmc._costs)
 
 # copying over covariances so don't have to recompute
 hfmc.covs = true_covs 
 
-ms = hfmc.budget_alloc(budget)
+hf_ms = hfmc.budget_alloc(budget)
 
-hfmc_var = hfmc.get_entry_variance(ms).reshape(HF_DIM, HF_DIM)
-
+hfmc_var = hfmc.get_entry_variance(hf_ms).reshape(HF_DIM, HF_DIM)
+hf_ms 
 # %% 
+from matplotlib import colors
 
-figure(figsize=(16,4))
+# Define norm with custom min (-10), center (0), and max (80)
+
+# 2. Create the continuous colormap
+
+# norm = colors.TwoSlopeNorm(vcenter=1.0, vmin=0, vmax=(hfmc_var / rmfmc_var).max())
+
+figure(figsize=(16,4), dpi = 300)
 subplot(1,3,1)
 imshow(jnp.diag(true_covs[-1][-1]).reshape(HF_DIM, HF_DIM) / jnp.diag(true_covs[-1][-1]).max(), cmap = "Oranges", vmin=0.0, vmax = 1.0)
 colorbar()
@@ -179,26 +183,14 @@ title("High-Fidelity Variance")
 xticks([]); yticks([])
 
 subplot(1,3,2)
-imshow(hfmc_var / unreg_var, cmap = "YlGnBu", vmin=0.0, vmax = (hfmc_var / rmfmc_var).max())
+imshow(hfmc_var / unreg_var, cmap = "GnBu", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
-title("Unregularized \nVariance Reduction")
+title("R-MFMC Variance Reduction\nWithout Regularization")
 xticks([]); yticks([])
 
 subplot(1,3,3)
-imshow(hfmc_var / rmfmc_var, cmap = "YlGnBu", vmin=0.0, vmax = (hfmc_var / rmfmc_var).max())
+imshow(hfmc_var / rmfmc_var, cmap = "GnBu", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
-title("Regularized \nVariance Reduction")
+title("R-MFMC Variance Reduction\nwith Regularization")
 xticks([]); yticks([])
-
-# %% making the high-fidelity covariance poorly scaled
-
-U, S, _ = np.linalg.svd(jnp.block([row[0:2] for row in rmfmc.covs[0:2]]), full_matrices = True)
-
-S[S <= 2e-16] = 2e-16
-
 # %%
-figure() 
-semilogy(S / S[0])
-title("Singular value decay of high-fidelity variance")
-xlabel("Singular value index")
-ylabel("Relative singular values $\\sigma_i / \\sigma_0$")

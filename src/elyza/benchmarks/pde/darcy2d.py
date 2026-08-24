@@ -18,13 +18,12 @@ def build_image_source(path, grid_dim, inflation = 1.0):
     # uncomment for 3-channel RGB image 
     # ---------------------------------------------------------------------
     image = image[:,:,:3].mean(axis=2).astype(np.float64)
-    image = image / np.max(image)
+    image = image / np.max(image) # scaling to [0,1]
+
 
     # negating and scaling to [-1,1] 
-    image = -image+1
-
-
-    image *= inflation 
+    image = -2*image +1
+    # image *= inflation 
 
     # # threshold for images to generate more interesting force fields
     # thresh = 0.5
@@ -34,15 +33,16 @@ def build_image_source(path, grid_dim, inflation = 1.0):
     # # inflating source term 
     # image *= 2.0
     # ---------------------------------------------------------------------
-
+    # zooming to make square 
     image = ndimage.zoom(image, (grid_dim/height, grid_dim/width), order=3)
 
 
-    image[image <= 0] = 0.0
-    image *= 2 
-    image = 1/(1+np.exp(-image))
+    # image[image <= 0] = 0.0
+    image = jnp.exp(image)
+    
 
-    # zooming to make square 
+    image = jnp.tanh(1 * image) 
+    image = (image - image.min()) / (np.max(image) - np.min(image)) 
     return image
 
 def get_field(key, grf_mean, grf_std, scaled_eigenvecs, n_kl):
