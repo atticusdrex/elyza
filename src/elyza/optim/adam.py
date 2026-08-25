@@ -21,9 +21,9 @@ class ADAMOptions(OptimizerOptions):
     verbose : bool = Field(default = False, description = "whether or not to print the reuslts of the optimizer")
     eps : float = Field(default = 1e-8, description = "small positive number to prevent division by zero")
     random_state : int = Field(default = 42, description = "random seed for replication")
+    unroll : int | bool = Field(default = False, description = "whether or not to unroll the jax.lax.scan operation (unroll=True: long compilation times, faster execution times, high memory, unroll = k: unroll for set size-k blocks of k loop steps, unroll = False: short compile times, slower execution times, lower memory)")
 
     def model_post_init(self, __context):
-        assert self.p_init is not None, "must give initial parameter guess"
         assert self.lr > 0, "learning rate cannot be negative" 
         assert self.epochs >= 1, "need at least one epoch"
         assert self.batch_size is None or self.batch_size >= 1, "batch size must be None or at least 1"
@@ -49,10 +49,11 @@ class ADAM(BatchGradientOptimizer):
     def run(self, *data : list[jax.Array]):
         # asserting the loss function has been set 
         assert self.loss_grad_fn is not None, "you must specify a loss function" 
+        assert self.opts.p_init is not None, "must give initial parameter guess"
 
-        # setting the default batch size 
-        if self.opts.batch_size is None: 
-            self.opts.batch_size = data[0].shape[0]
+
+        # determining the batch size for this run (without mutating shared opts)
+        batch_size = self.opts.batch_size if self.opts.batch_size is not None else data[0].shape[0]
 
         # generating the PRNG key 
         key = jrand.PRNGKey(self.opts.random_state) 
@@ -88,12 +89,12 @@ class ADAM(BatchGradientOptimizer):
 
         # main optimization loop
         for iter in progress_bar:
-            batches = self._get_batches(keys[iter], self.opts.batch_size, *data)
+            batches = self._get_batches(keys[iter], batch_size, *data)
             unzipped_batches = zip(*batches) 
             stacked_batches = tuple([jnp.stack(arg) for arg in unzipped_batches])
 
             # performing the lax scan
-            carry, batch_losses = jax.lax.scan(scan_fn, carry, xs=stacked_batches)
+            carry, batch_losses = jax.lax.scan(scan_fn, carry, xs=stacked_batches, unroll = self.opts.unroll)
 
             # displaying the loss
             self.opts.verbose and progress_bar.set_postfix_str(f"avg. batch objective: {batch_losses.mean():.4e}")

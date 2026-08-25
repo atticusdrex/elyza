@@ -2,14 +2,28 @@
 from elyza.multifidelity.surrogate import MAGPI 
 from elyza.benchmarks.multifidelity.magpi_analytical import * 
 from elyza.surrogate.gp import GaussianProcess, ARD, Linear, Constant
-from elyza.optim.gradient import ADAM, LBFGS
+from elyza.optim import ADAM, ADAMOptions
 from elyza.surrogate import SupervisedDataset
 from elyza.util.imports import * 
 
 from matplotlib.pyplot import * 
 
-# building the lowest-fidelity GP 
+# declaring the ADAM optimizer options 
+adam_opts = ADAMOptions(
+    lr = 3e-1, 
+    epochs = 500, 
+    batch_size = None, 
+    beta1 = 0.9, 
+    beta2 = 0.999, 
+    active_params = {'mean':True, 'kernel':True, 'noise':False}, 
+    constraints = None, 
+    verbose = True, 
+    eps = 1e-8, 
+    random_state = 42, 
+    unroll = 25
+)
 
+# building the lowest-fidelity GP 
 lf_inputs = x.sample(jrand.PRNGKey(42), 250)
 lf_outputs = lf_evaluator.evaluate(lf_inputs) 
 
@@ -26,11 +40,11 @@ lf_gp = GaussianProcess(
     noise_var = lf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
-    verbose = True
+    verbose = True, 
+    calibrate_noise = True
 )
  
-lf_gp.set_optimizer(LBFGS, m=25, constraints = None) 
-
+lf_gp.set_optimizer(ADAM, adam_opts) 
 
 # building the medium-fidelity gp 
 mf_inputs = x.sample(jrand.PRNGKey(42), 100)
@@ -43,50 +57,48 @@ mf_data = SupervisedDataset(
 )
 
 mf_gp = GaussianProcess(
-    input_dim = 2, # note the +1 dimensional input 
+    input_dim = 2, 
     kernel_cls = ARD, 
-    mean_cls = Linear, 
+    mean_cls = Constant, 
     noise_var = mf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
-    verbose = True, 
-    calibrate_noise = True
+    verbose = True
 )
+ 
 
 # constraint set to zero out the input part of the linear mean parameters 
-mf_gp.set_optimizer(LBFGS, m=25, constraints = {'mean':lambda a: a.at[1:1+x.dim].set(0)})
+mf_gp.set_optimizer(ADAM, adam_opts)
 
-# 
 hf_inputs = x.sample(jrand.PRNGKey(42), 25)
 hf_outputs = hf_evaluator.evaluate(hf_inputs) 
 
 hf_data = SupervisedDataset(
     input_data = [hf_inputs], 
     output_data = hf_outputs, 
-    noise_var = 1e-2
+    noise_var = 1e-4
 )
 
 hf_gp = GaussianProcess(
-    input_dim = 3, # note the +1 dimensional input 
+    input_dim = 3, 
     kernel_cls = ARD, 
-    mean_cls = Linear, 
-    noise_var = lf_data.noise_var, 
+    mean_cls = Constant, 
+    noise_var = hf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
     verbose = True, 
     calibrate_noise = True
 )
 
-# constraint set to zero out the input part of the linear mean parameters 
-hf_gp.set_optimizer(LBFGS, m = 25, constraints = {'mean':lambda a: a.at[1:1+x.dim].set(0)})
+hf_gp.set_optimizer(ADAM, adam_opts)
 
-# 
+# %% instantiating MAGPI model
 magpi = MAGPI(
     data = [lf_data, mf_data, hf_data], 
     evaluators = [lf_evaluator, mf_evaluator, hf_evaluator]
 )
 
-# setting the surrogates for each level 
+# setting the surrogates for each level with prediction keyword arguments
 magpi.set_surrogate(
     level = 0,
     surrogate = lf_gp, 
@@ -107,14 +119,7 @@ magpi.set_surrogate(
 )
 
 # %%training the lowest-fidelity surrogate 
-magpi.fit(
-    0, 
-    p_init = magpi._surrogates[0].p,
-    active_params = {'kernel':True, 'mean':True, 'noise':False}, 
-    lr = 1e-1, 
-    steps = 100, 
-    verbose = True
-)
+magpi.fit(0)
 
 figure()
 x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
@@ -127,15 +132,8 @@ plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(lf_inputs.ravel(), lf_outputs.ravel())
 show()
 
-# %% training the medium-fidelity surrogate
-magpi.fit(
-    1, 
-    p_init = magpi._surrogates[1].p,
-    active_params = {'kernel':True, 'mean':True, 'noise':False}, 
-    lr = 1e-1, 
-    steps = 100, 
-    verbose = True
-)
+# training the medium-fidelity surrogate
+magpi.fit(1)
 
 figure()
 x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
@@ -147,16 +145,8 @@ fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), a
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(mf_inputs.ravel(), mf_outputs.ravel())
 show() 
-# %% training the medium-fidelity surrogate
-magpi.fit(
-    2, 
-    p_init = magpi._surrogates[2].p,
-    active_params = {'kernel':True, 'mean':True, 'noise':False}, 
-    lr = 1.0, 
-    steps = 250, 
-    verbose = True
-)
-
+# training the medium-fidelity surrogate
+magpi.fit(2)
 
 figure()
 x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
@@ -168,4 +158,3 @@ fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), a
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(hf_inputs.ravel(), hf_outputs.ravel())
 show()
-# %%

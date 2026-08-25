@@ -1,4 +1,4 @@
-from .util import * 
+from elyza.util.imports import * 
 
 class BaseMean(BaseModel):
     input_dim : int 

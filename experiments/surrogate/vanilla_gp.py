@@ -5,8 +5,8 @@ from matplotlib.pyplot import *
 from elyza.surrogate.gp import GaussianProcess, ARD, Constant
 from elyza.optim.adam import ADAM, ADAMOptions
 
-# %%
-n_train = 25 
+# 
+n_train = 250
 input_data = x.sample(jrand.PRNGKey(42), n_train)
 output_data = hf_evaluator.evaluate(input_data) + 1e-2 * jrand.uniform(jrand.PRNGKey(42), shape = (n_train,1))
 
@@ -33,7 +33,8 @@ adam_opts = ADAMOptions(
     constraints = None, 
     verbose = True, 
     eps = 1e-8, 
-    random_state = 42 
+    random_state = 42, 
+    unroll = 25
 )
 
 # setting the optimizer
@@ -55,7 +56,7 @@ show()
 # %% 
 from elyza.optim.lbfgs import LBFGS, LBFGSOptions
 
-n_train = 25 
+n_train = 250
 input_data = x.sample(jrand.PRNGKey(42), n_train)
 output_data = hf_evaluator.evaluate(input_data) + 1e-2 * jrand.uniform(jrand.PRNGKey(42), shape = (n_train,1))
 
@@ -82,7 +83,8 @@ lbfgs_opts = LBFGSOptions(
     constraints = None, 
     verbose = True, 
     eps = 1e-8, 
-    random_state = 42 
+    random_state = 42,
+    unroll = True
 )
 
 # setting the optimizer

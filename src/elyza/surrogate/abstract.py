@@ -1,6 +1,7 @@
 from elyza.util.imports import * 
 from elyza.core.data import * 
 from elyza.util.helpers import ensure_2d
+from elyza.optim.abstract import Optimizer, OptimizerOptions 
 
 '''
 ~---------------------------------~
@@ -51,6 +52,7 @@ When a child class does not implement all the methods (e.g., a deep learning cla
 class Surrogate(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    @abstractmethod 
     def fit(
         self, 
         X: np.ndarray | jax.Array, 
@@ -60,7 +62,16 @@ class Surrogate(BaseModel):
         """Fit the surrogate model to training data."""
         raise NotImplementedError("This feature is not implemented yet.")
 
+    '''setting an optimizer for the surrogate model'''
+    @abstractmethod 
+    def set_optimizer(
+        self, 
+        optimizer:Optimizer, 
+        optimizer_opts:OptimizerOptions
+    ):
+        raise NotImplementedError("This feature is not implemented yet.")
 
+    @abstractmethod
     def predict(
         self, 
         X: np.ndarray | jax.Array, 
@@ -69,12 +80,12 @@ class Surrogate(BaseModel):
         """Return predictive mean (and optionally variance) at new points."""
         raise NotImplementedError("This feature is not implemented yet.")
 
-
-    def sample(self, X, n_samples: int = 1, random_state: int = 0) -> jax.Array:
+    @abstractmethod
+    def sample(self, key, X:jax.Array, n_samples: int = 1) -> jax.Array:
         """Draw samples from the posterior/predictive distribution."""
         raise NotImplementedError("This feature is not implemented yet.")
 
-
+    @abstractmethod
     def update(self, X, Y) -> None:
         """Update the model with new observations (e.g. online/incremental fitting)."""
         raise NotImplementedError("This feature is not implemented yet.")

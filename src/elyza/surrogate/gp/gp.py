@@ -1,7 +1,7 @@
 from .kernel import *
 from .mean import *
 from elyza.util.imports import * 
-from elyza.surrogate.surrogate import Surrogate
+from elyza.surrogate.abstract import Surrogate
 from elyza.optim.abstract import BatchGradientOptimizer, OptimizerOptions
 from elyza.util.helpers import ensure_2d, ls, softplus, inv_softplus, kernel_mat
 from jax.scipy.linalg import solve_triangular, cho_solve, cholesky
@@ -153,6 +153,21 @@ class GaussianProcess(Surrogate):
             cov_diag = Kaux - jnp.sum(Ktest * alpha.T, axis=1)
             return mu, cov_diag
 
+    def sample(self, key, X, n_samples: int = 1) -> jax.Array:
+        '''
+        Draw samples from the GP posterior at X via the reparameterization trick,
+        treating each point independently (using only the marginal variances from
+        predict(X, full_cov=False) rather than the full posterior covariance) so
+        this stays cheap for large X: z ~ N(0, I), sample = mu + sqrt(var) * z.
+        Keeping mu/var in the computation graph (rather than e.g.
+        jax.random.multivariate_normal) makes the samples differentiable w.r.t.
+        the posterior mean and variance.
+        '''
+        mu, var = self.predict(X, full_cov=False)
+        std = jnp.sqrt(var + self.eps)
+        z = jrand.normal(key, shape=(mu.shape[0], n_samples), dtype=mu.dtype)
+        return mu.reshape(-1, 1) + std.reshape(-1, 1) * z
+
     def _objective(self, X, Y, p) -> float:
         # Getting cholesky factors and solve linear system
         L = self._get_L(X, p['kernel'], p['noise'])
@@ -176,6 +191,9 @@ class GaussianProcess(Surrogate):
     ):
         # making sure an optimizer has been declared 
         assert self._optimizer is not None, "must declare an optimizer" 
+
+        # making sure p_init is specified 
+        self._optimizer.opts.p_init = deepcopy(self.p)
 
         # converting training data to jax arrays
         X, Y = ensure_2d(jnp.array(X)), ensure_2d(jnp.array(Y))

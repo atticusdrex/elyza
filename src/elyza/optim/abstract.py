@@ -9,12 +9,26 @@ class OptimizerOptions(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 '''
+Optimizer 
+---------
+abstract class for general optimizers 
+'''
+class Optimizer(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    '''
+    each batch gradient optimizer must have a run function in the following style
+    '''
+    @abstractmethod
+    def run(*args):
+        raise NotImplementedError("this method is only a placeholder and hasn't been implemented")
+
+'''
 BatchGradientOptimizer
 ----------------------
 an abstract class for gradient-based optimization in batches
 '''
-class BatchGradientOptimizer(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+class BatchGradientOptimizer(Optimizer):
     loss_grad_fn : SkipValidation[callable] | None = Field(default = None, description = "a function in the form def func(p, *args) -> float")
     opts : OptimizerOptions = Field(default = OptimizerOptions(), description = "optimizer options")
 
@@ -37,10 +51,6 @@ class BatchGradientOptimizer(BaseModel):
 
         return batches
 
-    '''
-    each batch gradient optimizer must have a run function in the following style
-    '''
-    def run(*args):
-        raise NotImplementedError("this method is only a placeholder and hasn't been implemented")
+    
 
 

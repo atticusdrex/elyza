@@ -1,1 +1,1 @@
-from .surrogate import Surrogate, SupervisedDataset
+from .abstract import Surrogate, SupervisedDataset
