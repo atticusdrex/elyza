@@ -1,0 +1,758 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elyza.optim.lbfgs &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/elyza/optim/lbfgs';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-light" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-dark pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for elyza.optim.lbfgs</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Batched limited-memory BFGS (L-BFGS) optimizer built on ``jax.lax.scan``.</span>
+
+<span class="sd">Defines :class:`LBFGSOptions` and :class:`LBFGS`, a</span>
+<span class="sd">:class:`~elyza.optim.abstract.BatchGradientOptimizer` implementation of</span>
+<span class="sd">quasi-Newton optimization with a two-loop recursion over a fixed-size</span>
+<span class="sd">curvature-pair history and an Armijo backtracking line search, all</span>
+<span class="sd">compiled into a single ``lax.scan`` step.</span>
+<span class="sd">"""</span>
+<span class="c1"># imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim.abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerOptions</span><span class="p">,</span> <span class="n">BatchGradientOptimizer</span><span class="p">,</span> <span class="n">fill_pytree_spec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jax.tree_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">tree_map</span><span class="p">,</span> <span class="n">tree_leaves</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jax</span><span class="w"> </span><span class="kn">import</span> <span class="n">lax</span>
+
+<div class="viewcode-block" id="LBFGSOptions">
+<a class="viewcode-back" href="../../../elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LBFGSOptions</span><span class="p">(</span><span class="n">OptimizerOptions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Options which parameterize an L-BFGS optimizer.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        p_init: Initial dictionary (pytree) of parameters.</span>
+<span class="sd">        lr: Initial step size scale for the backtracking line search.</span>
+<span class="sd">        epochs: Number of times we pass through the training data.</span>
+<span class="sd">        batch_size: Number of training datapoints in a specific loss</span>
+<span class="sd">            function evaluation.</span>
+<span class="sd">        m: Number of ``(s, y)`` curvature pairs retained for the two-loop</span>
+<span class="sd">            recursion.</span>
+<span class="sd">        max_backtracks: Maximum number of step-halving attempts in the</span>
+<span class="sd">            backtracking line search.</span>
+<span class="sd">        active_params: A dictionary of the active parameters to optimize.</span>
+<span class="sd">        constraints: A dictionary of constraints mapping from</span>
+<span class="sd">            parameter to constraint function.</span>
+<span class="sd">        verbose: Whether or not to print the results of the optimizer.</span>
+<span class="sd">        eps: Small positive number to prevent division by zero.</span>
+<span class="sd">        random_state: Random seed for replication.</span>
+<span class="sd">        unroll: Whether or not to unroll the ``jax.lax.scan`` operation</span>
+<span class="sd">            (``unroll=True``: long compilation times, faster execution</span>
+<span class="sd">            times, high memory; ``unroll=k``: unroll in size-``k`` blocks;</span>
+<span class="sd">            ``unroll=False``: short compile times, slower execution times,</span>
+<span class="sd">            lower memory).</span>
+<span class="sd">    """</span>
+    <span class="n">p_init</span> <span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"initial dictionary of parameters"</span><span class="p">)</span>
+    <span class="n">lr</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"initial step size scale for the backtracking line search"</span><span class="p">)</span>
+    <span class="n">epochs</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"number of times we pass through the training data"</span><span class="p">)</span>
+    <span class="n">batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"number of training datapoints in a specific loss function evaluation"</span><span class="p">)</span>
+    <span class="n">m</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"number of (s,y) curvature pairs retained for the two-loop recursion"</span><span class="p">)</span>
+    <span class="n">max_backtracks</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"maximum number of step-halving attempts in the backtracking line search"</span><span class="p">)</span>
+    <span class="n">active_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"a dictionary of the active parameters to optimize"</span><span class="p">)</span>
+    <span class="n">constraints</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="n">Callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"a dictionary of constraints mapping from parameter:constraint function"</span><span class="p">)</span>
+    <span class="n">verbose</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"whether or not to print the reuslts of the optimizer"</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"small positive number to prevent division by zero"</span><span class="p">)</span>
+    <span class="n">random_state</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"random seed for replication"</span><span class="p">)</span>
+    <span class="n">unroll</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"whether or not to unroll the jax.lax.scan operation (unroll=True: long compilation times, faster execution times, high memory, unroll = k: unroll for set size-k blocks of k loop steps, unroll = False: short compile times, slower execution times, lower memory)"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LBFGSOptions.model_post_init">
+<a class="viewcode-back" href="../../../elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions.model_post_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate that the option values are internally consistent.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If ``p_init``, ``lr``, ``epochs``,</span>
+<span class="sd">                ``batch_size``, ``m``, or ``max_backtracks`` hold invalid</span>
+<span class="sd">                values.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"must give initial parameter guess"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"learning rate cannot be negative"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"need at least one epoch"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"batch size must be None or at least 1"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"history size m must be at least 1"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_backtracks</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"must allow at least one backtracking attempt"</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LBFGS">
+<a class="viewcode-back" href="../../../elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LBFGS</span><span class="p">(</span><span class="n">BatchGradientOptimizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Batch L-BFGS optimizer for running quasi-Newton optimization scripts in batches.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        opts: Options for the optimizer.</span>
+<span class="sd">    """</span>
+    <span class="n">opts</span> <span class="p">:</span> <span class="n">LBFGSOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"options for the optimizer"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LBFGS.model_post_init">
+<a class="viewcode-back" href="../../../elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGS.model_post_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate that valid options have been supplied.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If ``opts`` is ``None``.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_post_init</span><span class="p">(</span><span class="n">__context</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must pass a valid instance of LBFGSOptions()"</span></div>
+
+
+<div class="viewcode-block" id="LBFGS.run">
+<a class="viewcode-back" href="../../../elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGS.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Run L-BFGS over the given data for ``opts.epochs`` epochs.</span>
+
+<span class="sd">        Everything needed to parameterize the estimator must already be in</span>
+<span class="sd">        ``self.opts``. The ``*data`` is purely passed through to</span>
+<span class="sd">        ``loss_grad_fn`` after the parameter pytree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *data: Training arrays (e.g. ``X, Y``) sharing a leading sample</span>
+<span class="sd">                dimension, batched internally according to</span>
+<span class="sd">                ``opts.batch_size``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The optimized parameter pytree, with the same structure as</span>
+<span class="sd">            ``opts.p_init``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If ``loss_grad_fn`` has not been set.</span>
+<span class="sd">        """</span>
+        <span class="c1"># asserting the loss function has been set</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must specify a loss function"</span>
+
+        <span class="c1"># setting the default batch size</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># generating the PRNG key</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="c1"># filling in unspecified constraints/active_params (identity constraint, active=True), matching the full p_init pytree structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="n">fill_pytree_spec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">p_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">constraints</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">active_params</span> <span class="o">=</span> <span class="n">fill_pytree_spec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">p_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">active_params</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># flattening the parameter pytree into a single vector</span>
+        <span class="n">p_flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">p_init</span><span class="p">))</span>
+
+        <span class="c1"># flattening the active-parameter mask to match</span>
+        <span class="n">mask_flat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span>
+            <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">active</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">active_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">p_init</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># initializing the curvature-pair history buffers</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">p_flat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">s_buf</span><span class="p">,</span> <span class="n">y_buf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">p_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">p_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">rho_buf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">m</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">p_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># initializing progress bar</span>
+        <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">epochs</span><span class="p">))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">verbose</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
+
+        <span class="c1"># setting per-epoch PRNG keys</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
+
+        <span class="c1"># initializing the carry object</span>
+        <span class="n">carry</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p_flat'</span><span class="p">:</span><span class="n">p_flat</span><span class="p">,</span> <span class="s1">'s_buf'</span><span class="p">:</span><span class="n">s_buf</span><span class="p">,</span> <span class="s1">'y_buf'</span><span class="p">:</span><span class="n">y_buf</span><span class="p">,</span> <span class="s1">'rho_buf'</span><span class="p">:</span><span class="n">rho_buf</span><span class="p">,</span> <span class="s1">'loss'</span><span class="p">:</span><span class="mf">0.0</span><span class="p">}</span>
+
+        <span class="c1"># define the scan function</span>
+        <span class="n">scan_fn</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">carry</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">_batch_lbfgs_scan</span><span class="p">(</span>
+            <span class="n">carry</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_grad_fn</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">mask_flat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">max_backtracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">constraints</span>
+        <span class="p">))</span>
+
+        <span class="c1"># main optimization loop</span>
+        <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">:</span>
+            <span class="n">batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_batches</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="nb">iter</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">unzipped_batches</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">batches</span><span class="p">)</span>
+            <span class="n">stacked_batches</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unzipped_batches</span><span class="p">])</span>
+
+            <span class="c1"># performing the lax scan</span>
+            <span class="n">carry</span><span class="p">,</span> <span class="n">batch_losses</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">scan_fn</span><span class="p">,</span> <span class="n">carry</span><span class="p">,</span> <span class="n">xs</span><span class="o">=</span><span class="n">stacked_batches</span><span class="p">,</span> <span class="n">unroll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">unroll</span><span class="p">)</span>
+
+            <span class="c1"># displaying the loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">verbose</span> <span class="ow">and</span> <span class="n">progress_bar</span><span class="o">.</span><span class="n">set_postfix_str</span><span class="p">(</span><span class="sa">f</span><span class="s2">"avg. batch objective: </span><span class="si">{</span><span class="n">batch_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">unravel_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">[</span><span class="s1">'p_flat'</span><span class="p">]))</span></div>
+</div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lbfgs_two_loop_recursion</span><span class="p">(</span><span class="n">grad_flat</span><span class="p">,</span> <span class="n">s_buf</span><span class="p">,</span> <span class="n">y_buf</span><span class="p">,</span> <span class="n">rho_buf</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Approximate the L-BFGS descent direction ``-H_k @ grad_flat``.</span>
+
+<span class="sd">    Standard L-BFGS two-loop recursion (Nocedal &amp; Wright, Algorithm 7.4)</span>
+<span class="sd">    approximating ``-H_k @ grad_flat`` from the last ``m`` ``(s, y)``</span>
+<span class="sd">    curvature pairs, without ever forming the (inverse) Hessian explicitly.</span>
+<span class="sd">    Operates on fixed-size ``(m, n)`` buffers so the whole step can be</span>
+<span class="sd">    compiled into a single XLA program via ``lax.scan``. Slot ``i`` holds a</span>
+<span class="sd">    real pair iff ``rho_buf[i] != 0``; empty/invalid slots contribute</span>
+<span class="sd">    exactly zero (``alpha=0``, ``beta=0``), so no separate validity mask is</span>
+<span class="sd">    needed. Index ``-1`` is always the most recently added pair (see</span>
+<span class="sd">    :func:`_lbfgs_update_history`).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grad_flat: Flattened gradient at the current point, shape ``(n,)``.</span>
+<span class="sd">        s_buf: Buffer of parameter-step vectors, shape ``(m, n)``.</span>
+<span class="sd">        y_buf: Buffer of gradient-difference vectors, shape ``(m, n)``.</span>
+<span class="sd">        rho_buf: Buffer of ``1 / (s^T y)`` values, shape ``(m,)``; a zero</span>
+<span class="sd">            entry marks an empty/invalid slot.</span>
+<span class="sd">        eps: Small positive number to prevent division by zero.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: The approximate descent direction, shape ``(n,)``.</span>
+<span class="sd">    """</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">s_buf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">carry</span><span class="p">):</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">alphas</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="n">alpha_i</span> <span class="o">=</span> <span class="n">rho_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">q</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">-</span> <span class="n">alpha_i</span> <span class="o">*</span> <span class="n">y_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">alpha_i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">q</span><span class="p">,</span> <span class="n">alphas</span>
+
+    <span class="n">q</span><span class="p">,</span> <span class="n">alphas</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">fori_loop</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">backward</span><span class="p">,</span> <span class="p">(</span><span class="n">grad_flat</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">grad_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)))</span>
+
+    <span class="n">has_history</span> <span class="o">=</span> <span class="n">rho_buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">has_history</span><span class="p">,</span>
+        <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s_buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span>
+        <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">grad_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="n">beta_i</span> <span class="o">=</span> <span class="n">rho_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span> <span class="o">+</span> <span class="n">s_buf</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">alphas</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta_i</span><span class="p">)</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">fori_loop</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">forward</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span>
+
+    <span class="c1"># no curvature pairs yet -- normalize the raw gradient instead of using it directly,</span>
+    <span class="c1"># since it can be astronomically large near an ill-conditioned objective</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">has_history</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">grad_flat</span> <span class="o">/</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grad_flat</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="n">r</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lbfgs_update_history</span><span class="p">(</span><span class="n">s_buf</span><span class="p">,</span> <span class="n">y_buf</span><span class="p">,</span> <span class="n">rho_buf</span><span class="p">,</span> <span class="n">s_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fold a new curvature pair into the fixed-size L-BFGS history buffers.</span>
+
+<span class="sd">    Shifts out the oldest pair and appends ``(s_k, y_k)`` at the end --</span>
+<span class="sd">    unless the curvature condition ``s^T y &gt; eps`` is violated, in which</span>
+<span class="sd">    case the buffers are left completely untouched.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s_buf: Buffer of parameter-step vectors, shape ``(m, n)``.</span>
+<span class="sd">        y_buf: Buffer of gradient-difference vectors, shape ``(m, n)``.</span>
+<span class="sd">        rho_buf: Buffer of ``1 / (s^T y)`` values, shape ``(m,)``.</span>
+<span class="sd">        s_k: The newest parameter-step vector, shape ``(n,)``.</span>
+<span class="sd">        y_k: The newest gradient-difference vector, shape ``(n,)``.</span>
+<span class="sd">        eps: Curvature-condition threshold and division-by-zero guard.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[jax.Array, jax.Array, jax.Array]: The updated</span>
+<span class="sd">        ``(s_buf, y_buf, rho_buf)``.</span>
+<span class="sd">    """</span>
+    <span class="n">sy</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">)</span>
+    <span class="n">curvature_ok</span> <span class="o">=</span> <span class="n">sy</span> <span class="o">&gt;</span> <span class="n">eps</span>
+
+    <span class="n">s_shifted</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">s_buf</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">s_k</span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y_buf</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">y_k</span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">safe_sy</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curvature_ok</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sy</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+    <span class="n">rho_shifted</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">rho_buf</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">safe_sy</span><span class="p">)[</span><span class="kc">None</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">s_buf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curvature_ok</span><span class="p">,</span> <span class="n">s_shifted</span><span class="p">,</span> <span class="n">s_buf</span><span class="p">)</span>
+    <span class="n">y_buf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curvature_ok</span><span class="p">,</span> <span class="n">y_shifted</span><span class="p">,</span> <span class="n">y_buf</span><span class="p">)</span>
+    <span class="n">rho_buf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curvature_ok</span><span class="p">,</span> <span class="n">rho_shifted</span><span class="p">,</span> <span class="n">rho_buf</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">s_buf</span><span class="p">,</span> <span class="n">y_buf</span><span class="p">,</span> <span class="n">rho_buf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_lbfgs_scan</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">loss_grad_fn</span> <span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">mask_flat</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">lr</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">max_backtracks</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">constraints</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Perform one L-BFGS parameter update over a single batch, for use in ``lax.scan``.</span>
+
+<span class="sd">    Forms the L-BFGS search direction from the current curvature history,</span>
+<span class="sd">    backtracks along it (Armijo sufficient-decrease line search) until a</span>
+<span class="sd">    step is accepted, and folds the accepted step into the curvature-pair</span>
+<span class="sd">    history for the next call.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        carry: Scan carry dict with keys ``p_flat`` (flattened parameters),</span>
+<span class="sd">            ``s_buf``, ``y_buf``, ``rho_buf`` (curvature history), and</span>
+<span class="sd">            ``loss``.</span>
+<span class="sd">        batch: A tuple ``(Xbatch, Ybatch)`` for this scan step.</span>
+<span class="sd">        loss_grad_fn: Function returning ``(loss, grad)`` for the current</span>
+<span class="sd">            (unraveled) parameters and batch.</span>
+<span class="sd">        unravel_fn: Function that reshapes a flat parameter vector back into</span>
+<span class="sd">            the parameter pytree.</span>
+<span class="sd">        mask_flat: Flattened active-parameter mask, shape matching</span>
+<span class="sd">            ``p_flat``; zero entries are frozen.</span>
+<span class="sd">        lr: Initial step size scale for the backtracking line search.</span>
+<span class="sd">        max_backtracks: Maximum number of step-halving attempts.</span>
+<span class="sd">        eps: Small positive number used for curvature and division-by-zero</span>
+<span class="sd">            guards.</span>
+<span class="sd">        constraints: Pytree of constraint functions, matching the parameter</span>
+<span class="sd">            pytree, applied after each trial step.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(carry, loss)`` -- the updated carry dict and this batch's</span>
+<span class="sd">        (possibly unchanged, if no step was accepted) loss, as required by</span>
+<span class="sd">        ``lax.scan``.</span>
+<span class="sd">    """</span>
+    <span class="c1"># extract batches</span>
+    <span class="n">Xbatch</span><span class="p">,</span> <span class="n">Ybatch</span> <span class="o">=</span> <span class="n">batch</span>
+
+    <span class="c1"># evaluates the loss/gradient at a flattened parameter vector, masking out inactive parameters</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
+        <span class="n">loss</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">loss_grad_fn</span><span class="p">(</span><span class="n">Xbatch</span><span class="p">,</span> <span class="n">Ybatch</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span>
+        <span class="n">grad_flat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">grad_flat</span> <span class="o">*</span> <span class="n">mask_flat</span>
+
+    <span class="n">p_flat</span> <span class="o">=</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'p_flat'</span><span class="p">]</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">grad_flat</span> <span class="o">=</span> <span class="n">_evaluate</span><span class="p">(</span><span class="n">p_flat</span><span class="p">)</span>
+
+    <span class="c1"># setting the loss for this batch</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>
+
+    <span class="c1"># approximate Newton direction via the two-loop recursion</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">_lbfgs_two_loop_recursion</span><span class="p">(</span><span class="n">grad_flat</span><span class="p">,</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'s_buf'</span><span class="p">],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'y_buf'</span><span class="p">],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'rho_buf'</span><span class="p">],</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask_flat</span>
+    <span class="n">directional_derivative</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">grad_flat</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+    <span class="n">direction_ok</span> <span class="o">=</span> <span class="n">directional_derivative</span> <span class="o">&lt;</span> <span class="mf">0.0</span>  <span class="c1"># only search along genuine descent directions</span>
+
+    <span class="c1"># backtracking the step scale until we find a sufficient decrease in the objective</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bt_cond</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">attempt</span><span class="p">,</span> <span class="n">accepted</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">return</span> <span class="n">direction_ok</span> <span class="o">&amp;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_backtracks</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bt_body</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">step_scale</span><span class="p">,</span> <span class="n">attempt</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">p_new</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">prm</span><span class="p">:</span> <span class="n">c</span><span class="p">(</span><span class="n">prm</span><span class="p">),</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">p_flat</span> <span class="o">+</span> <span class="n">step_scale</span> <span class="o">*</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">direction</span><span class="p">))</span>
+        <span class="n">p_flat_trial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">p_new</span><span class="p">)</span>
+        <span class="n">loss_trial</span><span class="p">,</span> <span class="n">grad_flat_trial</span> <span class="o">=</span> <span class="n">_evaluate</span><span class="p">(</span><span class="n">p_flat_trial</span><span class="p">)</span>
+
+        <span class="n">sufficient_decrease</span> <span class="o">=</span> <span class="n">loss_trial</span> <span class="o">&lt;=</span> <span class="n">loss</span> <span class="o">+</span> <span class="mf">1e-4</span> <span class="o">*</span> <span class="n">step_scale</span> <span class="o">*</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">directional_derivative</span>
+        <span class="n">next_step_scale</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sufficient_decrease</span><span class="p">,</span> <span class="n">step_scale</span><span class="p">,</span> <span class="n">step_scale</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">next_step_scale</span><span class="p">,</span> <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sufficient_decrease</span><span class="p">,</span> <span class="n">p_flat_trial</span><span class="p">,</span> <span class="n">loss_trial</span><span class="p">,</span> <span class="n">grad_flat_trial</span><span class="p">)</span>
+
+    <span class="n">init_bt</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">p_flat</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+        <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span> <span class="n">p_flat</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">grad_flat</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">accepted</span><span class="p">,</span> <span class="n">p_flat_trial</span><span class="p">,</span> <span class="n">loss_trial</span><span class="p">,</span> <span class="n">grad_flat_trial</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">bt_cond</span><span class="p">,</span> <span class="n">bt_body</span><span class="p">,</span> <span class="n">init_bt</span><span class="p">)</span>
+
+    <span class="c1"># updating the curvature-pair history with the step actually taken</span>
+    <span class="n">s_k</span><span class="p">,</span> <span class="n">y_k</span> <span class="o">=</span> <span class="n">p_flat_trial</span> <span class="o">-</span> <span class="n">p_flat</span><span class="p">,</span> <span class="n">grad_flat_trial</span> <span class="o">-</span> <span class="n">grad_flat</span>
+    <span class="n">s_buf_new</span><span class="p">,</span> <span class="n">y_buf_new</span><span class="p">,</span> <span class="n">rho_buf_new</span> <span class="o">=</span> <span class="n">_lbfgs_update_history</span><span class="p">(</span><span class="n">carry</span><span class="p">[</span><span class="s1">'s_buf'</span><span class="p">],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'y_buf'</span><span class="p">],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'rho_buf'</span><span class="p">],</span> <span class="n">s_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+
+    <span class="c1"># this search direction was unusable -- drop the curvature history so the next</span>
+    <span class="c1"># direction is a fresh steepest-descent guess, and hold the last known-good parameters</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'s_buf'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">s_buf_new</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">carry</span><span class="p">[</span><span class="s1">'s_buf'</span><span class="p">]))</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'y_buf'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">y_buf_new</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">carry</span><span class="p">[</span><span class="s1">'y_buf'</span><span class="p">]))</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'rho_buf'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">rho_buf_new</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">carry</span><span class="p">[</span><span class="s1">'rho_buf'</span><span class="p">]))</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'p_flat'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">p_flat_trial</span><span class="p">,</span> <span class="n">p_flat</span><span class="p">)</span>
+    <span class="n">carry</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">loss_trial</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+
+    <span class="c1"># displaying the loss</span>
+    <span class="k">return</span> <span class="n">carry</span><span class="p">,</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

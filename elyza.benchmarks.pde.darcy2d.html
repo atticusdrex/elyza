@@ -1,0 +1,985 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>elyza.benchmarks.pde.darcy2d module &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'elyza.benchmarks.pde.darcy2d';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="elyza.core package" href="elyza.core.html" />
+    <link rel="prev" title="elyza.benchmarks.pde package" href="elyza.benchmarks.pde.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/elyza_logo.png" class="logo__image only-light" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="_static/elyza_logo.png" class="logo__image only-dark pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">elyza</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="elyza.html">elyza package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4 current active"><a class="reference internal" href="elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/elyza.benchmarks.pde.darcy2d.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>elyza.benchmarks.pde.darcy2d module</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.grid_dim"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_term"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.source_term</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_inflation"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.source_inflation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_tol"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.cg_tol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_max_iter"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.cg_max_iter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._f"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._f</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._h"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._h</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._batched_solve"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._batched_solve</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.evaluate"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_config"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_post_init"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput"><code class="docutils literal notranslate"><span class="pre">GRFInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grid_dim"><code class="docutils literal notranslate"><span class="pre">GRFInput.grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale"><code class="docutils literal notranslate"><span class="pre">GRFInput.length_scale</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.n_kl_terms"><code class="docutils literal notranslate"><span class="pre">GRFInput.n_kl_terms</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_mean"><code class="docutils literal notranslate"><span class="pre">GRFInput.grf_mean</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_std"><code class="docutils literal notranslate"><span class="pre">GRFInput.grf_std</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.reference_grid_dim"><code class="docutils literal notranslate"><span class="pre">GRFInput.reference_grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.minval"><code class="docutils literal notranslate"><span class="pre">GRFInput.minval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.maxval"><code class="docutils literal notranslate"><span class="pre">GRFInput.maxval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput._scaled_eigvecs"><code class="docutils literal notranslate"><span class="pre">GRFInput._scaled_eigvecs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_config"><code class="docutils literal notranslate"><span class="pre">GRFInput.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">GRFInput.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_image_source"><code class="docutils literal notranslate"><span class="pre">build_image_source()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis"><code class="docutils literal notranslate"><span class="pre">build_kl_basis()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis_at"><code class="docutils literal notranslate"><span class="pre">build_kl_basis_at()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_source_field"><code class="docutils literal notranslate"><span class="pre">build_source_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.get_field"><code class="docutils literal notranslate"><span class="pre">get_field()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-elyza.benchmarks.pde.darcy2d">
+<span id="elyza-benchmarks-pde-darcy2d-module"></span><h1>elyza.benchmarks.pde.darcy2d module<a class="headerlink" href="#module-elyza.benchmarks.pde.darcy2d" title="Link to this heading">#</a></h1>
+<p>2-D Darcy flow benchmark with a Gaussian-random-field permeability input.</p>
+<p>Provides <a class="reference internal" href="#elyza.benchmarks.pde.darcy2d.GRFInput" title="elyza.benchmarks.pde.darcy2d.GRFInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GRFInput</span></code></a>, a log-normal Gaussian random field input
+(sampled via a truncated Karhunen-Loeve expansion, optionally coupled
+across grid resolutions for multifidelity use), and
+<a class="reference internal" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator" title="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">DarcyFlowEvaluator</span></code></a>, which solves the corresponding 2-D Darcy flow
+PDE via cell-centred finite differences and a JAX-native conjugate-gradient
+solver. Supporting module-private helpers build the KL eigenbasis, the
+source term, and the FD stiffness-matrix action.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">DarcyFlowEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><span class="pre">Input</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jit_compile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_term</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_inflation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cg_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cg_max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#DarcyFlowEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a></p>
+<p>Solves 2-D Darcy flow, <code class="docutils literal notranslate"><span class="pre">-div(kappa</span> <span class="pre">grad(u))</span> <span class="pre">=</span> <span class="pre">f</span></code> on <code class="docutils literal notranslate"><span class="pre">[0,1]^2</span></code> with <code class="docutils literal notranslate"><span class="pre">u|dOmega</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<p>Solves for a given (flattened) permeability field <code class="docutils literal notranslate"><span class="pre">kappa</span></code> via
+cell-centred FD + CG. <code class="docutils literal notranslate"><span class="pre">.evaluate(kappa_fields)</span></code> takes the
+<code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">grid_dim**2)</span></code> array returned by a <a class="reference internal" href="#elyza.benchmarks.pde.darcy2d.GRFInput" title="elyza.benchmarks.pde.darcy2d.GRFInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GRFInput</span></code></a>’s
+<code class="docutils literal notranslate"><span class="pre">.sample()</span></code> and returns the matching flow fields.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.grid_dim">
+<span class="sig-name descname"><span class="pre">grid_dim</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.grid_dim" title="Link to this definition">#</a></dt>
+<dd><p>Solver grid resolution (<code class="docutils literal notranslate"><span class="pre">grid_dim</span> <span class="pre">x</span> <span class="pre">grid_dim</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_term">
+<span class="sig-name descname"><span class="pre">source_term</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_term" title="Link to this definition">#</a></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code> piecewise-constant source array, a path to
+an image to use as a full-resolution source field, or <code class="docutils literal notranslate"><span class="pre">None</span></code>
+for a uniform unit source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | jax.Array | numpy.ndarray | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_inflation">
+<span class="sig-name descname"><span class="pre">source_inflation</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_inflation" title="Link to this definition">#</a></dt>
+<dd><p>Scale factor applied to an image-derived source
+field (only used when <code class="docutils literal notranslate"><span class="pre">source_term</span></code> is a path).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_tol">
+<span class="sig-name descname"><span class="pre">cg_tol</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_tol" title="Link to this definition">#</a></dt>
+<dd><p>Relative residual tolerance for the CG solver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_max_iter">
+<span class="sig-name descname"><span class="pre">cg_max_iter</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_max_iter" title="Link to this definition">#</a></dt>
+<dd><p>Maximum CG iterations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._f">
+<span class="sig-name descname"><span class="pre">_f</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._f" title="Link to this definition">#</a></dt>
+<dd><p>The constructed source field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array | numpy.ndarray | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._h">
+<span class="sig-name descname"><span class="pre">_h</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._h" title="Link to this definition">#</a></dt>
+<dd><p>Grid spacing (<code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">grid_dim</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._batched_solve">
+<span class="sig-name descname"><span class="pre">_batched_solve</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._batched_solve" title="Link to this definition">#</a></dt>
+<dd><p>Jit-compiled, vmapped solve function built once in
+<code class="docutils literal notranslate"><span class="pre">model_post_init</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">input_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#DarcyFlowEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.evaluate" title="Link to this definition">#</a></dt>
+<dd><p>Solve the Darcy PDE for a batch of permeability fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*input_vals</strong> – A single array of permeability fields, shape
+<code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">grid_dim**2)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flow-field solutions, shape <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">grid_dim**2)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_DarcyFlowEvaluator__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#DarcyFlowEvaluator.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Build the source field and pre-compile the batched CG solve.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">GRFInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">callable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SkipValidation</span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_kl_terms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grf_mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grf_std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_grid_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#GRFInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput" title="elyza.core.data.VectorInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorInput</span></code></a></p>
+<p>A log-normal Gaussian random field input.</p>
+<p>Represented by a truncated KL expansion of a squared-exponential
+covariance kernel on an <code class="docutils literal notranslate"><span class="pre">(grid_dim</span> <span class="pre">x</span> <span class="pre">grid_dim)</span></code> grid over
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]^2</span></code>. <code class="docutils literal notranslate"><span class="pre">.sample(key,</span> <span class="pre">n_points)</span></code> returns <code class="docutils literal notranslate"><span class="pre">n_points</span></code> flattened
+field realisations as a single <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">grid_dim**2)</span></code> array.</p>
+<p>To couple samples across resolutions (e.g. for multifidelity Monte
+Carlo), set <code class="docutils literal notranslate"><span class="pre">reference_grid_dim</span></code> to the SAME value – along with
+matching <code class="docutils literal notranslate"><span class="pre">length_scale</span></code>/<code class="docutils literal notranslate"><span class="pre">n_kl_terms</span></code> – on every <code class="docutils literal notranslate"><span class="pre">GRFInput</span></code> that
+should share the same underlying field. The same PRNGKey then yields
+the same field, just discretised at each instance’s own <code class="docutils literal notranslate"><span class="pre">grid_dim</span></code>.
+Leave it unset for standalone use (each instance gets its own
+independent basis, computed at its own <code class="docutils literal notranslate"><span class="pre">grid_dim</span></code>).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.grid_dim">
+<span class="sig-name descname"><span class="pre">grid_dim</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grid_dim" title="Link to this definition">#</a></dt>
+<dd><p>Field grid resolution (<code class="docutils literal notranslate"><span class="pre">grid_dim</span> <span class="pre">x</span> <span class="pre">grid_dim</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.length_scale">
+<span class="sig-name descname"><span class="pre">length_scale</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale" title="Link to this definition">#</a></dt>
+<dd><p>Correlation length of the squared-exponential kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.n_kl_terms">
+<span class="sig-name descname"><span class="pre">n_kl_terms</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.n_kl_terms" title="Link to this definition">#</a></dt>
+<dd><p>Number of KL expansion terms retained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.grf_mean">
+<span class="sig-name descname"><span class="pre">grf_mean</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_mean" title="Link to this definition">#</a></dt>
+<dd><p>Mean of the underlying (log-permeability) Gaussian random field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.grf_std">
+<span class="sig-name descname"><span class="pre">grf_std</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_std" title="Link to this definition">#</a></dt>
+<dd><p>Standard deviation of the underlying Gaussian random field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.reference_grid_dim">
+<span class="sig-name descname"><span class="pre">reference_grid_dim</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.reference_grid_dim" title="Link to this definition">#</a></dt>
+<dd><p>Grid resolution the KL eigenbasis is computed on;
+set the SAME value on multiple <code class="docutils literal notranslate"><span class="pre">GRFInput``s</span> <span class="pre">(with</span> <span class="pre">matching</span>
+<span class="pre">``length_scale</span></code>/<code class="docutils literal notranslate"><span class="pre">n_kl_terms</span></code>) to couple their sampled fields
+across resolutions. Defaults to <code class="docutils literal notranslate"><span class="pre">grid_dim</span></code> (no coupling).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.minval">
+<span class="sig-name descname"><span class="pre">minval</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.minval" title="Link to this definition">#</a></dt>
+<dd><p>Unused for GRF inputs (inherited box-bound field).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array | numpy.ndarray | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.maxval">
+<span class="sig-name descname"><span class="pre">maxval</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.maxval" title="Link to this definition">#</a></dt>
+<dd><p>Unused for GRF inputs (inherited box-bound field).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array | numpy.ndarray | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput._scaled_eigvecs">
+<span class="sig-name descname"><span class="pre">_scaled_eigvecs</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput._scaled_eigvecs" title="Link to this definition">#</a></dt>
+<dd><p>KL eigenvectors pre-scaled by <code class="docutils literal notranslate"><span class="pre">sqrt(eigenvalue)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.GRFInput.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_GRFInput__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#GRFInput.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Compute the KL eigenbasis once and wire up <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.build_image_source">
+<span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">build_image_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inflation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#build_image_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.build_image_source" title="Link to this definition">#</a></dt>
+<dd><p>Build a full-resolution PDE source field from a grayscale image.</p>
+<p>Loads the image, averages it to grayscale, rescales/inverts it to
+<code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>, resamples it onto a <code class="docutils literal notranslate"><span class="pre">(grid_dim,</span> <span class="pre">grid_dim)</span></code> grid, and maps
+it through <code class="docutils literal notranslate"><span class="pre">exp</span></code>/<code class="docutils literal notranslate"><span class="pre">tanh</span></code> before normalizing to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the source image.</p></li>
+<li><p><strong>grid_dim</strong> – Output grid resolution (<code class="docutils literal notranslate"><span class="pre">grid_dim</span> <span class="pre">x</span> <span class="pre">grid_dim</span></code>).</p></li>
+<li><p><strong>inflation</strong> – Scale factor reserved for inflating the source term
+(currently unused; the corresponding scaling code is commented
+out below).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Source field of shape <code class="docutils literal notranslate"><span class="pre">(grid_dim,</span> <span class="pre">grid_dim)</span></code> with
+values in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.build_kl_basis">
+<span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">build_kl_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_kl_terms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#build_kl_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis" title="Link to this definition">#</a></dt>
+<dd><p>Compute the leading KL eigenpairs of a squared-exponential covariance kernel.</p>
+<p>The covariance is discretised as a dense <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">N)</span></code> matrix
+<code class="docutils literal notranslate"><span class="pre">C_ij</span> <span class="pre">=</span> <span class="pre">exp(-||x_i</span> <span class="pre">-</span> <span class="pre">x_j||^2</span> <span class="pre">/</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">l^2))</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">grid_n**2</span></code>, on an
+<code class="docutils literal notranslate"><span class="pre">(n</span> <span class="pre">x</span> <span class="pre">n)</span></code> grid with periodic-free domain <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]^2</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_n</strong> – Grid resolution (<code class="docutils literal notranslate"><span class="pre">grid_n</span> <span class="pre">x</span> <span class="pre">grid_n</span></code>).</p></li>
+<li><p><strong>length_scale</strong> – Correlation length <code class="docutils literal notranslate"><span class="pre">l</span></code> of the squared-exponential kernel.</p></li>
+<li><p><strong>n_kl_terms</strong> – Number of leading eigenpairs to compute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(eigvals,</span> <span class="pre">eigvecs)</span></code> where
+<code class="docutils literal notranslate"><span class="pre">eigvals</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(n_kl_terms,)</span></code> (float64) and <code class="docutils literal notranslate"><span class="pre">eigvecs</span></code>
+has shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">n_kl_terms)</span></code> (float64), already scaled by
+<code class="docutils literal notranslate"><span class="pre">sqrt(lambda_k)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[np.ndarray, np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.build_kl_basis_at">
+<span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">build_kl_basis_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_kl_terms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_grid_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#build_kl_basis_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis_at" title="Link to this definition">#</a></dt>
+<dd><p>KL eigenbasis evaluated at an <code class="docutils literal notranslate"><span class="pre">(grid_n,</span> <span class="pre">grid_n)</span></code> grid via Nystrom extension.</p>
+<p><code class="docutils literal notranslate"><span class="pre">build_kl_basis</span></code> computes an independent eigendecomposition of the
+covariance matrix discretised AT <code class="docutils literal notranslate"><span class="pre">grid_n</span></code> – two different <code class="docutils literal notranslate"><span class="pre">grid_n</span></code>
+values give unrelated eigenvectors, so a shared PRNGKey does not
+correspond to the same underlying field at two different resolutions.
+Nystrom extension instead evaluates ONE fixed set of eigenfunctions
+(computed once on the reference grid) at <code class="docutils literal notranslate"><span class="pre">grid_n</span></code>’s own points, so any
+two <code class="docutils literal notranslate"><span class="pre">grid_n</span></code>’s sharing <code class="docutils literal notranslate"><span class="pre">(length_scale,</span> <span class="pre">n_kl_terms,</span> <span class="pre">reference_grid_dim)</span></code>
+sample the same continuous field, just discretised at different
+resolutions.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">grid_n</span> <span class="pre">==</span> <span class="pre">reference_grid_dim</span></code> this reduces exactly to
+<a class="reference internal" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis" title="elyza.benchmarks.pde.darcy2d.build_kl_basis"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_kl_basis()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_n</strong> – Grid resolution to evaluate the basis at.</p></li>
+<li><p><strong>length_scale</strong> – Correlation length of the squared-exponential kernel.</p></li>
+<li><p><strong>n_kl_terms</strong> – Number of leading eigenpairs.</p></li>
+<li><p><strong>reference_grid_dim</strong> – Grid resolution the reference eigenbasis is
+computed (and cached) on.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(eigvals,</span> <span class="pre">eigvecs)</span></code> where
+<code class="docutils literal notranslate"><span class="pre">eigvals</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(n_kl_terms,)</span></code> and <code class="docutils literal notranslate"><span class="pre">eigvecs</span></code> has shape
+<code class="docutils literal notranslate"><span class="pre">(grid_n**2,</span> <span class="pre">n_kl_terms)</span></code>, already scaled by <code class="docutils literal notranslate"><span class="pre">sqrt(lambda_k)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[np.ndarray, np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.build_source_field">
+<span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">build_source_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_3x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#build_source_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.build_source_field" title="Link to this definition">#</a></dt>
+<dd><p>Expand a (3,3) source array into an (grid_n, grid_n) field.</p>
+<p>Tiles the domain into a 3x3 tic-tac-toe partition, where each cell of
+the partition receives the corresponding constant value from
+<code class="docutils literal notranslate"><span class="pre">source_3x3</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_3x3</strong> – Piecewise-constant source values, shape <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code>.</p></li>
+<li><p><strong>grid_n</strong> – Output grid resolution (<code class="docutils literal notranslate"><span class="pre">grid_n</span> <span class="pre">x</span> <span class="pre">grid_n</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flattened <code class="docutils literal notranslate"><span class="pre">(grid_n*grid_n,)</span></code> source field.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jnp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elyza.benchmarks.pde.darcy2d.get_field">
+<span class="sig-prename descclassname"><span class="pre">elyza.benchmarks.pde.darcy2d.</span></span><span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grf_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grf_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled_eigenvecs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_kl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/benchmarks/pde/darcy2d.html#get_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.benchmarks.pde.darcy2d.get_field" title="Link to this definition">#</a></dt>
+<dd><p>Sample one log-normal Gaussian random field realization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key.</p></li>
+<li><p><strong>grf_mean</strong> – Mean of the underlying (log-permeability) Gaussian field.</p></li>
+<li><p><strong>grf_std</strong> – Standard deviation of the underlying Gaussian field.</p></li>
+<li><p><strong>scaled_eigenvecs</strong> – KL eigenvectors pre-scaled by <code class="docutils literal notranslate"><span class="pre">sqrt(eigenvalue)</span></code>,
+shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">n_kl)</span></code>.</p></li>
+<li><p><strong>n_kl</strong> – Number of KL expansion terms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flattened permeability field of shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>, strictly
+positive (log-normal).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="elyza.benchmarks.pde.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">elyza.benchmarks.pde package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="elyza.core.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">elyza.core package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.grid_dim"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_term"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.source_term</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.source_inflation"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.source_inflation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_tol"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.cg_tol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.cg_max_iter"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.cg_max_iter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._f"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._f</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._h"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._h</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._batched_solve"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator._batched_solve</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.evaluate"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_config"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator.model_post_init"><code class="docutils literal notranslate"><span class="pre">DarcyFlowEvaluator.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput"><code class="docutils literal notranslate"><span class="pre">GRFInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grid_dim"><code class="docutils literal notranslate"><span class="pre">GRFInput.grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale"><code class="docutils literal notranslate"><span class="pre">GRFInput.length_scale</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.n_kl_terms"><code class="docutils literal notranslate"><span class="pre">GRFInput.n_kl_terms</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_mean"><code class="docutils literal notranslate"><span class="pre">GRFInput.grf_mean</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.grf_std"><code class="docutils literal notranslate"><span class="pre">GRFInput.grf_std</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.reference_grid_dim"><code class="docutils literal notranslate"><span class="pre">GRFInput.reference_grid_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.minval"><code class="docutils literal notranslate"><span class="pre">GRFInput.minval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.maxval"><code class="docutils literal notranslate"><span class="pre">GRFInput.maxval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput._scaled_eigvecs"><code class="docutils literal notranslate"><span class="pre">GRFInput._scaled_eigvecs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_config"><code class="docutils literal notranslate"><span class="pre">GRFInput.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.GRFInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">GRFInput.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_image_source"><code class="docutils literal notranslate"><span class="pre">build_image_source()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis"><code class="docutils literal notranslate"><span class="pre">build_kl_basis()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_kl_basis_at"><code class="docutils literal notranslate"><span class="pre">build_kl_basis_at()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.build_source_field"><code class="docutils literal notranslate"><span class="pre">build_source_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.benchmarks.pde.darcy2d.get_field"><code class="docutils literal notranslate"><span class="pre">get_field()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
