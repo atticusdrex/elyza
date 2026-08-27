@@ -418,17 +418,17 @@
 <p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> is a <a class="reference external" href="https://github.com/jax-ml/jax">Jax</a>-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, <a class="reference external" href="https://docs.pydantic.dev/">Pydantic</a>-validated building blocks for defining simulation inputs and evaluators, fitting surrogate models (Gaussian processes, neural networks, and closed-form linear regression, including a multifidelity/autoregressive Gaussian process), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> requires Python 3.10+. Clone the repository and install it in editable mode:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/atticusdrex/elyza.git
-<span class="nb">cd</span><span class="w"> </span>elyza
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-<p>To include the development dependencies (<code class="docutils literal notranslate"><span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">twine</span></code>, <code class="docutils literal notranslate"><span class="pre">pytest</span></code>):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
+<p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> requires Python 3.10+.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>elyza
 </pre></div>
 </div>
 <p>Core dependencies (installed automatically): <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">jax</span></code>/<code class="docutils literal notranslate"><span class="pre">jaxlib</span></code>, <code class="docutils literal notranslate"><span class="pre">pydantic</span></code>, <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, <code class="docutils literal notranslate"><span class="pre">pillow</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>.</p>
+<p>To work on <code class="docutils literal notranslate"><span class="pre">elyza</span></code> itself, clone the repository and install it in editable mode with the development dependencies (<code class="docutils literal notranslate"><span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">twine</span></code>, <code class="docutils literal notranslate"><span class="pre">pytest</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/atticusdrex/elyza.git
+<span class="nb">cd</span><span class="w"> </span>elyza
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
+</pre></div>
+</div>
 </section>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
