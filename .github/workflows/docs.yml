@@ -16,7 +16,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx-book-theme
+          pip install sphinx sphinx-book-theme myst-parser
           pip install -e .
 
       - name: Build docs
