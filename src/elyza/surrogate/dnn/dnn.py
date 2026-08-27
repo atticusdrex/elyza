@@ -104,13 +104,15 @@ class MLPRegressor(Surrogate):
         # setting the new params
         self.p = deepcopy(new_params)
 
-    def sample(self, X: jax.Array) -> jax.Array: 
-        pass 
+    def sample(self, X: jax.Array, n_points : int) -> jax.Array: 
+        raise NotImplementedError("this method isn't implemented for the simple MLPRegressor class. instead use MLPRegressor.predict()")
 
     def set_optimizer(self, optimizer:Optimizer, optimizer_options:OptimizerOptions): 
         self._optimizer = optimizer(opts = optimizer_options) 
 
-
+    '''
+    placeholder function which does absolutely nothing because the MLP architecture doesn't store the X and Y data
+    '''
     def update(self, X:jax.Array, Y: jax.Array):
         pass 
 
@@ -119,7 +121,7 @@ class MLPRegressor(Surrogate):
         Yhat = self._pred(p, X)
 
         # computing the loss term (Yhat is (output_dim, batch); transpose to match Y's (batch, output_dim))
-        loss_term = ((Yhat.T - Y)**2).ravel().sum()
+        loss_term = ((Yhat.T - Y)**2).ravel().mean()
 
         # computing the regularization
         regularization = 0.0 
