@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elyza.util.preprocessing &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/elyza/util/preprocessing';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-light" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-dark pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for elyza.util.preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Feature preprocessing and transformation classes.</span>
+
+<span class="sd">Provides scikit-learn-style ``fit``/``transform``/``fit_transform`` classes</span>
+<span class="sd">for standardizing inputs (:class:`StandardScaler`), decorrelating inputs via</span>
+<span class="sd">an SVD-based whitening transform (:class:`OrthonormalScaler`), mapping</span>
+<span class="sd">inputs into a kernel-feature space (:class:`KernelFeatures`), and expanding</span>
+<span class="sd">inputs into polynomial feature bases (:class:`PolynomialFeatures`).</span>
+<span class="sd">"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">combinations_with_replacement</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_2d</span><span class="p">,</span> <span class="n">inv_softplus</span>
+
+<div class="viewcode-block" id="StandardScaler">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StandardScaler</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Standardizes features by removing the mean and scaling to unit variance.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        _mean: Per-feature mean computed by :meth:`fit`, shape ``(1, n_features)``.</span>
+<span class="sd">        _stds: Per-feature scale computed by :meth:`fit`, shape ``(1, n_features)``.</span>
+<span class="sd">        _eps: Small constant added to the scale to avoid division by zero.</span>
+<span class="sd">    """</span>
+    <span class="n">_mean</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_stds</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_eps</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StandardScaler.fit">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute the per-feature mean and scale from training data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Training data, shape ``(n_samples, n_features)``.</span>
+<span class="sd">        """</span>
+        <span class="c1"># taking the mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># taking the standard deviations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stds</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StandardScaler.transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Standardize ``X`` using previously fit statistics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Data to transform, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Standardized data of the same shape as ``X``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If :meth:`fit` has not been called yet.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must call StandardScaler.fit or StandardScaler.fit_transform before transforming new data"</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stds</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StandardScaler.fit_transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Fit to ``X`` and return the standardized result in one call.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Training data, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Standardized data of the same shape as ``X``.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="OrthonormalScaler">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OrthonormalScaler</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Whitens features via a truncated SVD so transformed columns are orthonormal.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        rcond: Relative condition number used to truncate small singular</span>
+<span class="sd">            values when computing the SVD; ``None`` keeps all of them.</span>
+<span class="sd">        eps: Small jitter added to singular values to prevent division by</span>
+<span class="sd">            zero, acting as L2 regularization on the decomposition.</span>
+<span class="sd">        _mean: Per-feature mean computed by :meth:`fit`, shape ``(1, n_features)``.</span>
+<span class="sd">        _A: Whitening matrix computed by :meth:`fit`.</span>
+<span class="sd">    """</span>
+    <span class="n">rcond</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"relative condition number to truncate singular values when taking the SVD"</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"small jitter to prevent division by zero. acts as l2 regularization on the singular value decomposition."</span><span class="p">)</span>
+
+    <span class="n">_mean</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_A</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OrthonormalScaler.fit">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute the whitening transform from training data via SVD.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Training data, shape ``(n_samples, n_features)``, with at</span>
+<span class="sd">                least as many samples as features.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If ``X`` has fewer rows than columns.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"you need at least as many observations as the number of features to compute orthogonal features"</span>
+        <span class="c1"># taking the row-wise mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># centering the inputs</span>
+        <span class="n">Xc</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span>
+        <span class="c1"># computing the svd of the centered matrix</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Ut</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">Xc</span><span class="p">,</span> <span class="n">full_matrices</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># truncating singular values above some relative tolerance</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcond</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">S</span> <span class="o">/</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcond</span><span class="p">]</span>
+            <span class="n">Ut</span> <span class="o">=</span> <span class="n">Ut</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),:]</span>
+
+        <span class="c1"># computing the scaling matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_A</span> <span class="o">=</span> <span class="n">Ut</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">S</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="OrthonormalScaler.transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Apply the fitted whitening transform to ``X``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Data to transform, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Orthonormalized features.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If :meth:`fit` has not been called yet.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must call fit() or fit_transform() before transforming new data"</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_A</span></div>
+
+
+<div class="viewcode-block" id="OrthonormalScaler.fit_transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Fit to ``X`` and return the whitened result in one call.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Training data, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Orthonormalized features.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+</div>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp.kernel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseKernel</span><span class="p">,</span> <span class="n">ARD</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">kernel_mat</span>
+
+<div class="viewcode-block" id="KernelFeatures">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KernelFeatures</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Maps inputs to features given by kernel evaluations against fixed centers.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        input_dim: Input dimension.</span>
+<span class="sd">        kernel_cls: Kernel class used to compute the feature map.</span>
+<span class="sd">        eps: Small jitter to prevent division by zero; acts as L2</span>
+<span class="sd">            regularization on the underlying decomposition.</span>
+<span class="sd">        _centers: Fixed center points supplied to :meth:`fit`.</span>
+<span class="sd">        _k_params: Softplus-inverted kernel parameters supplied to :meth:`fit`.</span>
+<span class="sd">        _mapping_func: Unused placeholder for a custom mapping function.</span>
+<span class="sd">        _kernel: Instantiated kernel object built from ``kernel_cls``.</span>
+<span class="sd">    """</span>
+    <span class="n">input_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">"the input dimension"</span><span class="p">)</span>
+    <span class="n">kernel_cls</span> <span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseKernel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"the kernel to use as the features"</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"small jitter to prevent division by zero. acts as l2 regularization on the singular value decomposition."</span><span class="p">)</span>
+
+    <span class="n">_centers</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_k_params</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_mapping_func</span> <span class="p">:</span> <span class="n">SkipValidation</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_kernel</span> <span class="p">:</span> <span class="n">BaseKernel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KernelFeatures.model_post_init">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures.model_post_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Instantiate the kernel object used to compute features."""</span>
+        <span class="c1"># defining kernel function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_cls</span><span class="p">(</span>
+            <span class="n">input_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span>
+            <span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelFeatures.fit">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_params</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">centers</span><span class="p">:</span><span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Store the kernel parameters and center points used for transformation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kernel_params: Raw (already-positive) kernel hyperparameters;</span>
+<span class="sd">                stored internally in softplus-inverted (unconstrained) form.</span>
+<span class="sd">            centers: Center points the kernel is evaluated against, coerced</span>
+<span class="sd">                to 2-d via :func:`ensure_2d`.</span>
+<span class="sd">        """</span>
+        <span class="c1"># storing the centers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_centers</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span>
+        <span class="c1"># softplus-inverting the kernel params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_params</span> <span class="o">=</span> <span class="n">inv_softplus</span><span class="p">(</span><span class="n">kernel_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelFeatures.transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span><span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute kernel features of ``X`` against the fitted centers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Input points, shape ``(n_samples, input_dim)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Kernel matrix of shape ``(n_samples, n_centers)``.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">kernel_mat</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_params</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="PolynomialFeatures">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolynomialFeatures</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Expands inputs into polynomial (and optionally interaction-only) features.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        degree: Maximum polynomial degree of the generated features.</span>
+<span class="sd">        interaction_only: If ``True``, only products of distinct input</span>
+<span class="sd">            features are produced (no powers of a single feature above</span>
+<span class="sd">            degree 1).</span>
+<span class="sd">        include_bias: If ``True``, include a bias column of all ones.</span>
+<span class="sd">        _powers: Exponent matrix computed by :meth:`fit`, shape</span>
+<span class="sd">            ``(n_output_features, n_features)``.</span>
+<span class="sd">    """</span>
+    <span class="n">degree</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"the maximum polynomial degree of the generated features"</span><span class="p">)</span>
+    <span class="n">interaction_only</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"if True, only products of distinct input features are produced (no powers of a single feature above degree 1)"</span><span class="p">)</span>
+    <span class="n">include_bias</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"if True, include a bias column of all ones"</span><span class="p">)</span>
+
+    <span class="n">_powers</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PolynomialFeatures.fit">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Determine the set of exponent combinations for the polynomial expansion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Reference data used only for its feature count, shape</span>
+<span class="sd">                ``(n_samples, n_features)``.</span>
+<span class="sd">        """</span>
+        <span class="n">n_features</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">combo_fn</span> <span class="o">=</span> <span class="n">combinations</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interaction_only</span> <span class="k">else</span> <span class="n">combinations_with_replacement</span>
+
+        <span class="n">powers_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_bias</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">powers_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_features</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">combo_fn</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">),</span> <span class="n">d</span><span class="p">):</span>
+                <span class="n">powers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_features</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">combo</span><span class="p">:</span>
+                    <span class="n">powers</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">powers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_powers</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">powers_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PolynomialFeatures.transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Expand ``X`` into its polynomial features.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Input data, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Polynomial features, shape ``(n_samples, n_output_features_)``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If :meth:`fit` has not been called yet.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_powers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must call fit() or fit_transform() before transforming new data"</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># X: (N, n_features), _powers: (n_output_features, n_features)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">_powers</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PolynomialFeatures.fit_transform">
+<a class="viewcode-back" href="../../../elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Fit to ``X`` and return the polynomial features in one call.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Input data, shape ``(n_samples, n_features)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Polynomial features, shape ``(n_samples, n_output_features_)``.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_output_features_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""int: Number of polynomial features produced by :meth:`transform`.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If :meth:`fit` has not been called yet.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_powers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must call fit() or fit_transform() first"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_powers</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

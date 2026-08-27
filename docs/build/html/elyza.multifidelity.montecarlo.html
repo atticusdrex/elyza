@@ -1,0 +1,1217 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>elyza.multifidelity.montecarlo module &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'elyza.multifidelity.montecarlo';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="elyza.multifidelity.surrogate module" href="elyza.multifidelity.surrogate.html" />
+    <link rel="prev" title="elyza.multifidelity package" href="elyza.multifidelity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/elyza_logo.png" class="logo__image only-light" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="_static/elyza_logo.png" class="logo__image only-dark pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">elyza</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="elyza.html">elyza package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/elyza.multifidelity.montecarlo.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>elyza.multifidelity.montecarlo module</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC"><code class="docutils literal notranslate"><span class="pre">HFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC._costs"><code class="docutils literal notranslate"><span class="pre">HFMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">HFMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.evaluate"><code class="docutils literal notranslate"><span class="pre">HFMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">HFMC.get_entry_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.model_config"><code class="docutils literal notranslate"><span class="pre">HFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">HFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC"><code class="docutils literal notranslate"><span class="pre">MFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs"><code class="docutils literal notranslate"><span class="pre">MFMC.get_matrix_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.model_config"><code class="docutils literal notranslate"><span class="pre">MFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC"><code class="docutils literal notranslate"><span class="pre">MLMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._costs"><code class="docutils literal notranslate"><span class="pre">MLMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._level_costs"><code class="docutils literal notranslate"><span class="pre">MLMC._level_costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">MLMC._info_coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">MLMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.evaluate"><code class="docutils literal notranslate"><span class="pre">MLMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_config"><code class="docutils literal notranslate"><span class="pre">MLMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MLMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.evaluators"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.evaluators</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.covs"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.covs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.corrs"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.corrs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._K"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo._K</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._hf_dim"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo._hf_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.get_pilots"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.get_pilots()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.level_mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.level_sum()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_config"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_post_init"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.model_post_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.print()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC"><code class="docutils literal notranslate"><span class="pre">RMFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.l2_reg"><code class="docutils literal notranslate"><span class="pre">RMFMC.l2_reg</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.rcond"><code class="docutils literal notranslate"><span class="pre">RMFMC.rcond</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._betas"><code class="docutils literal notranslate"><span class="pre">RMFMC._betas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC._info_coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC._coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._costs"><code class="docutils literal notranslate"><span class="pre">RMFMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">RMFMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.evaluate"><code class="docutils literal notranslate"><span class="pre">RMFMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_entry_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_matrix_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_scalar_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_vector_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.model_config"><code class="docutils literal notranslate"><span class="pre">RMFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">RMFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-elyza.multifidelity.montecarlo">
+<span id="elyza-multifidelity-montecarlo-module"></span><h1>elyza.multifidelity.montecarlo module<a class="headerlink" href="#module-elyza.multifidelity.montecarlo" title="Link to this heading">#</a></h1>
+<p>Multifidelity Monte Carlo estimators.</p>
+<p>Defines the <a class="reference internal" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a> base class and four concrete
+estimators built on top of it: <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> (regression-based
+multifidelity MC, with matrix/vector/scalar coefficient variants),
+<a class="reference internal" href="#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a> (a single-coefficient-per-level special case of RMFMC),
+<a class="reference internal" href="#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a> (telescoping multilevel MC), and <a class="reference internal" href="#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a> (plain
+high-fidelity-only MC, used as a baseline). Each estimator combines
+<a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> samples across fidelity levels into
+a low-variance estimate of the high-fidelity expectation, and computes an
+optimal sample allocation for a given evaluation budget.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.multifidelity.montecarlo.</span></span><span class="sig-name descname"><span class="pre">HFMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><span class="pre">Evaluator</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#HFMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a></p>
+<p>Plain high-fidelity-only Monte Carlo estimator (a baseline).</p>
+<p>Ignores every lower-fidelity level and spends the entire budget on the
+high-fidelity evaluator.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC._costs">
+<span class="sig-name descname"><span class="pre">_costs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC._costs" title="Link to this definition">#</a></dt>
+<dd><p>Per-evaluator cost array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.jaxlib._jax.Array | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC.budget_alloc">
+<span class="sig-name descname"><span class="pre">budget_alloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#HFMC.budget_alloc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC.budget_alloc" title="Link to this definition">#</a></dt>
+<dd><p>Allocate the entire budget to the high-fidelity level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>budget</strong> – Total evaluation budget.</p></li>
+<li><p><strong>warm_start</strong> – Unused; present for interface compatibility with the
+other estimators.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Zero for every lower-fidelity level, with the
+(integer) high-fidelity sample count last.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">budget</span></code> cannot afford even a single
+    high-fidelity evaluation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#HFMC.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC.evaluate" title="Link to this definition">#</a></dt>
+<dd><p>Compute the plain Monte Carlo estimate using only the high-fidelity level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key.</p></li>
+<li><p><strong>sample_sizes</strong> – Per-level sample sizes; only the last entry
+(high-fidelity) is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Monte Carlo estimate, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC.get_entry_variance">
+<span class="sig-name descname"><span class="pre">get_entry_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#HFMC.get_entry_variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC.get_entry_variance" title="Link to this definition">#</a></dt>
+<dd><p>Compute the per-output-dimension estimator variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ms</strong> – Per-level sample sizes; only the last entry is used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Per-dimension variance, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.HFMC.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_HFMC__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#HFMC.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.HFMC.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Compute per-evaluator costs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MFMC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.multifidelity.montecarlo.</span></span><span class="sig-name descname"><span class="pre">MFMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><span class="pre">Evaluator</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2_reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcond</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MFMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MFMC" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a></p>
+<p>Multifidelity Monte Carlo (MFMC) estimator.</p>
+<p>A special case of <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> in which each level’s regression
+coefficient is derived only from its own covariance/cross-covariance
+with the high-fidelity level, rather than the full joint covariance of
+all lower levels.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs">
+<span class="sig-name descname"><span class="pre">get_matrix_coefs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MFMC.get_matrix_coefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Compute the per-level MFMC regression coefficients.</p>
+<p>Unlike <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RMFMC.get_matrix_coefs()</span></code></a>, each level’s coefficient
+depends only on its own covariance/cross-covariance with the
+high-fidelity level. Populates <code class="docutils literal notranslate"><span class="pre">self._coefs</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MFMC.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MFMC.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MFMC.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_RMFMC__context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MFMC.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the per-level beta placeholders and evaluator cost array.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.multifidelity.montecarlo.</span></span><span class="sig-name descname"><span class="pre">MLMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><span class="pre">Evaluator</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MLMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a></p>
+<p>Multilevel Monte Carlo (MLMC) estimator.</p>
+<p>Combines independently-sampled telescoping corrections
+<code class="docutils literal notranslate"><span class="pre">E[f_l]</span> <span class="pre">-</span> <span class="pre">E[f_{l-1}]</span></code> across levels, rather than nested regression
+coefficients.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC._costs">
+<span class="sig-name descname"><span class="pre">_costs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC._costs" title="Link to this definition">#</a></dt>
+<dd><p>Per-evaluator cost array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.jaxlib._jax.Array | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC._level_costs">
+<span class="sig-name descname"><span class="pre">_level_costs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC._level_costs" title="Link to this definition">#</a></dt>
+<dd><p>Per-level cost of one telescoping-correction sample
+(level 0 evaluates only evaluator 0; level <code class="docutils literal notranslate"><span class="pre">l</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> evaluates
+both evaluators <code class="docutils literal notranslate"><span class="pre">l</span> <span class="pre">-</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">l</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.jaxlib._jax.Array | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC._info_coefs">
+<span class="sig-name descname"><span class="pre">_info_coefs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC._info_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Per-level variance-reduction coefficients used for
+sample allocation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC.budget_alloc">
+<span class="sig-name descname"><span class="pre">budget_alloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MLMC.budget_alloc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC.budget_alloc" title="Link to this definition">#</a></dt>
+<dd><p>Compute the per-level sample allocation for a given budget.</p>
+<p>MLMC levels use independent batches, so (unlike RMFMC/MFMC) there
+is no nesting/ordering constraint between sample sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>budget</strong> – Total evaluation budget.</p></li>
+<li><p><strong>warm_start</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, start from the (feasible) fractional
+relaxation solution; otherwise start from one sample per
+level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Per-level integer sample allocations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">budget</span></code> is too small for even the minimal
+    allocation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MLMC.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC.evaluate" title="Link to this definition">#</a></dt>
+<dd><p>Compute the MLMC telescoping-sum estimate of the high-fidelity mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key, split across fidelity levels for sampling.</p></li>
+<li><p><strong>sample_sizes</strong> – Number of samples to draw at each level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The MLMC estimate, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_MLMC__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MLMC.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Compute per-evaluator and per-level (telescoping-pair) costs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.multifidelity.montecarlo.</span></span><span class="sig-name descname"><span class="pre">MultifidelityMonteCarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><span class="pre">Evaluator</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Base class for multifidelity Monte Carlo estimators.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.evaluators">
+<span class="sig-name descname"><span class="pre">evaluators</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.evaluators" title="Link to this definition">#</a></dt>
+<dd><p>A list of multifidelity evaluators (index 0 is
+lowest-fidelity, the last entry is high-fidelity).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator">elyza.core.evaluator.Evaluator</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.covs">
+<span class="sig-name descname"><span class="pre">covs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.covs" title="Link to this definition">#</a></dt>
+<dd><p>A 2-d nested list of covariance matrices relating the levels
+of fidelity such that <code class="docutils literal notranslate"><span class="pre">covs[level1][level2]</span> <span class="pre">=</span> <span class="pre">Cov(level1,</span> <span class="pre">level2)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[jax.jaxlib._jax.Array]] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.corrs">
+<span class="sig-name descname"><span class="pre">corrs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.corrs" title="Link to this definition">#</a></dt>
+<dd><p>Matching nested list of correlation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[jax.jaxlib._jax.Array]] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._K">
+<span class="sig-name descname"><span class="pre">_K</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._K" title="Link to this definition">#</a></dt>
+<dd><p>Number of levels of fidelity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._hf_dim">
+<span class="sig-name descname"><span class="pre">_hf_dim</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._hf_dim" title="Link to this definition">#</a></dt>
+<dd><p>Output dimension of the high-fidelity evaluator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.get_pilots">
+<span class="sig-name descname"><span class="pre">get_pilots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pilots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_costs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo.get_pilots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.get_pilots" title="Link to this definition">#</a></dt>
+<dd><p>Draw pilot samples from every evaluator and compute cross-level covariances.</p>
+<p>Populates <code class="docutils literal notranslate"><span class="pre">self.covs</span></code> (and <code class="docutils literal notranslate"><span class="pre">self.corrs</span></code>, if requested) from
+<code class="docutils literal notranslate"><span class="pre">n_pilots</span></code> shared-key samples of each evaluator’s inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key, reused across evaluators/levels so their
+pilot samples correspond to the same underlying draws.</p></li>
+<li><p><strong>n_pilots</strong> – Number of pilot samples per evaluator.</p></li>
+<li><p><strong>set_costs</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, calibrate each evaluator’s <code class="docutils literal notranslate"><span class="pre">cost</span></code> from
+the timed pilot evaluation.</p></li>
+<li><p><strong>noise_std</strong> – Standard deviation of optional Gaussian noise added
+to each evaluator’s pilot outputs (for experimentation).</p></li>
+<li><p><strong>compute_correlation</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, also populate <code class="docutils literal notranslate"><span class="pre">self.corrs</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean">
+<span class="sig-name descname"><span class="pre">level_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo.level_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean" title="Link to this definition">#</a></dt>
+<dd><p>Estimate the mean output of a given fidelity level from fresh samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key used to sample this level’s inputs.</p></li>
+<li><p><strong>level</strong> – Fidelity level index.</p></li>
+<li><p><strong>n_points</strong> – Number of samples to draw.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sample mean of the level’s outputs, shape <code class="docutils literal notranslate"><span class="pre">(output_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum">
+<span class="sig-name descname"><span class="pre">level_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo.level_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum" title="Link to this definition">#</a></dt>
+<dd><p>Estimate the summed output of a given fidelity level from fresh samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key used to sample this level’s inputs.</p></li>
+<li><p><strong>level</strong> – Fidelity level index.</p></li>
+<li><p><strong>n_points</strong> – Number of samples to draw.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sample sum of the level’s outputs, shape <code class="docutils literal notranslate"><span class="pre">(output_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_MultifidelityMonteCarlo__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Validate <code class="docutils literal notranslate"><span class="pre">evaluators</span></code> and cache the fidelity count/high-fidelity dim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">evaluators</span></code> is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MultifidelityMonteCarlo.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print" title="Link to this definition">#</a></dt>
+<dd><p>Print every evaluator’s summary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.multifidelity.montecarlo.</span></span><span class="sig-name descname"><span class="pre">RMFMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><span class="pre">Evaluator</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2_reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcond</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a></p>
+<p>Regression-based multifidelity Monte Carlo (RMFMC) estimator.</p>
+<p>Combines nested samples across fidelity levels using regression
+coefficients computed from the pilot covariances (see
+<a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code></a>, <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_vector_coefs()</span></code></a>,
+<a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_scalar_coefs()</span></code></a>) to form an unbiased, reduced-variance
+estimate of the high-fidelity mean.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.l2_reg">
+<span class="sig-name descname"><span class="pre">l2_reg</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.l2_reg" title="Link to this definition">#</a></dt>
+<dd><p>Regularization parameter for the least-squares coefficient solve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.rcond">
+<span class="sig-name descname"><span class="pre">rcond</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.rcond" title="Link to this definition">#</a></dt>
+<dd><p>Relative condition number for the least-squares coefficient solve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC._betas">
+<span class="sig-name descname"><span class="pre">_betas</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC._betas" title="Link to this definition">#</a></dt>
+<dd><p>Nested per-(sample level, fidelity level) coefficients used
+by <a class="reference internal" href="#elyza.multifidelity.montecarlo.RMFMC.evaluate" title="elyza.multifidelity.montecarlo.RMFMC.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>, derived from <code class="docutils literal notranslate"><span class="pre">_coefs</span></code> and the sample sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[jax.jaxlib._jax.Array]] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC._info_coefs">
+<span class="sig-name descname"><span class="pre">_info_coefs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC._info_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Per-level variance-reduction “information” coefficients,
+used for sample allocation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC._coefs">
+<span class="sig-name descname"><span class="pre">_coefs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC._coefs" title="Link to this definition">#</a></dt>
+<dd><p>Nested per-level regression coefficients computed by
+<code class="docutils literal notranslate"><span class="pre">get_*_coefs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[jax.jaxlib._jax.Array]] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC._costs">
+<span class="sig-name descname"><span class="pre">_costs</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC._costs" title="Link to this definition">#</a></dt>
+<dd><p>Per-evaluator cost array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.jaxlib._jax.Array | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.budget_alloc">
+<span class="sig-name descname"><span class="pre">budget_alloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.budget_alloc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.budget_alloc" title="Link to this definition">#</a></dt>
+<dd><p>Compute the (integer, nested) per-level sample allocation for a budget.</p>
+<p>Greedily increments the sample size of whichever level offers the
+best marginal variance reduction per unit cost, subject to the
+nesting constraint (<code class="docutils literal notranslate"><span class="pre">ms[level]</span> <span class="pre">&gt;=</span> <span class="pre">ms[level</span> <span class="pre">+</span> <span class="pre">1]</span></code>) and the budget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>budget</strong> – Total evaluation budget.</p></li>
+<li><p><strong>warm_start</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, start from the (feasible, rounded-down)
+fractional-relaxation solution; otherwise start from the
+smallest valid nested allocation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Per-level integer sample allocations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If coefficients haven’t been computed yet, the
+    fidelity ordering is invalid, or <code class="docutils literal notranslate"><span class="pre">budget</span></code> is too small for
+    even the minimal allocation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.evaluate" title="Link to this definition">#</a></dt>
+<dd><p>Compute the RMFMC estimate of the high-fidelity mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A JAX PRNG key, split across fidelity levels for sampling.</p></li>
+<li><p><strong>sample_sizes</strong> – Number of (nested) samples to draw at each level,
+ordered from lowest to highest fidelity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The RMFMC estimate, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If coefficients have not been computed yet (see
+    <code class="docutils literal notranslate"><span class="pre">get_matrix_coefs</span></code>/<code class="docutils literal notranslate"><span class="pre">get_vector_coefs</span></code>/<code class="docutils literal notranslate"><span class="pre">get_scalar_coefs</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.get_entry_variance">
+<span class="sig-name descname"><span class="pre">get_entry_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.get_entry_variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.get_entry_variance" title="Link to this definition">#</a></dt>
+<dd><p>Compute the per-output-dimension estimator variance for given sample sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ms</strong> – Per-level sample sizes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Per-dimension variance, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs">
+<span class="sig-name descname"><span class="pre">get_matrix_coefs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.get_matrix_coefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Compute optimal full-matrix regression coefficients at every level.</p>
+<p>This function gets overwritten for the other estimator
+implementations (e.g. <a class="reference internal" href="#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a>) depending on how the
+coefficients are formulated. Populates <code class="docutils literal notranslate"><span class="pre">self._coefs</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs">
+<span class="sig-name descname"><span class="pre">get_scalar_coefs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.get_scalar_coefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Compute optimal scalar (isotropic) regression coefficients at every level.</p>
+<p>Restricts each level’s coefficient block to a scalar multiple of
+the identity, requiring all evaluators to share the same output
+dimension. Populates <code class="docutils literal notranslate"><span class="pre">self._coefs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If evaluators don’t all share the same output dimension.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs">
+<span class="sig-name descname"><span class="pre">get_vector_coefs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.get_vector_coefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs" title="Link to this definition">#</a></dt>
+<dd><p>Compute optimal diagonal-matrix (vector) regression coefficients at every level.</p>
+<p>Restricts each level’s coefficient block to a diagonal matrix,
+requiring all evaluators to share the same output dimension.
+Populates <code class="docutils literal notranslate"><span class="pre">self._coefs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If evaluators don’t all share the same output dimension.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.RMFMC.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_RMFMC__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#RMFMC.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.RMFMC.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the per-level beta placeholders and evaluator cost array.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="elyza.multifidelity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">elyza.multifidelity package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="elyza.multifidelity.surrogate.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">elyza.multifidelity.surrogate module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC"><code class="docutils literal notranslate"><span class="pre">HFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC._costs"><code class="docutils literal notranslate"><span class="pre">HFMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">HFMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.evaluate"><code class="docutils literal notranslate"><span class="pre">HFMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">HFMC.get_entry_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.model_config"><code class="docutils literal notranslate"><span class="pre">HFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.HFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">HFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC"><code class="docutils literal notranslate"><span class="pre">MFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs"><code class="docutils literal notranslate"><span class="pre">MFMC.get_matrix_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.model_config"><code class="docutils literal notranslate"><span class="pre">MFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC"><code class="docutils literal notranslate"><span class="pre">MLMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._costs"><code class="docutils literal notranslate"><span class="pre">MLMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._level_costs"><code class="docutils literal notranslate"><span class="pre">MLMC._level_costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">MLMC._info_coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">MLMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.evaluate"><code class="docutils literal notranslate"><span class="pre">MLMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_config"><code class="docutils literal notranslate"><span class="pre">MLMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MLMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.evaluators"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.evaluators</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.covs"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.covs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.corrs"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.corrs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._K"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo._K</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._hf_dim"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo._hf_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.get_pilots"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.get_pilots()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.level_mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.level_sum()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_config"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_post_init"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.model_post_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print"><code class="docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo.print()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC"><code class="docutils literal notranslate"><span class="pre">RMFMC</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.l2_reg"><code class="docutils literal notranslate"><span class="pre">RMFMC.l2_reg</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.rcond"><code class="docutils literal notranslate"><span class="pre">RMFMC.rcond</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._betas"><code class="docutils literal notranslate"><span class="pre">RMFMC._betas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC._info_coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC._coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC._costs"><code class="docutils literal notranslate"><span class="pre">RMFMC._costs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">RMFMC.budget_alloc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.evaluate"><code class="docutils literal notranslate"><span class="pre">RMFMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_entry_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_matrix_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_scalar_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="docutils literal notranslate"><span class="pre">RMFMC.get_vector_coefs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.model_config"><code class="docutils literal notranslate"><span class="pre">RMFMC.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.RMFMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">RMFMC.model_post_init()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

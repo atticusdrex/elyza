@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elyza.util.helpers &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/elyza/util/helpers';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-light" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="../../../_static/elyza_logo.png" class="logo__image only-dark pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for elyza.util.helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Standalone numerical helper functions used throughout ``elyza``.</span>
+
+<span class="sd">Includes covariance/correlation utilities, a robust least-squares wrapper,</span>
+<span class="sd">shape-normalization helpers, a Gaussian KL-divergence, greedy inducing-point</span>
+<span class="sd">selection, elementwise activation functions and their inverses, and a</span>
+<span class="sd">vectorized kernel-matrix evaluator.</span>
+<span class="sd">"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="matrix_cov">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.matrix_cov">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_cov</span><span class="p">(</span><span class="n">Y1</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">Y2</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the cross-covariance matrix between two column-aligned datasets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Y1: Array of shape ``(n_samples, d1)``.</span>
+<span class="sd">        Y2: Array of shape ``(n_samples, d2)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Covariance matrix of shape ``(d1, d2)``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If ``Y1`` and ``Y2`` do not have the same number of samples.</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="n">Y1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"Y1 and Y2 must contain the same number of samples"</span>
+    <span class="n">Y1c</span> <span class="o">=</span> <span class="n">Y1</span> <span class="o">-</span> <span class="n">Y1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Y2c</span> <span class="o">=</span> <span class="n">Y2</span> <span class="o">-</span> <span class="n">Y2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Y1c</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Y2c</span> <span class="o">/</span> <span class="p">(</span><span class="n">Y1c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="matrix_corr">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.matrix_corr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_corr</span><span class="p">(</span><span class="n">Y1</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">Y2</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the cross-correlation matrix between two column-aligned datasets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Y1: Array of shape ``(n_samples, d1)``.</span>
+<span class="sd">        Y2: Array of shape ``(n_samples, d2)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Correlation matrix of shape ``(d1, d2)``, with entries in ``[-1, 1]``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If ``Y1`` and ``Y2`` do not have the same number of samples.</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="n">Y1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"Y1 and Y2 must contain the same number of samples"</span>
+    <span class="n">Y1c</span> <span class="o">=</span> <span class="n">Y1</span> <span class="o">-</span> <span class="n">Y1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Y2c</span> <span class="o">=</span> <span class="n">Y2</span> <span class="o">-</span> <span class="n">Y2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">Y1c</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Y2c</span> <span class="o">/</span> <span class="p">(</span><span class="n">Y1c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">std1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Y1c</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Y1c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">std2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Y2c</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Y2c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cov</span> <span class="o">/</span> <span class="p">(</span><span class="n">std1</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <span class="n">std2</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ls">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.ls">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ls</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Solve the linear least-squares problem ``min ||A @ X - B||``.</span>
+
+<span class="sd">    Thin wrapper around :func:`jax.numpy.linalg.lstsq` that returns only the</span>
+<span class="sd">    solution array (not residuals, rank, or singular values).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        A: Coefficient matrix of shape ``(m, n)``.</span>
+<span class="sd">        B: Right-hand side of shape ``(m, k)`` or ``(m,)``.</span>
+<span class="sd">        rcond: Relative condition number used to truncate small singular</span>
+<span class="sd">            values; forwarded to ``jnp.linalg.lstsq``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Least-squares solution ``X`` of shape ``(n, k)`` or ``(n,)``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="n">rcond</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ensure_2d">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.ensure_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_2d</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reshape an array to be at least 2-dimensional.</span>
+
+<span class="sd">    Scalars become shape ``(1, 1)`` and 1-d arrays become column vectors of</span>
+<span class="sd">    shape ``(-1, 1)``; arrays that are already 2-d (or higher) pass through</span>
+<span class="sd">    unchanged.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X: Input array of any rank.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: ``X`` with rank at least 2.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">X</span></div>
+
+
+
+<div class="viewcode-block" id="KL_div">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.KL_div">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">KL_div</span><span class="p">(</span><span class="n">mu_q</span><span class="p">,</span> <span class="n">L_q</span><span class="p">,</span> <span class="n">mu_p</span><span class="p">,</span> <span class="n">L_p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""KL divergence KL(q || p) for Gaussians parameterized by Cholesky factors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu_q: Mean vector of ``q``, shape ``(k,)``.</span>
+<span class="sd">        L_q: Lower-triangular Cholesky factor of ``q``'s covariance, shape ``(k, k)``.</span>
+<span class="sd">        mu_p: Mean vector of ``p``, shape ``(k,)``.</span>
+<span class="sd">        L_p: Lower-triangular Cholesky factor of ``p``'s covariance, shape ``(k, k)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Scalar KL divergence KL(q || p).</span>
+<span class="sd">    """</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">mu_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Covariance matrices</span>
+    <span class="n">Sigma_q</span> <span class="o">=</span> <span class="n">L_q</span> <span class="o">@</span> <span class="n">L_q</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">Sigma_p</span> <span class="o">=</span> <span class="n">L_p</span> <span class="o">@</span> <span class="n">L_p</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Trace term: tr(Sigma_p^{-1} Sigma_q)</span>
+    <span class="c1"># Solve instead of explicitly inverting</span>
+    <span class="n">Sigma_p_inv</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_p</span><span class="p">)</span>
+    <span class="n">Tr_q</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">Sigma_p_inv</span> <span class="o">@</span> <span class="n">Sigma_q</span><span class="p">)</span>
+
+    <span class="c1"># Mean term: (mu_p - mu_q)^T Sigma_p^{-1} (mu_p - mu_q)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">mu_q</span> <span class="o">-</span> <span class="n">mu_p</span>
+    <span class="n">mean_term</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">cho_solve</span><span class="p">((</span><span class="n">L_p</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="n">diff</span><span class="p">))</span>
+
+    <span class="c1"># Log-determinant ratio</span>
+    <span class="n">logdet_q</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L_q</span><span class="p">)))</span>
+    <span class="n">logdet_p</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L_p</span><span class="p">)))</span>
+    <span class="n">logdet_ratio</span> <span class="o">=</span> <span class="n">logdet_p</span> <span class="o">-</span> <span class="n">logdet_q</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">Tr_q</span> <span class="o">+</span> <span class="n">mean_term</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="n">logdet_ratio</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="greedy_k_center">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.greedy_k_center">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">greedy_k_center</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Greedy k-centers selection of inducing inputs.</span>
+
+<span class="sd">    Starting from a random point, repeatedly selects the point farthest</span>
+<span class="sd">    (in Euclidean distance) from the already-selected set, giving a set of</span>
+<span class="sd">    ``k`` points that spreads coverage over ``X``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X: Candidate points, shape ``(n_points, n_features)``.</span>
+<span class="sd">        k: Number of centers to select.</span>
+<span class="sd">        seed: Seed for the initial random point.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(selected_points, selected_indices)`` where</span>
+<span class="sd">        ``selected_points`` has shape ``(k, n_features)`` and</span>
+<span class="sd">        ``selected_indices`` is the list of row indices into ``X``.</span>
+<span class="sd">    """</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">selected_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">selected_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">selected_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">new_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">new_distances</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)],</span> <span class="n">selected_indices</span></div>
+
+
+<div class="viewcode-block" id="sigmoid">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.sigmoid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sigmoid activation elementwise: ``1 / (1 + exp(-x))``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: Input array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Elementwise sigmoid of ``x``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="inv_sigmoid">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.inv_sigmoid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inv_sigmoid</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Inverse sigmoid (logit): maps ``(0, 1)`` back to the real line.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y: Input array with values in ``(0, 1)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Elementwise logit of ``y``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">y</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="softplus">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.softplus">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">softplus</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Softplus activation: ``log(1 + exp(x))``.</span>
+
+<span class="sd">    Commonly used to map an unconstrained parameter to a strictly positive</span>
+<span class="sd">    value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: Input array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Elementwise softplus of ``x``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="inv_softplus">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.inv_softplus">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inv_softplus</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Inverse softplus: maps positive values back to unconstrained space.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y: Input array with strictly positive values.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Elementwise inverse softplus of ``y``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="kernel_mat">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.kernel_mat">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel_mat</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">kernel_params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the full kernel matrix between two point sets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X1: First set of points, shape ``(n1, input_dim)``.</span>
+<span class="sd">        X2: Second set of points, shape ``(n2, input_dim)``.</span>
+<span class="sd">        kernel: A kernel object exposing ``eval(x, y, kernel_params)`` for a</span>
+<span class="sd">            single pair of points.</span>
+<span class="sd">        kernel_params: Parameter array passed through to ``kernel.eval``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.Array: Kernel matrix of shape ``(n1, n2)`` where entry ``(i, j)``</span>
+<span class="sd">        is ``kernel.eval(X1[i], X2[j], kernel_params)``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">kernel</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kernel_params</span><span class="p">))(</span><span class="n">X2</span><span class="p">))(</span><span class="n">X1</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
