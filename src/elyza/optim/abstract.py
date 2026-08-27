@@ -1,7 +1,39 @@
 from elyza.util.imports import *
+from jax.tree_util import tree_map
 
 '''
-OptimizerOptions 
+fill_pytree_spec
+----------------
+builds a pytree with the same nested-dict structure as `template` (e.g. a parameter
+pytree like p_init), so that callers can specify `active_params`/`constraints` etc.
+for only the leaves/subtrees they care about instead of the entire pytree.
+
+- any leaf/subtree left unspecified in `partial` is filled in with `default`
+- giving a value for an intermediate dict key in `partial` broadcasts that value to
+  every leaf beneath it (e.g. {'weights': False} turns off every weight layer)
+- an unknown key in `partial` (typo, wrong nesting) raises rather than being silently
+  dropped
+'''
+def fill_pytree_spec(template, partial, default):
+    def _fill(node, spec, path):
+        if isinstance(node, dict):
+            if spec is not None and not isinstance(spec, dict):
+                return tree_map(lambda _leaf: spec, node)
+
+            spec = spec or {}
+            unknown = set(spec) - set(node)
+            if unknown:
+                location = ".".join(map(str, path)) or "<root>"
+                raise ValueError(f"unknown key(s) {unknown} at '{location}'; expected one of {set(node)}")
+
+            return {key: _fill(subnode, spec.get(key), path + [key]) for key, subnode in node.items()}
+
+        return default if spec is None else spec
+
+    return _fill(template, partial, [])
+
+'''
+OptimizerOptions
 -----------------
 a simple abstract class to 
 '''

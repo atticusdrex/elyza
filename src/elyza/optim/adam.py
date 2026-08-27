@@ -1,5 +1,5 @@
 # imports 
-from elyza.optim.abstract import OptimizerOptions, BatchGradientOptimizer
+from elyza.optim.abstract import OptimizerOptions, BatchGradientOptimizer, fill_pytree_spec
 from elyza.util.imports import * 
 from jax.tree_util import tree_map, tree_leaves
 from jax import lax
@@ -10,14 +10,14 @@ ADAMOptions
 the options which parameterize an ADAM optimizer
 '''
 class ADAMOptions(OptimizerOptions):
-    p_init : dict[str|int,jax.Array] | None = Field(default = None, description = "initial dictionary of parameters")
+    p_init : dict | jax.Array | None = Field(default = None, description = "initial dictionary of parameters")
     lr : float = Field(default = 1e-3, description = "learning rate for gradient descent")
     epochs : int = Field(default = 1, description = "number of times we pass through the training data")
     batch_size : int | None = Field(default = None, description = "number of training datapoints in a specific loss function evaluation")
     beta1 : float = Field(default = 0.9, description = "first momentum parameter")
     beta2 : float = Field(default = 0.999, description = "second momentum parameter")
-    active_params : dict[str,bool] | None = Field(default = None, description = "a dictionary of the active parameters to optimize")
-    constraints : dict[str,Callable] | None = Field(default = None, description = "a dictionary of constraints mapping from parameter:constraint function")
+    active_params : dict | None = Field(default = None, description = "a dictionary of the active parameters to optimize")
+    constraints : dict | None = Field(default = None, description = "a dictionary of constraints mapping from parameter:constraint function")
     verbose : bool = Field(default = False, description = "whether or not to print the reuslts of the optimizer")
     eps : float = Field(default = 1e-8, description = "small positive number to prevent division by zero")
     random_state : int = Field(default = 42, description = "random seed for replication")
@@ -58,13 +58,9 @@ class ADAM(BatchGradientOptimizer):
         # generating the PRNG key 
         key = jrand.PRNGKey(self.opts.random_state) 
 
-        # fill in identity constraints for any params not given an explicit constraint
-        default_constraints = tree_map(lambda x: lambda y: y, self.opts.p_init) # use identity constraints
-        self.opts.constraints = {**default_constraints, **(self.opts.constraints or {})}
-
-        # determining which parameters are active
-        if self.opts.active_params is None:
-            self.opts.active_params = tree_map(lambda _: True, self.opts.p_init)
+        # filling in unspecified constraints/active_params (identity constraint, active=True), matching the full p_init pytree structure
+        self.opts.constraints = fill_pytree_spec(self.opts.p_init, self.opts.constraints, lambda y: y)
+        self.opts.active_params = fill_pytree_spec(self.opts.p_init, self.opts.active_params, True)
 
         # initialize parameters
         p = deepcopy(self.opts.p_init)

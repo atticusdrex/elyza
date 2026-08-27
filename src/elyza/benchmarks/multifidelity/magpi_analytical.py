@@ -16,7 +16,8 @@ hf_evaluator = Evaluator(
     output_dim = 1, 
     evaluation_func = jit(
         lambda x: jnp.exp(-x) * jnp.sin(2*pi*x)
-    )
+    ), 
+    jit_compile = True
 )
 mf_evaluator = Evaluator(
     name = "Medium-Fidelity", 
@@ -24,7 +25,8 @@ mf_evaluator = Evaluator(
     output_dim = 1, 
     evaluation_func = jit(
         lambda x: jnp.sin(2*pi*x)
-    )
+    ), 
+    jit_compile = True
 )
 lf_evaluator = Evaluator(
     name = "Low-Fidelity", 
@@ -32,5 +34,6 @@ lf_evaluator = Evaluator(
     output_dim = 1, 
     evaluation_func = jit(
         lambda x: jnp.exp(-x)
-    )
+    ), 
+    jit_compile = True
 )

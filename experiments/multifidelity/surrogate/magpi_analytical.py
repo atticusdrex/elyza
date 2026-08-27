@@ -46,6 +46,8 @@ lf_gp = GaussianProcess(
  
 lf_gp.set_optimizer(ADAM, adam_opts) 
 
+
+
 # building the medium-fidelity gp 
 mf_inputs = x.sample(jrand.PRNGKey(42), 100)
 mf_outputs = mf_evaluator.evaluate(mf_inputs) 

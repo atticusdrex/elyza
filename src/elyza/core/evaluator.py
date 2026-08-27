@@ -26,6 +26,8 @@ class Evaluator(BaseModel):
         description = "The cost to evaluate."
     )
 
+    jit_compile : bool = Field(default = False, description = "whether or not to jit-compile the evaluation func")
+
     @computed_field # function for getting the set of input names
     def _input_names(self) -> set: 
         return set([input.name for input in self.inputs])
@@ -44,11 +46,13 @@ class Evaluator(BaseModel):
     '''
     input_vals is a list of arrays of inputs assumed to be valid for the evaluator, where the shape of each list item is (# of data points, input dimension).
     '''
-    def evaluate(self, *input_vals, jit_compile = False):
-        if jit_compile:
-            return jit(vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim))
+    def evaluate(self, *input_vals):
+        if self.jit_compile: 
+            eval_vmap = jit(vmap(self.evaluation_func, in_axes = [0]*len(input_vals)))
         else:
-            return vmap(self.evaluation_func, in_axes=[0]*len(input_vals))(*input_vals).block_until_ready().reshape(-1,self.output_dim)
+            eval_vmap = vmap(self.evaluation_func, in_axes = [0]*len(input_vals))
+
+        return eval_vmap(*input_vals).block_until_ready().reshape(-1,self.output_dim)
 
     def print(self):
         print("\n------------------------------------------------")

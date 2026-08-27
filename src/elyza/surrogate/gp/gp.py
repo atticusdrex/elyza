@@ -13,15 +13,15 @@ from jax.scipy.linalg import solve_triangular, cho_solve, cholesky
 '''
 class GaussianProcess(Surrogate):
     # public fields
-    input_dim: int
-    kernel_cls: type[BaseKernel]
-    mean_cls: type[BaseMean]
-    calibrate_noise: bool = False
-    noise_var: float = 0.0
-    eps: float = 1e-12
-    max_cond: float = 1e5
-    verbose: bool = False
-    p: dict | None = None
+    input_dim: int = Field(description = "input dimension")
+    kernel_cls: type[BaseKernel] = Field(description = "kernel class")
+    mean_cls: type[BaseMean] = Field(description = "mean class")
+    calibrate_noise: bool = Field(default = False, description = "whether or not to calibrate the noise variance to reduce the condition number of the kernel matrix")
+    noise_var: float = Field(default = 0.0, description = "variance of Gaussian white noise in the model outputs")
+    eps: float = Field(default = 1e-12, description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
+    max_cond: float = Field(default = 1e5, description = "maximum condition number for kernel matrices") 
+    verbose: bool = Field(default = False, description = "whether or not to print the training and calibration progress") 
+    p: dict | None = Field(default = None, description = "an optional value depending on whether the user wants to instantiate the GP with predefined model parameters")
 
     # private/internal state
     _kernel: BaseKernel | None = PrivateAttr(default=None)
@@ -51,7 +51,7 @@ class GaussianProcess(Surrogate):
         self.p = {
             'kernel': jnp.ones(self._kernel.p_dim),
             'mean': jnp.ones(self._mean.p_dim),
-            'noise': inv_softplus(self.noise_var)
+            'noise': inv_softplus(self.noise_var + self.eps)
         }
 
     '''
@@ -168,7 +168,7 @@ class GaussianProcess(Surrogate):
         z = jrand.normal(key, shape=(mu.shape[0], n_samples), dtype=mu.dtype)
         return mu.reshape(-1, 1) + std.reshape(-1, 1) * z
 
-    def _objective(self, X, Y, p) -> float:
+    def _objective(self, p, X, Y) -> float:
         # Getting cholesky factors and solve linear system
         L = self._get_L(X, p['kernel'], p['noise'])
         mean = ensure_2d(jnp.asarray(self._mean.eval(X, p['mean'])))

@@ -1,5 +1,5 @@
 # imports
-from elyza.optim.abstract import OptimizerOptions, BatchGradientOptimizer
+from elyza.optim.abstract import OptimizerOptions, BatchGradientOptimizer, fill_pytree_spec
 from elyza.util.imports import *
 from jax.tree_util import tree_map, tree_leaves
 from jax import lax
@@ -10,7 +10,7 @@ LBFGSOptions
 the options which parameterize an L-BFGS optimizer
 '''
 class LBFGSOptions(OptimizerOptions):
-    p_init : dict[str|int,jax.Array] | None = Field(default = None, description = "initial dictionary of parameters")
+    p_init : dict | jax.Array | None = Field(default = None, description = "initial dictionary of parameters")
     lr : float = Field(default = 1.0, description = "initial step size scale for the backtracking line search")
     epochs : int = Field(default = 1, description = "number of times we pass through the training data")
     batch_size : int | None = Field(default = None, description = "number of training datapoints in a specific loss function evaluation")
@@ -58,13 +58,9 @@ class LBFGS(BatchGradientOptimizer):
         # generating the PRNG key
         key = jrand.PRNGKey(self.opts.random_state)
 
-        # fill in identity constraints for any params not given an explicit constraint
-        default_constraints = tree_map(lambda x: lambda y: y, self.opts.p_init) # use identity constraints
-        self.opts.constraints = {**default_constraints, **(self.opts.constraints or {})}
-
-        # determining which parameters are active
-        if self.opts.active_params is None:
-            self.opts.active_params = tree_map(lambda _: True, self.opts.p_init)
+        # filling in unspecified constraints/active_params (identity constraint, active=True), matching the full p_init pytree structure
+        self.opts.constraints = fill_pytree_spec(self.opts.p_init, self.opts.constraints, lambda y: y)
+        self.opts.active_params = fill_pytree_spec(self.opts.p_init, self.opts.active_params, True)
 
         # flattening the parameter pytree into a single vector
         p_flat, unravel_fn = flatten_util.ravel_pytree(deepcopy(self.opts.p_init))
