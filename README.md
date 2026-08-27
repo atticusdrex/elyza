@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./misc/elyza_logo.PNG" width="400" />
+  <img src="https://raw.githubusercontent.com/atticusdrex/elyza/main/misc/elyza_logo.PNG" width="400" />
 </p>
 
 <!-- summary-start -->
@@ -84,6 +84,6 @@ See `experiments/` for end-to-end scripts demonstrating the library, including:
 
 ## License
 
-`elyza` is licensed under the [BSD 3-Clause License](elyza/LICENSE).
+`elyza` is licensed under the [BSD 3-Clause License](LICENSE).
 
 
