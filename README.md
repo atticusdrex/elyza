@@ -7,21 +7,21 @@
 
 ## Installation
 
-`elyza` requires Python 3.10+. Clone the repository and install it in editable mode:
+`elyza` requires Python 3.10+.
+
+```bash
+pip install elyza
+```
+
+Core dependencies (installed automatically): `numpy`, `jax`/`jaxlib`, `pydantic`, `tqdm`, `pillow`, `scipy`.
+
+To work on `elyza` itself, clone the repository and install it in editable mode with the development dependencies (`build`, `twine`, `pytest`):
 
 ```bash
 git clone https://github.com/atticusdrex/elyza.git
 cd elyza
-pip install -e .
-```
-
-To include the development dependencies (`build`, `twine`, `pytest`):
-
-```bash
 pip install -e ".[dev]"
 ```
-
-Core dependencies (installed automatically): `numpy`, `jax`/`jaxlib`, `pydantic`, `tqdm`, `pillow`, `scipy`.
 
 ## Overview
 
