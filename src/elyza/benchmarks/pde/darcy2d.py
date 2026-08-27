@@ -1,3 +1,13 @@
+"""2-D Darcy flow benchmark with a Gaussian-random-field permeability input.
+
+Provides :class:`GRFInput`, a log-normal Gaussian random field input
+(sampled via a truncated Karhunen-Loeve expansion, optionally coupled
+across grid resolutions for multifidelity use), and
+:class:`DarcyFlowEvaluator`, which solves the corresponding 2-D Darcy flow
+PDE via cell-centred finite differences and a JAX-native conjugate-gradient
+solver. Supporting module-private helpers build the KL eigenbasis, the
+source term, and the FD stiffness-matrix action.
+"""
 from elyza.util.imports import *
 from elyza.core.data import VectorInput
 from elyza.core.evaluator import Evaluator
@@ -10,45 +20,76 @@ from scipy import ndimage
 import functools
 
 def build_image_source(path, grid_dim, inflation = 1.0):
-    # loading image 
+    """Build a full-resolution PDE source field from a grayscale image.
+
+    Loads the image, averages it to grayscale, rescales/inverts it to
+    ``[-1, 1]``, resamples it onto a ``(grid_dim, grid_dim)`` grid, and maps
+    it through ``exp``/``tanh`` before normalizing to ``[0, 1]``.
+
+    Args:
+        path: Path to the source image.
+        grid_dim: Output grid resolution (``grid_dim x grid_dim``).
+        inflation: Scale factor reserved for inflating the source term
+            (currently unused; the corresponding scaling code is commented
+            out below).
+
+    Returns:
+        jax.Array: Source field of shape ``(grid_dim, grid_dim)`` with
+        values in ``[0, 1]``.
+    """
+    # loading image
     image = np.array(Image.open(path))
-    height, width = image.shape[:2] 
+    height, width = image.shape[:2]
 
     # ---------------------------------------------------------------------
-    # uncomment for 3-channel RGB image 
+    # uncomment for 3-channel RGB image
     # ---------------------------------------------------------------------
     image = image[:,:,:3].mean(axis=2).astype(np.float64)
     image = image / np.max(image) # scaling to [0,1]
 
 
-    # negating and scaling to [-1,1] 
+    # negating and scaling to [-1,1]
     image = -2*image +1
-    # image *= inflation 
+    # image *= inflation
 
     # # threshold for images to generate more interesting force fields
     # thresh = 0.5
     # image[image < thresh] = -image[image < thresh]
     # image[image > 0.5] = 0.5
 
-    # # inflating source term 
+    # # inflating source term
     # image *= 2.0
     # ---------------------------------------------------------------------
-    # zooming to make square 
+    # zooming to make square
     image = ndimage.zoom(image, (grid_dim/height, grid_dim/width), order=3)
 
 
     # image[image <= 0] = 0.0
     image = jnp.exp(image)
-    
 
-    image = jnp.tanh(1 * image) 
-    image = (image - image.min()) / (np.max(image) - np.min(image)) 
+
+    image = jnp.tanh(1 * image)
+    image = (image - image.min()) / (np.max(image) - np.min(image))
     return image
 
 def get_field(key, grf_mean, grf_std, scaled_eigenvecs, n_kl):
+    """Sample one log-normal Gaussian random field realization.
+
+    Args:
+        key: A JAX PRNG key.
+        grf_mean: Mean of the underlying (log-permeability) Gaussian field.
+        grf_std: Standard deviation of the underlying Gaussian field.
+        scaled_eigenvecs: KL eigenvectors pre-scaled by ``sqrt(eigenvalue)``,
+            shape ``(N, n_kl)``.
+        n_kl: Number of KL expansion terms.
+
+    Returns:
+        jax.Array: Flattened permeability field of shape ``(N,)``, strictly
+        positive (log-normal).
+    """
     xi = jrand.normal(key, shape=(n_kl,))               # i.i.d. N(0,1)
     log_kappa = grf_mean + grf_std * (scaled_eigenvecs @ xi)   # (N,)
-    return jnp.exp(log_kappa)    
+    return jnp.exp(log_kappa)
 # ---------------------------------------------------------------------------
 # KL expansion helpers  (computed once, on CPU via NumPy/SciPy)
 # ---------------------------------------------------------------------------
@@ -65,17 +106,22 @@ def build_kl_basis(
     length_scale: float,
     n_kl_terms: int,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Compute the leading KL eigenpairs of a squared-exponential covariance
-    kernel on an (n×n) grid with periodic-free domain [0,1]².
+    """Compute the leading KL eigenpairs of a squared-exponential covariance kernel.
 
-    The covariance is discretised as a dense (N×N) matrix
-    C_{ij} = exp(-‖x_i - x_j‖² / (2 ℓ²)),  N = grid_n².
+    The covariance is discretised as a dense ``(N, N)`` matrix
+    ``C_ij = exp(-||x_i - x_j||^2 / (2 * l^2))``, ``N = grid_n**2``, on an
+    ``(n x n)`` grid with periodic-free domain ``[0, 1]^2``.
 
-    Returns
-    -------
-    eigvals : (n_kl_terms,) float64
-    eigvecs : (N, n_kl_terms) float64   — already scaled by √λ_k
+    Args:
+        grid_n: Grid resolution (``grid_n x grid_n``).
+        length_scale: Correlation length ``l`` of the squared-exponential kernel.
+        n_kl_terms: Number of leading eigenpairs to compute.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray]: ``(eigvals, eigvecs)`` where
+        ``eigvals`` has shape ``(n_kl_terms,)`` (float64) and ``eigvecs``
+        has shape ``(N, n_kl_terms)`` (float64), already scaled by
+        ``sqrt(lambda_k)``.
     """
     def fix_signs(V):
         signs = np.sign(V[0, :])
@@ -130,20 +176,32 @@ def build_kl_basis_at(
     n_kl_terms: int,
     reference_grid_dim: int,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """
-    KL eigenbasis evaluated at an (grid_n x grid_n) grid, via a Nystrom
-    extension of a basis computed (and cached) on a fixed reference grid.
+    """KL eigenbasis evaluated at an ``(grid_n, grid_n)`` grid via Nystrom extension.
 
-    build_kl_basis computes an independent eigendecomposition of the
-    covariance matrix discretised AT grid_n -- two different grid_n values
-    give unrelated eigenvectors, so a shared PRNGKey does not correspond to
-    the same underlying field at two different resolutions. Nystrom
-    extension instead evaluates ONE fixed set of eigenfunctions (computed
-    once on the reference grid) at grid_n's own points, so any two
-    grid_n's sharing (length_scale, n_kl_terms, reference_grid_dim) sample
-    the same continuous field, just discretised at different resolutions.
+    ``build_kl_basis`` computes an independent eigendecomposition of the
+    covariance matrix discretised AT ``grid_n`` -- two different ``grid_n``
+    values give unrelated eigenvectors, so a shared PRNGKey does not
+    correspond to the same underlying field at two different resolutions.
+    Nystrom extension instead evaluates ONE fixed set of eigenfunctions
+    (computed once on the reference grid) at ``grid_n``'s own points, so any
+    two ``grid_n``'s sharing ``(length_scale, n_kl_terms, reference_grid_dim)``
+    sample the same continuous field, just discretised at different
+    resolutions.
 
-    For grid_n == reference_grid_dim this reduces exactly to build_kl_basis.
+    For ``grid_n == reference_grid_dim`` this reduces exactly to
+    :func:`build_kl_basis`.
+
+    Args:
+        grid_n: Grid resolution to evaluate the basis at.
+        length_scale: Correlation length of the squared-exponential kernel.
+        n_kl_terms: Number of leading eigenpairs.
+        reference_grid_dim: Grid resolution the reference eigenbasis is
+            computed (and cached) on.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray]: ``(eigvals, eigvecs)`` where
+        ``eigvals`` has shape ``(n_kl_terms,)`` and ``eigvecs`` has shape
+        ``(grid_n**2, n_kl_terms)``, already scaled by ``sqrt(lambda_k)``.
     """
     cache_key = (length_scale, n_kl_terms, reference_grid_dim)
     if cache_key not in _kl_reference_cache:
@@ -175,12 +233,18 @@ def build_source_field(
     source_3x3: jnp.ndarray,
     grid_n: int,
 ) -> jnp.ndarray:
-    """
-    Expand a (3,3) source array into an (grid_n, grid_n) field by tiling
-    the domain into a 3×3 tic-tac-toe partition.  Each cell of the partition
-    receives the corresponding constant value.
+    """Expand a (3,3) source array into an (grid_n, grid_n) field.
 
-    Returns flattened (grid_n*grid_n,) array.
+    Tiles the domain into a 3x3 tic-tac-toe partition, where each cell of
+    the partition receives the corresponding constant value from
+    ``source_3x3``.
+
+    Args:
+        source_3x3: Piecewise-constant source values, shape ``(3, 3)``.
+        grid_n: Output grid resolution (``grid_n x grid_n``).
+
+    Returns:
+        jnp.ndarray: Flattened ``(grid_n*grid_n,)`` source field.
     """
     # Repeat each value along each axis: grid_n // 3 interior + remainder
     # Use jnp.repeat to keep things traceable
@@ -208,22 +272,19 @@ def _fd_laplacian_action(
     grid_n: int,
     h: float,
 ) -> jnp.ndarray:
-    """
-    Compute  A(κ) u  via a cell-centred finite-difference discretisation
-    of  -∇·(κ ∇u)  with homogeneous Dirichlet BCs.
+    """Compute ``A(kappa) u`` via a cell-centred FD discretisation of ``-div(kappa grad(u))``.
 
-    Uses harmonic-mean interface permeabilities (standard for Darcy).
+    Uses harmonic-mean interface permeabilities (standard for Darcy) and
+    homogeneous Dirichlet boundary conditions.
 
-    Parameters
-    ----------
-    u      : (N,)  current iterate / vector
-    kappa  : (N,)  permeability field (strictly positive)
-    grid_n : int
-    h      : float  grid spacing
+    Args:
+        u: Current iterate / vector, shape ``(N,)``.
+        kappa: Permeability field (strictly positive), shape ``(N,)``.
+        grid_n: Grid resolution (``grid_n x grid_n``, ``N = grid_n**2``).
+        h: Grid spacing.
 
-    Returns
-    -------
-    Au : (N,)
+    Returns:
+        jnp.ndarray: ``A(kappa) @ u``, shape ``(N,)``.
     """
     n = grid_n
     U = u.reshape(n, n)
@@ -274,9 +335,18 @@ def _cg_solve(
     tol: float = 1e-6,
     max_iter: int = 2000,
 ) -> jnp.ndarray:
-    """
-    Unpreconditioned Conjugate Gradient solver for  A x = b.
-    Uses `jax.lax.while_loop` so it is fully jit-compatible.
+    """Unpreconditioned Conjugate Gradient solver for ``A x = b``.
+
+    Uses ``jax.lax.while_loop`` so it is fully jit-compatible.
+
+    Args:
+        matvec: Function computing the matrix-vector product ``A @ v``.
+        b: Right-hand side, shape ``(N,)``.
+        tol: Relative residual tolerance.
+        max_iter: Maximum number of CG iterations.
+
+    Returns:
+        jnp.ndarray: Approximate solution ``x``, shape ``(N,)``.
     """
     N = b.shape[0]
     x0 = jnp.zeros(N)
@@ -308,19 +378,34 @@ def _cg_solve(
 # ---------------------------------------------------------------------------
 
 class GRFInput(VectorInput):
-    """
-    A log-normal Gaussian random field input, represented by a truncated KL
-    expansion of a squared-exponential covariance kernel on an (grid_dim x
-    grid_dim) grid over [0,1]^2. `.sample(key, n_points)` returns n_points
-    flattened field realisations as a single (n_points, grid_dim**2) array.
+    """A log-normal Gaussian random field input.
+
+    Represented by a truncated KL expansion of a squared-exponential
+    covariance kernel on an ``(grid_dim x grid_dim)`` grid over
+    ``[0, 1]^2``. ``.sample(key, n_points)`` returns ``n_points`` flattened
+    field realisations as a single ``(n_points, grid_dim**2)`` array.
 
     To couple samples across resolutions (e.g. for multifidelity Monte
-    Carlo), set `reference_grid_dim` to the SAME value -- along with
-    matching `length_scale`/`n_kl_terms` -- on every GRFInput that should
-    share the same underlying field. The same PRNGKey then yields the same
-    field, just discretised at each instance's own `grid_dim`. Leave it
-    unset for standalone use (each instance gets its own independent basis,
-    computed at its own grid_dim).
+    Carlo), set ``reference_grid_dim`` to the SAME value -- along with
+    matching ``length_scale``/``n_kl_terms`` -- on every ``GRFInput`` that
+    should share the same underlying field. The same PRNGKey then yields
+    the same field, just discretised at each instance's own ``grid_dim``.
+    Leave it unset for standalone use (each instance gets its own
+    independent basis, computed at its own ``grid_dim``).
+
+    Attributes:
+        grid_dim: Field grid resolution (``grid_dim x grid_dim``).
+        length_scale: Correlation length of the squared-exponential kernel.
+        n_kl_terms: Number of KL expansion terms retained.
+        grf_mean: Mean of the underlying (log-permeability) Gaussian random field.
+        grf_std: Standard deviation of the underlying Gaussian random field.
+        reference_grid_dim: Grid resolution the KL eigenbasis is computed on;
+            set the SAME value on multiple ``GRFInput``s (with matching
+            ``length_scale``/``n_kl_terms``) to couple their sampled fields
+            across resolutions. Defaults to ``grid_dim`` (no coupling).
+        minval: Unused for GRF inputs (inherited box-bound field).
+        maxval: Unused for GRF inputs (inherited box-bound field).
+        _scaled_eigvecs: KL eigenvectors pre-scaled by ``sqrt(eigenvalue)``.
     """
     grid_dim : int = Field(description = "field grid resolution (grid_dim x grid_dim)")
     length_scale : float = Field(default = 0.25, description = "correlation length of the squared-exponential kernel")
@@ -337,6 +422,7 @@ class GRFInput(VectorInput):
     _scaled_eigvecs : jax.Array | None = PrivateAttr(default = None)
 
     def model_post_init(self, __context):
+        """Compute the KL eigenbasis once and wire up ``sampling_func``."""
         # each flattened field realisation has grid_dim**2 entries
         self.dim = self.grid_dim ** 2
         if self.minval is None:
@@ -358,11 +444,26 @@ class GRFInput(VectorInput):
 
 
 class DarcyFlowEvaluator(Evaluator):
-    """
-    Solves 2-D Darcy flow, -div(kappa grad(u)) = f on [0,1]^2 with u|dOmega = 0,
-    for a given (flattened) permeability field kappa via cell-centred FD + CG.
-    `.evaluate(kappa_fields)` takes the (n_points, grid_dim**2) array returned
-    by a GRFInput's `.sample()` and returns the matching flow fields.
+    """Solves 2-D Darcy flow, ``-div(kappa grad(u)) = f`` on ``[0,1]^2`` with ``u|dOmega = 0``.
+
+    Solves for a given (flattened) permeability field ``kappa`` via
+    cell-centred FD + CG. ``.evaluate(kappa_fields)`` takes the
+    ``(n_points, grid_dim**2)`` array returned by a :class:`GRFInput`'s
+    ``.sample()`` and returns the matching flow fields.
+
+    Attributes:
+        grid_dim: Solver grid resolution (``grid_dim x grid_dim``).
+        source_term: A ``(3, 3)`` piecewise-constant source array, a path to
+            an image to use as a full-resolution source field, or ``None``
+            for a uniform unit source.
+        source_inflation: Scale factor applied to an image-derived source
+            field (only used when ``source_term`` is a path).
+        cg_tol: Relative residual tolerance for the CG solver.
+        cg_max_iter: Maximum CG iterations.
+        _f: The constructed source field.
+        _h: Grid spacing (``1 / grid_dim``).
+        _batched_solve: Jit-compiled, vmapped solve function built once in
+            ``model_post_init``.
     """
     model_config = ConfigDict(arbitrary_types_allowed = True)
 
@@ -377,6 +478,7 @@ class DarcyFlowEvaluator(Evaluator):
     _batched_solve : Callable | None = PrivateAttr(default = None)
 
     def model_post_init(self, __context):
+        """Build the source field and pre-compile the batched CG solve."""
         self.output_dim = self.grid_dim ** 2
 
         self._h = 1.0 / self.grid_dim
@@ -402,4 +504,13 @@ class DarcyFlowEvaluator(Evaluator):
         super().model_post_init(__context)
 
     def evaluate(self, *input_vals : list[jax.Array]) -> jax.Array:
+        """Solve the Darcy PDE for a batch of permeability fields.
+
+        Args:
+            *input_vals: A single array of permeability fields, shape
+                ``(n_points, grid_dim**2)``.
+
+        Returns:
+            jax.Array: Flow-field solutions, shape ``(n_points, grid_dim**2)``.
+        """
         return self._batched_solve(input_vals[0]).reshape(-1, self.output_dim)

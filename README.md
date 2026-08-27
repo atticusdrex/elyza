@@ -2,7 +2,8 @@
   <img src="./misc/elyza_logo.PNG" width="400" />
 </p>
 
-`elyza` is a [Jax](https://github.com/jax-ml/jax)-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, [Pydantic](https://docs.pydantic.dev/)-validated building blocks for defining simulation inputs and evaluators, fitting Gaussian process surrogates (including multifidelity/autoregressive models), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.
+<!-- summary-start -->
+`elyza` is a [Jax](https://github.com/jax-ml/jax)-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, [Pydantic](https://docs.pydantic.dev/)-validated building blocks for defining simulation inputs and evaluators, fitting surrogate models (Gaussian processes, neural networks, and closed-form linear regression, including a multifidelity/autoregressive Gaussian process), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.
 
 ## Installation
 
@@ -31,46 +32,58 @@ The library is organized into a few main packages under `src/elyza/`:
 - **`evaluator`**: The `Evaluator` class wraps a callable simulation or model (e.g. an expensive PDE solver or a cheap analytical approximation) together with its inputs, output dimension, and evaluation cost, and vectorizes evaluation over batches with `vmap`.
 
 ### `surrogate` — surrogate models
-- **`surrogate`**: `Surrogate`, the base interface (`fit`, `predict`, `sample`, `update`) that all surrogate models implement.
-- **`gp`**: A Gaussian process implementation (`GaussianProcess`, `DeltaGP`) with pluggable kernels (`RBF`, `ARD`, `Laplace` in `kernel.py`) and mean functions (`Zero`, `Constant`, `Linear` in `mean.py`), fit via gradient-based hyperparameter calibration.
+- **`abstract`**: `Surrogate`, the base interface (`fit`, `predict`, `sample`, `update`, `set_optimizer`) that every surrogate model implements, plus `SupervisedDataset`, a container for a model's training inputs/outputs.
+- **`gp`**: `GaussianProcess`, a Gaussian process regressor with pluggable kernels (`RBF`, `ARD`, `Laplace` in `kernel.py`) and mean functions (`Zero`, `Constant`, `Linear` in `mean.py`), fit via gradient-based hyperparameter calibration and supporting incremental (rank-update) fitting.
+- **`dnn`**: `MLPRegressor`, a feedforward neural network surrogate.
+- **`linear`**: `Ridge`, closed-form L2-regularized linear regression.
 
 ### `multifidelity` — combining models across fidelity levels
-- **`surrogate`**: Hierarchical surrogate models (e.g. `GPKennedyOHagan`) that fuse training data across multiple levels of fidelity.
+- **`surrogate`**: `HierarchicalSurrogate` and `MAGPI` (Multifidelity-Augmented GP Inputs), which fit a chain of level-specific surrogates where each level's features are augmented with the predictions of every lower-fidelity level.
 - **`montecarlo`**: A family of multifidelity Monte Carlo estimators built on top of `MultifidelityMonteCarlo`:
   - `HFMC` — plain high-fidelity-only Monte Carlo (baseline).
   - `MLMC` — multilevel Monte Carlo, telescoping sums across fidelity levels.
-  - `MFMC` — multifidelity Monte Carlo with optimal control-variate coefficients.
-  - `RMFMC` — recursive multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients.
+  - `MFMC` — multifidelity Monte Carlo with optimal per-level control-variate coefficients.
+  - `RMFMC` — regression-based multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.
 
   These estimators use pilot samples to estimate cross-fidelity covariances, then allocate sampling budgets across fidelity levels to minimize estimator variance for a fixed computational cost.
 
 ### `optim` — gradient-based optimizers
-- **`gradient`**: Lightweight `ADAM`, `BatchADAM`, and `BatchSGD` optimizers used internally to calibrate surrogate hyperparameters, and usable standalone.
+- **`abstract`**: `Optimizer`/`BatchGradientOptimizer`, the base interfaces used to calibrate surrogate hyperparameters.
+- **`adam`**: `ADAM`, a batched Adam optimizer built on `jax.lax.scan`.
+- **`lbfgs`**: `LBFGS`, a batched limited-memory BFGS optimizer with a two-loop recursion and Armijo backtracking line search.
 
 ### `benchmarks` — reference problems for testing/demos
-- **`multifidelity/magpi_analytical`**: Analytical multifidelity benchmark functions.
-- **`pde/darcy2d`**: A 2D Darcy flow benchmark (`DarcyFlowEvaluator`) that solves `-div(kappa * grad(u)) = f` on the unit square via finite differences and conjugate gradient, with permeability fields sampled from a Gaussian random field (`GRFInput`) via a KL expansion.
+- **`multifidelity/magpi_analytical`**: A cheap analytical three-fidelity benchmark (`hf_evaluator`, `mf_evaluator`, `lf_evaluator`) sharing a single scalar input.
+- **`pde/darcy2d`**: A 2D Darcy flow benchmark (`DarcyFlowEvaluator`) that solves `-div(kappa * grad(u)) = f` on the unit square via finite differences and conjugate gradient, with permeability fields sampled from a Gaussian random field (`GRFInput`) via a KL expansion — usable at different grid resolutions to form a fidelity hierarchy.
 
 ### `util` — shared helpers
-- **`helpers`**: Covariance/correlation utilities (`matrix_cov`, `matrix_corr`) and a regularized least-squares solver (`ls`).
-- **`preprocessing`**: `OrthonormalFeatures` for feature preprocessing.
-- **`imports`**: Centralized `numpy`/`jax`/`tqdm` imports used throughout the package.
+- **`imports`**: Centralized `numpy`/`jax`/`pydantic`/`tqdm` imports used throughout the package.
+- **`helpers`**: Covariance/correlation utilities (`matrix_cov`, `matrix_corr`), a regularized least-squares solver (`ls`), activation functions, and other small numerical helpers.
+- **`preprocessing`**: `StandardScaler`, `OrthonormalScaler`, `KernelFeatures`, and `PolynomialFeatures` for feature preprocessing.
+
+## Documentation
+
+Full API documentation (built with Sphinx from the docstrings in `src/`) lives under `docs/`, including a [surrogate modeling quickstart](docs/source/quickstart.rst). To build it locally:
+
+```bash
+pip install -e ".[docs]"
+sphinx-build -b html docs/source docs/build/html
+```
+
+Then open `docs/build/html/index.html`.
 
 ## Examples
 
-See `experiments/multifidelity/monte-carlo/` for end-to-end scripts demonstrating multifidelity Monte Carlo estimation, including:
-- `legendre_benchmark.py` — an analytical multifidelity benchmark.
-- `darcy_benchmark.py` — multifidelity estimation on the 2D Darcy flow PDE benchmark.
+See `experiments/` for end-to-end scripts demonstrating the library, including:
+- `multifidelity/monte-carlo/legendre_benchmark.py` — multifidelity Monte Carlo estimation on an analytical benchmark.
+- `multifidelity/monte-carlo/darcy_benchmark.py` — multifidelity Monte Carlo estimation on the 2D Darcy flow PDE benchmark.
+- `multifidelity/surrogate/magpi_analytical.py` — fitting a `MAGPI` hierarchical surrogate on the analytical benchmark.
+- `surrogate/gp_testing.py` and `surrogate/dnn_testing.py` — fitting `GaussianProcess` and `MLPRegressor` surrogates to a single-fidelity benchmark.
 
-## Testing
-
-Tests live under `tests/` and use `pytest`:
-
-```bash
-pip install -e ".[dev]"
-pytest
-```
+<!-- summary-end -->
 
 ## License
 
-`elyza` is licensed under the [BSD 3-Clause License](./LICENSE).
+`elyza` is licensed under the [BSD 3-Clause License](elyza/LICENSE).
+
+

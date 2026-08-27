@@ -1,15 +1,42 @@
+"""Batched limited-memory BFGS (L-BFGS) optimizer built on ``jax.lax.scan``.
+
+Defines :class:`LBFGSOptions` and :class:`LBFGS`, a
+:class:`~elyza.optim.abstract.BatchGradientOptimizer` implementation of
+quasi-Newton optimization with a two-loop recursion over a fixed-size
+curvature-pair history and an Armijo backtracking line search, all
+compiled into a single ``lax.scan`` step.
+"""
 # imports
 from elyza.optim.abstract import OptimizerOptions, BatchGradientOptimizer, fill_pytree_spec
 from elyza.util.imports import *
 from jax.tree_util import tree_map, tree_leaves
 from jax import lax
 
-'''
-LBFGSOptions
-------------
-the options which parameterize an L-BFGS optimizer
-'''
 class LBFGSOptions(OptimizerOptions):
+    """Options which parameterize an L-BFGS optimizer.
+
+    Attributes:
+        p_init: Initial dictionary (pytree) of parameters.
+        lr: Initial step size scale for the backtracking line search.
+        epochs: Number of times we pass through the training data.
+        batch_size: Number of training datapoints in a specific loss
+            function evaluation.
+        m: Number of ``(s, y)`` curvature pairs retained for the two-loop
+            recursion.
+        max_backtracks: Maximum number of step-halving attempts in the
+            backtracking line search.
+        active_params: A dictionary of the active parameters to optimize.
+        constraints: A dictionary of constraints mapping from
+            parameter to constraint function.
+        verbose: Whether or not to print the results of the optimizer.
+        eps: Small positive number to prevent division by zero.
+        random_state: Random seed for replication.
+        unroll: Whether or not to unroll the ``jax.lax.scan`` operation
+            (``unroll=True``: long compilation times, faster execution
+            times, high memory; ``unroll=k``: unroll in size-``k`` blocks;
+            ``unroll=False``: short compile times, slower execution times,
+            lower memory).
+    """
     p_init : dict | jax.Array | None = Field(default = None, description = "initial dictionary of parameters")
     lr : float = Field(default = 1.0, description = "initial step size scale for the backtracking line search")
     epochs : int = Field(default = 1, description = "number of times we pass through the training data")
@@ -24,6 +51,13 @@ class LBFGSOptions(OptimizerOptions):
     unroll : int | bool = Field(default = False, description = "whether or not to unroll the jax.lax.scan operation (unroll=True: long compilation times, faster execution times, high memory, unroll = k: unroll for set size-k blocks of k loop steps, unroll = False: short compile times, slower execution times, lower memory)")
 
     def model_post_init(self, __context):
+        """Validate that the option values are internally consistent.
+
+        Raises:
+            AssertionError: If ``p_init``, ``lr``, ``epochs``,
+                ``batch_size``, ``m``, or ``max_backtracks`` hold invalid
+                values.
+        """
         assert self.p_init is not None, "must give initial parameter guess"
         assert self.lr > 0, "learning rate cannot be negative"
         assert self.epochs >= 1, "need at least one epoch"
@@ -32,22 +66,42 @@ class LBFGSOptions(OptimizerOptions):
         assert self.max_backtracks >= 1, "must allow at least one backtracking attempt"
 
 
-'''
-Batch LBFGS optimizer
-----------------------
-class for running quasi-Newton (L-BFGS) optimization scripts in batches
-'''
 class LBFGS(BatchGradientOptimizer):
+    """Batch L-BFGS optimizer for running quasi-Newton optimization scripts in batches.
+
+    Attributes:
+        opts: Options for the optimizer.
+    """
     opts : LBFGSOptions | None = Field(default = None, description = "options for the optimizer")
 
     def model_post_init(self, __context):
+        """Validate that valid options have been supplied.
+
+        Raises:
+            AssertionError: If ``opts`` is ``None``.
+        """
         super().model_post_init(__context)
         assert self.opts is not None, "you must pass a valid instance of LBFGSOptions()"
 
-    '''
-    everything needed to parameterize the estimator must already be in the self.opts variable. the *args is purely just to pass into the loss functions after p
-    '''
     def run(self, *data : list[jax.Array]):
+        """Run L-BFGS over the given data for ``opts.epochs`` epochs.
+
+        Everything needed to parameterize the estimator must already be in
+        ``self.opts``. The ``*data`` is purely passed through to
+        ``loss_grad_fn`` after the parameter pytree.
+
+        Args:
+            *data: Training arrays (e.g. ``X, Y``) sharing a leading sample
+                dimension, batched internally according to
+                ``opts.batch_size``.
+
+        Returns:
+            The optimized parameter pytree, with the same structure as
+            ``opts.p_init``.
+
+        Raises:
+            AssertionError: If ``loss_grad_fn`` has not been set.
+        """
         # asserting the loss function has been set
         assert self.loss_grad_fn is not None, "you must specify a loss function"
 
@@ -103,16 +157,30 @@ class LBFGS(BatchGradientOptimizer):
 
         return deepcopy(unravel_fn(carry['p_flat']))
 
-'''
-Standard L-BFGS two-loop recursion (Nocedal & Wright, Algorithm 7.4) approximating
--H_k @ grad_flat from the last `m` (s, y) curvature pairs, without ever forming the
-(inverse) Hessian explicitly. Operates on fixed-size (m, n) buffers so the whole step
-can be compiled into a single XLA program via lax.scan. Slot i holds a real pair iff
-rho_buf[i] != 0; empty/invalid slots contribute exactly zero (alpha=0, beta=0), so no
-separate validity mask is needed. Index -1 is always the most recently added pair
-(see _lbfgs_update_history).
-'''
 def _lbfgs_two_loop_recursion(grad_flat, s_buf, y_buf, rho_buf, eps):
+    """Approximate the L-BFGS descent direction ``-H_k @ grad_flat``.
+
+    Standard L-BFGS two-loop recursion (Nocedal & Wright, Algorithm 7.4)
+    approximating ``-H_k @ grad_flat`` from the last ``m`` ``(s, y)``
+    curvature pairs, without ever forming the (inverse) Hessian explicitly.
+    Operates on fixed-size ``(m, n)`` buffers so the whole step can be
+    compiled into a single XLA program via ``lax.scan``. Slot ``i`` holds a
+    real pair iff ``rho_buf[i] != 0``; empty/invalid slots contribute
+    exactly zero (``alpha=0``, ``beta=0``), so no separate validity mask is
+    needed. Index ``-1`` is always the most recently added pair (see
+    :func:`_lbfgs_update_history`).
+
+    Args:
+        grad_flat: Flattened gradient at the current point, shape ``(n,)``.
+        s_buf: Buffer of parameter-step vectors, shape ``(m, n)``.
+        y_buf: Buffer of gradient-difference vectors, shape ``(m, n)``.
+        rho_buf: Buffer of ``1 / (s^T y)`` values, shape ``(m,)``; a zero
+            entry marks an empty/invalid slot.
+        eps: Small positive number to prevent division by zero.
+
+    Returns:
+        jax.Array: The approximate descent direction, shape ``(n,)``.
+    """
     m = s_buf.shape[0]
 
     def backward(i, carry):
@@ -144,13 +212,25 @@ def _lbfgs_two_loop_recursion(grad_flat, s_buf, y_buf, rho_buf, eps):
 
     return -r
 
-'''
-the function for folding a new curvature pair into the fixed-size L-BFGS history
-buffers, shifting out the oldest pair and appending (s_k, y_k) at the end -- unless
-the curvature condition s^T y > eps is violated, in which case the buffers are left
-completely untouched
-'''
 def _lbfgs_update_history(s_buf, y_buf, rho_buf, s_k, y_k, eps):
+    """Fold a new curvature pair into the fixed-size L-BFGS history buffers.
+
+    Shifts out the oldest pair and appends ``(s_k, y_k)`` at the end --
+    unless the curvature condition ``s^T y > eps`` is violated, in which
+    case the buffers are left completely untouched.
+
+    Args:
+        s_buf: Buffer of parameter-step vectors, shape ``(m, n)``.
+        y_buf: Buffer of gradient-difference vectors, shape ``(m, n)``.
+        rho_buf: Buffer of ``1 / (s^T y)`` values, shape ``(m,)``.
+        s_k: The newest parameter-step vector, shape ``(n,)``.
+        y_k: The newest gradient-difference vector, shape ``(n,)``.
+        eps: Curvature-condition threshold and division-by-zero guard.
+
+    Returns:
+        tuple[jax.Array, jax.Array, jax.Array]: The updated
+        ``(s_buf, y_buf, rho_buf)``.
+    """
     sy = jnp.dot(s_k, y_k)
     curvature_ok = sy > eps
 
@@ -165,13 +245,37 @@ def _lbfgs_update_history(s_buf, y_buf, rho_buf, s_k, y_k, eps):
 
     return s_buf, y_buf, rho_buf
 
-'''
-the function for performing parameter updates on a single batch: forms the L-BFGS
-search direction from the current curvature history, backtracks along it (Armijo
-sufficient-decrease line search) until a step is accepted, and folds the accepted
-step into the curvature-pair history for the next call
-'''
 def _batch_lbfgs_scan(carry, batch, loss_grad_fn : Callable, unravel_fn : Callable, mask_flat : jax.Array, lr:float, max_backtracks:int, eps:float, constraints:dict):
+    """Perform one L-BFGS parameter update over a single batch, for use in ``lax.scan``.
+
+    Forms the L-BFGS search direction from the current curvature history,
+    backtracks along it (Armijo sufficient-decrease line search) until a
+    step is accepted, and folds the accepted step into the curvature-pair
+    history for the next call.
+
+    Args:
+        carry: Scan carry dict with keys ``p_flat`` (flattened parameters),
+            ``s_buf``, ``y_buf``, ``rho_buf`` (curvature history), and
+            ``loss``.
+        batch: A tuple ``(Xbatch, Ybatch)`` for this scan step.
+        loss_grad_fn: Function returning ``(loss, grad)`` for the current
+            (unraveled) parameters and batch.
+        unravel_fn: Function that reshapes a flat parameter vector back into
+            the parameter pytree.
+        mask_flat: Flattened active-parameter mask, shape matching
+            ``p_flat``; zero entries are frozen.
+        lr: Initial step size scale for the backtracking line search.
+        max_backtracks: Maximum number of step-halving attempts.
+        eps: Small positive number used for curvature and division-by-zero
+            guards.
+        constraints: Pytree of constraint functions, matching the parameter
+            pytree, applied after each trial step.
+
+    Returns:
+        tuple: ``(carry, loss)`` -- the updated carry dict and this batch's
+        (possibly unchanged, if no step was accepted) loss, as required by
+        ``lax.scan``.
+    """
     # extract batches
     Xbatch, Ybatch = batch
 

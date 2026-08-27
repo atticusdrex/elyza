@@ -1,14 +1,44 @@
-from elyza.util.imports import * 
+"""Standalone numerical helper functions used throughout ``elyza``.
 
-# helper function for computing covariances
-def matrix_cov(Y1:jax.Array, Y2:jax.Array):
+Includes covariance/correlation utilities, a robust least-squares wrapper,
+shape-normalization helpers, a Gaussian KL-divergence, greedy inducing-point
+selection, elementwise activation functions and their inverses, and a
+vectorized kernel-matrix evaluator.
+"""
+from elyza.util.imports import *
+
+
+def matrix_cov(Y1: jax.Array, Y2: jax.Array):
+    """Compute the cross-covariance matrix between two column-aligned datasets.
+
+    Args:
+        Y1: Array of shape ``(n_samples, d1)``.
+        Y2: Array of shape ``(n_samples, d2)``.
+
+    Returns:
+        jax.Array: Covariance matrix of shape ``(d1, d2)``.
+
+    Raises:
+        AssertionError: If ``Y1`` and ``Y2`` do not have the same number of samples.
+    """
     assert Y1.shape[0] == Y2.shape[0], "Y1 and Y2 must contain the same number of samples"
-    Y1c = Y1 - Y1.mean(axis=0).reshape(1,-1) 
-    Y2c = Y2 - Y2.mean(axis=0).reshape(1,-1) 
+    Y1c = Y1 - Y1.mean(axis=0).reshape(1,-1)
+    Y2c = Y2 - Y2.mean(axis=0).reshape(1,-1)
     return Y1c.T @ Y2c / (Y1c.shape[0]-1)
 
-# function for computing correlations 
 def matrix_corr(Y1: jax.Array, Y2: jax.Array):
+    """Compute the cross-correlation matrix between two column-aligned datasets.
+
+    Args:
+        Y1: Array of shape ``(n_samples, d1)``.
+        Y2: Array of shape ``(n_samples, d2)``.
+
+    Returns:
+        jax.Array: Correlation matrix of shape ``(d1, d2)``, with entries in ``[-1, 1]``.
+
+    Raises:
+        AssertionError: If ``Y1`` and ``Y2`` do not have the same number of samples.
+    """
     assert Y1.shape[0] == Y2.shape[0], "Y1 and Y2 must contain the same number of samples"
     Y1c = Y1 - Y1.mean(axis=0).reshape(1, -1)
     Y2c = Y2 - Y2.mean(axis=0).reshape(1, -1)
@@ -17,27 +47,55 @@ def matrix_corr(Y1: jax.Array, Y2: jax.Array):
     std2 = jnp.sqrt(jnp.sum(Y2c**2, axis=0) / (Y2c.shape[0] - 1))
     return cov / (std1.reshape(-1, 1) @ std2.reshape(1, -1))
 
-# Defining a better least-squares function 
 def ls(A, B, rcond=None):
+    """Solve the linear least-squares problem ``min ||A @ X - B||``.
+
+    Thin wrapper around :func:`jax.numpy.linalg.lstsq` that returns only the
+    solution array (not residuals, rank, or singular values).
+
+    Args:
+        A: Coefficient matrix of shape ``(m, n)``.
+        B: Right-hand side of shape ``(m, k)`` or ``(m,)``.
+        rcond: Relative condition number used to truncate small singular
+            values; forwarded to ``jnp.linalg.lstsq``.
+
+    Returns:
+        jax.Array: Least-squares solution ``X`` of shape ``(n, k)`` or ``(n,)``.
+    """
     return jnp.linalg.lstsq(A,B, rcond=rcond)[0]
 
-# ensures that X is a 2d array better than numpy's stupid built-in function
 def ensure_2d(X):
-    if len(X.shape) == 0: 
-        return X.reshape(1,1) 
-    elif len(X.shape) == 1: 
-        return X.reshape(-1,1) 
-    else: 
+    """Reshape an array to be at least 2-dimensional.
+
+    Scalars become shape ``(1, 1)`` and 1-d arrays become column vectors of
+    shape ``(-1, 1)``; arrays that are already 2-d (or higher) pass through
+    unchanged.
+
+    Args:
+        X: Input array of any rank.
+
+    Returns:
+        jax.Array: ``X`` with rank at least 2.
+    """
+    if len(X.shape) == 0:
+        return X.reshape(1,1)
+    elif len(X.shape) == 1:
+        return X.reshape(-1,1)
+    else:
         return X
 
 
-# Special KL-divergence function for two Gaussians distributions
 def KL_div(mu_q, L_q, mu_p, L_p):
     """KL divergence KL(q || p) for Gaussians parameterized by Cholesky factors.
 
-    Arguments:
-      mu_q, L_q : mean and lower-triangular Cholesky factor for q
-      mu_p, L_p : mean and lower-triangular Cholesky factor for p
+    Args:
+        mu_q: Mean vector of ``q``, shape ``(k,)``.
+        L_q: Lower-triangular Cholesky factor of ``q``'s covariance, shape ``(k, k)``.
+        mu_p: Mean vector of ``p``, shape ``(k,)``.
+        L_p: Lower-triangular Cholesky factor of ``p``'s covariance, shape ``(k, k)``.
+
+    Returns:
+        jax.Array: Scalar KL divergence KL(q || p).
     """
     k = mu_q.shape[0]
 
@@ -61,11 +119,22 @@ def KL_div(mu_q, L_q, mu_p, L_p):
 
     return 0.5 * (Tr_q + mean_term - k + logdet_ratio)
 
-# Function for greedily choosing the number of inducing inputs 
 def greedy_k_center(X, k, seed=42):
     """Greedy k-centers selection of inducing inputs.
 
-    Returns a tuple (selected_points, selected_indices).
+    Starting from a random point, repeatedly selects the point farthest
+    (in Euclidean distance) from the already-selected set, giving a set of
+    ``k`` points that spreads coverage over ``X``.
+
+    Args:
+        X: Candidate points, shape ``(n_points, n_features)``.
+        k: Number of centers to select.
+        seed: Seed for the initial random point.
+
+    Returns:
+        tuple: ``(selected_points, selected_indices)`` where
+        ``selected_points`` has shape ``(k, n_features)`` and
+        ``selected_indices`` is the list of row indices into ``X``.
     """
     np.random.seed(seed)
     N = X.shape[0]
@@ -84,25 +153,64 @@ def greedy_k_center(X, k, seed=42):
     return X[np.array(selected_indices)], selected_indices
 
 def sigmoid(x):
-    """Sigmoid activation elementwise: 1 / (1 + exp(-x))."""
+    """Sigmoid activation elementwise: ``1 / (1 + exp(-x))``.
+
+    Args:
+        x: Input array.
+
+    Returns:
+        jax.Array: Elementwise sigmoid of ``x``.
+    """
     return 1.0 / (1.0 + jnp.exp(-x))
 
 def inv_sigmoid(y):
-    """Inverse sigmoid (logit): maps (0,1) -> R."""
+    """Inverse sigmoid (logit): maps ``(0, 1)`` back to the real line.
+
+    Args:
+        y: Input array with values in ``(0, 1)``.
+
+    Returns:
+        jax.Array: Elementwise logit of ``y``.
+    """
     return jnp.log(y/(1-y))
 
 def softplus(x):
-    """Softplus activation: log(1 + exp(x))."""
+    """Softplus activation: ``log(1 + exp(x))``.
+
+    Commonly used to map an unconstrained parameter to a strictly positive
+    value.
+
+    Args:
+        x: Input array.
+
+    Returns:
+        jax.Array: Elementwise softplus of ``x``.
+    """
     return jnp.log(1.0 + jnp.exp(x))
 
 def inv_softplus(y):
-    """Inverse softplus: maps positive values back to unconstrained space."""
+    """Inverse softplus: maps positive values back to unconstrained space.
+
+    Args:
+        y: Input array with strictly positive values.
+
+    Returns:
+        jax.Array: Elementwise inverse softplus of ``y``.
+    """
     return jnp.log(jnp.exp(y) - 1.0)
 
 def kernel_mat(X1, X2, kernel, kernel_params):
     """Compute the full kernel matrix between two point sets.
 
-    Returns an array with shape (len(X1), len(X2)) where each entry is
-    kernel.eval(x,y,kernel_params).
+    Args:
+        X1: First set of points, shape ``(n1, input_dim)``.
+        X2: Second set of points, shape ``(n2, input_dim)``.
+        kernel: A kernel object exposing ``eval(x, y, kernel_params)`` for a
+            single pair of points.
+        kernel_params: Parameter array passed through to ``kernel.eval``.
+
+    Returns:
+        jax.Array: Kernel matrix of shape ``(n1, n2)`` where entry ``(i, j)``
+        is ``kernel.eval(X1[i], X2[j], kernel_params)``.
     """
     return vmap(lambda x: vmap(lambda y: kernel.eval(x, y, kernel_params))(X2))(X1)
