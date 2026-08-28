@@ -437,9 +437,9 @@
 
 
 
-<div class="viewcode-block" id="KL_div">
-<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.KL_div">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">KL_div</span><span class="p">(</span><span class="n">mu_q</span><span class="p">,</span> <span class="n">L_q</span><span class="p">,</span> <span class="n">mu_p</span><span class="p">,</span> <span class="n">L_p</span><span class="p">):</span>
+<div class="viewcode-block" id="cholesky_KL_div">
+<a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.cholesky_KL_div">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cholesky_KL_div</span><span class="p">(</span><span class="n">mu_q</span><span class="p">,</span> <span class="n">L_q</span><span class="p">,</span> <span class="n">mu_p</span><span class="p">,</span> <span class="n">L_p</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""KL divergence KL(q || p) for Gaussians parameterized by Cholesky factors.</span>
 
 <span class="sd">    Args:</span>
@@ -451,16 +451,10 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        jax.Array: Scalar KL divergence KL(q || p).</span>
 <span class="sd">    """</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="n">mu_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="c1"># Covariance matrices</span>
-    <span class="n">Sigma_q</span> <span class="o">=</span> <span class="n">L_q</span> <span class="o">@</span> <span class="n">L_q</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">Sigma_p</span> <span class="o">=</span> <span class="n">L_p</span> <span class="o">@</span> <span class="n">L_p</span><span class="o">.</span><span class="n">T</span>
 
     <span class="c1"># Trace term: tr(Sigma_p^{-1} Sigma_q)</span>
     <span class="c1"># Solve instead of explicitly inverting</span>
-    <span class="n">Sigma_p_inv</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_p</span><span class="p">)</span>
-    <span class="n">Tr_q</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">Sigma_p_inv</span> <span class="o">@</span> <span class="n">Sigma_q</span><span class="p">)</span>
+    <span class="n">Tr_q</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">cho_solve</span><span class="p">((</span><span class="n">L_p</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="n">L_q</span> <span class="o">@</span> <span class="n">L_q</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
 
     <span class="c1"># Mean term: (mu_p - mu_q)^T Sigma_p^{-1} (mu_p - mu_q)</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">mu_q</span> <span class="o">-</span> <span class="n">mu_p</span>
@@ -471,7 +465,7 @@
     <span class="n">logdet_p</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L_p</span><span class="p">)))</span>
     <span class="n">logdet_ratio</span> <span class="o">=</span> <span class="n">logdet_p</span> <span class="o">-</span> <span class="n">logdet_q</span>
 
-    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">Tr_q</span> <span class="o">+</span> <span class="n">mean_term</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="n">logdet_ratio</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">Tr_q</span> <span class="o">+</span> <span class="n">mean_term</span> <span class="o">-</span> <span class="n">mu_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">logdet_ratio</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="greedy_k_center">
@@ -495,18 +489,18 @@
 <span class="sd">    """</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">selected_indices</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="p">,))</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">minval</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxval</span> <span class="o">=</span> <span class="n">N</span><span class="p">))</span>
     <span class="n">selected_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="n">distances</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">distances</span><span class="p">))</span>
         <span class="n">selected_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="n">new_distances</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">distances</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">new_distances</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)],</span> <span class="n">selected_indices</span></div>
+    <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)],</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="sigmoid">

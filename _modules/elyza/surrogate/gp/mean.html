@@ -380,7 +380,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Always ``0.0``.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="mf">0.0</span></div>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span></div>
 </div>
 
 
@@ -406,7 +406,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The constant value ``params[0]``.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span></div>
 </div>
 
 

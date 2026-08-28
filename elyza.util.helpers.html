@@ -388,7 +388,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.KL_div"><code class="docutils literal notranslate"><span class="pre">KL_div()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.cholesky_KL_div"><code class="docutils literal notranslate"><span class="pre">cholesky_KL_div()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.ensure_2d"><code class="docutils literal notranslate"><span class="pre">ensure_2d()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.greedy_k_center"><code class="docutils literal notranslate"><span class="pre">greedy_k_center()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.inv_sigmoid"><code class="docutils literal notranslate"><span class="pre">inv_sigmoid()</span></code></a></li>
@@ -418,8 +418,8 @@ shape-normalization helpers, a Gaussian KL-divergence, greedy inducing-point
 selection, elementwise activation functions and their inverses, and a
 vectorized kernel-matrix evaluator.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="elyza.util.helpers.KL_div">
-<span class="sig-prename descclassname"><span class="pre">elyza.util.helpers.</span></span><span class="sig-name descname"><span class="pre">KL_div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/util/helpers.html#KL_div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.util.helpers.KL_div" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.util.helpers.cholesky_KL_div">
+<span class="sig-prename descclassname"><span class="pre">elyza.util.helpers.</span></span><span class="sig-name descname"><span class="pre">cholesky_KL_div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/util/helpers.html#cholesky_KL_div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.util.helpers.cholesky_KL_div" title="Link to this definition">#</a></dt>
 <dd><p>KL divergence KL(q || p) for Gaussians parameterized by Cholesky factors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -698,7 +698,7 @@ value.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.KL_div"><code class="docutils literal notranslate"><span class="pre">KL_div()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.cholesky_KL_div"><code class="docutils literal notranslate"><span class="pre">cholesky_KL_div()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.ensure_2d"><code class="docutils literal notranslate"><span class="pre">ensure_2d()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.greedy_k_center"><code class="docutils literal notranslate"><span class="pre">greedy_k_center()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.util.helpers.inv_sigmoid"><code class="docutils literal notranslate"><span class="pre">inv_sigmoid()</span></code></a></li>
