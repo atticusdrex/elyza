@@ -33,7 +33,7 @@ class Zero(BaseMean):
         Returns:
             float: Always ``0.0``.
         """
-        return 0.0
+        return jnp.zeros(shape = (x.shape[0], 1))
 
 class Constant(BaseMean):
     """A constant mean function."""
@@ -53,7 +53,7 @@ class Constant(BaseMean):
         Returns:
             The constant value ``params[0]``.
         """
-        return params[0]
+        return params[0] * jnp.ones(shape = (x.shape[0],1))
 
 class Linear(BaseMean):
     """A linear mean function."""

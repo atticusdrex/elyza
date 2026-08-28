@@ -3,40 +3,15 @@ from elyza.surrogate import Surrogate
 from elyza.surrogate.gp.kernel import BaseKernel 
 from elyza.surrogate.gp.mean import BaseMean 
 from elyza.optim.abstract import BatchGradientOptimizer, OptimizerOptions
-from elyza.util.helpers import ensure_2d, ls, softplus, inv_softplus, kernel_mat
+from elyza.util.helpers import ensure_2d, ls, softplus, inv_softplus, kernel_mat, greedy_k_center, cholesky_KL_div
 from jax.scipy.linalg import solve_triangular, cho_solve, cholesky
 
-class GaussianProcess(Surrogate):
-    """Gaussian Process regression with a pluggable kernel and mean function.
-
-    Attributes:
-        input_dim: Input dimension.
-        kernel_cls: Kernel class.
-        mean_cls: Mean class.
-        calibrate_noise: Whether or not to calibrate the noise variance to
-            reduce the condition number of the kernel matrix.
-        noise_var: Variance of Gaussian white noise in the model outputs.
-        eps: Small positive jitter value to avoid singular kernel matrices
-            and divide-by-zero errors.
-        max_cond: Maximum condition number for kernel matrices.
-        verbose: Whether or not to print the training and calibration progress.
-        p: Model parameters (``kernel``, ``mean``, ``noise``); auto-initialized
-            if not given.
-        _kernel: Instantiated kernel object built from ``kernel_cls``.
-        _mean: Instantiated mean object built from ``mean_cls``.
-        _X: Stored (scaled) training inputs.
-        _Y: Stored training outputs.
-        _X_mean: Per-dimension input mean used for input standardization.
-        _X_std: Per-dimension input scale used for input standardization.
-        _calibrated: Whether the model has completed at least one fit/calibration.
-        _optimizer: The optimizer instance assigned via :meth:`set_optimizer`.
-        _L: Lower-triangular Cholesky factor of the training kernel matrix.
-        _alpha: Cached solve ``K^-1 (Y - mean(X))`` used by :meth:`predict`.
-    """
+class SparseGP(Surrogate):
     # public fields
     input_dim: int = Field(description = "input dimension")
     kernel_cls: type[BaseKernel] = Field(description = "kernel class")
     mean_cls: type[BaseMean] = Field(description = "mean class")
+    n_inducing_points : int = Field(description = "number of inducing points")
     calibrate_noise: bool = Field(default = False, description = "whether or not to calibrate the noise variance to reduce the condition number of the kernel matrix")
     noise_var: float = Field(default = 0.0, description = "variance of Gaussian white noise in the model outputs")
     eps: float = Field(default = 1e-12, description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
@@ -54,8 +29,6 @@ class GaussianProcess(Surrogate):
     _calibrated: bool = PrivateAttr(default=False)
     _optimizer: object | None = PrivateAttr(default=None)
     _L: jax.Array | None = PrivateAttr(default=None)
-    _alpha: jax.Array | None = PrivateAttr(default=None)
-
     # post-init class to run once the base variables are run
     def model_post_init(self, __context):
         """Instantiate the kernel/mean objects and the initial (all-ones) parameters."""
@@ -73,7 +46,10 @@ class GaussianProcess(Surrogate):
         self.p = {
             'kernel': jnp.ones(self._kernel.p_dim),
             'mean': jnp.ones(self._mean.p_dim),
-            'noise': inv_softplus(self.noise_var + self.eps)
+            'noise': inv_softplus(self.noise_var + self.eps),
+            'inducing':None, 
+            'q_mu':None, 
+            'q_L':None 
         }
 
     def _scale(self, X: jax.Array) -> jax.Array:
@@ -156,8 +132,7 @@ class GaussianProcess(Surrogate):
         self._calibrated = True
 
         # store L value for the predict() function
-        self._L = self._get_L(X, self.p['kernel'], self.p['noise'])
-        self._alpha = self._get_alpha(self._L, self.p['mean'])
+        self._L = self._get_L(self.p['inducing'], self.p['kernel'], self.p['noise'])
 
     def _calibrate_noise(self, max_cond=1e5) -> None:
         """Increase white noise variance to lower the kernel condition number.
@@ -166,7 +141,7 @@ class GaussianProcess(Surrogate):
             max_cond: Maximum allowed condition number of the training
                 kernel matrix.
         """
-        L = self._get_L(self._X, self.p['kernel'], self.p['noise'])
+        L = self._get_L(self.p['inducing'], self.p['kernel'], self.p['noise'])
         Kmat = L @ L.T
         cond_num = jnp.linalg.cond(Kmat)
         lambda_max = jnp.linalg.matrix_norm(Kmat)
@@ -191,20 +166,7 @@ class GaussianProcess(Surrogate):
         Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
         return cholesky(Ktrain, lower=True)
 
-    def _get_alpha(self, L, m_param) -> jax.Array:
-        """Solve for ``alpha = K^-1 (Y - m(X))`` using a Cholesky solve.
-
-        Args:
-            L: Lower-triangular Cholesky factor of the training kernel matrix.
-            m_param: Mean-function parameter array.
-
-        Returns:
-            jax.Array: Solved ``alpha``, shape matching ``self._Y``.
-        """
-        mean = ensure_2d(jnp.asarray(self._mean.eval(self._X, m_param)))
-        return cho_solve((L, True), self._Y - mean)
-
-    def predict(self, X, full_cov=False) -> tuple[jax.Array]:
+    def predict(self, X, key = jrand.PRNGKey(42), n_samples : int = 100) -> tuple[jax.Array]:
         """Compute the posterior mean and covariance at new points.
 
         Args:
@@ -218,19 +180,18 @@ class GaussianProcess(Surrogate):
             matrix, shape ``(n_samples, n_samples)``, or the marginal
             variances, shape ``(n_samples,)``.
         """
-        X = self._scale(jnp.array(X))
-        Ktest = kernel_mat(X, self._X, self._kernel, self.p['kernel'])
-        mean = ensure_2d(jnp.asarray(self._mean.eval(X, self.p['mean'])))
-        mu = (Ktest @ self._alpha + mean).ravel()
+        ysamp = self._samp(key, self._scale(jnp.array(X)), n_samples, self.p)
+        return ysamp.mean(axis=1), ysamp.std(axis=1)**2
 
-        if full_cov:
-            cov = kernel_mat(X, X, self._kernel, self.p['kernel']) - Ktest @ cho_solve((self._L, True), Ktest.T)
-            return mu, cov
-        else:
-            Kaux = (jax.vmap(lambda x: self._kernel.eval(x, x, self.p['kernel']))(X)).ravel()
-            alpha = cho_solve((self._L, True), Ktest.T)
-            cov_diag = Kaux - jnp.sum(Ktest * alpha.T, axis=1)
-            return mu, cov_diag
+    def _samp(self, key, X, n_samples, p):
+        # Getting cholesky factors and solve linear system
+        p_mu = self._mean.eval(p['inducing'], p['mean'])
+
+        L = self._get_L(p['inducing'], p['kernel'], p['noise'])
+        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + p['q_L'] @ jrand.normal(key,shape=(self.n_inducing_points, n_samples))
+        alpha_sample = cho_solve((L, True), q_sample) 
+        k_train = kernel_mat(X, p['inducing'], self._kernel, p['kernel']) 
+        return self._mean.eval(X, p['mean']).reshape(-1,1) + k_train @ alpha_sample
 
     def sample(self, key, X, n_samples: int = 1) -> jax.Array:
         """Draw samples from the GP posterior at ``X``.
@@ -252,12 +213,10 @@ class GaussianProcess(Surrogate):
         Returns:
             jax.Array: Samples, shape ``(n_samples_X, n_samples)``.
         """
-        mu, var = self.predict(X, full_cov=False)
-        std = jnp.sqrt(var + self.eps)
-        z = jrand.normal(key, shape=(mu.shape[0], n_samples), dtype=mu.dtype)
-        return mu.reshape(-1, 1) + std.reshape(-1, 1) * z
+        return self._samp(key, X, n_samples, self.p) 
 
-    def _objective(self, p, X, Y) -> float:
+
+    def _objective(self,key, X, Y, p, n_mc = 25) -> float:
         """Compute the negative log-marginal-likelihood training objective.
 
         Args:
@@ -269,15 +228,25 @@ class GaussianProcess(Surrogate):
             float: Sum of the quadratic term and log-determinant term of the
             negative log-marginal-likelihood (constant terms omitted).
         """
-        # Getting cholesky factors and solve linear system
-        L = self._get_L(X, p['kernel'], p['noise'])
-        mean = ensure_2d(jnp.asarray(self._mean.eval(X, p['mean'])))
-        Ytilde = ensure_2d(Y) - mean
-        quad_term = jnp.sum(Ytilde * cho_solve((L, True), Ytilde))
-        logdet_term = 2.0 * jnp.sum(jnp.log(jnp.diag(L)))
+        p_L = self._get_L(p['inducing'], p['kernel'], p['noise'])
+        p_mu = self._mean.eval(p['inducing'], p['mean'])
+        q_L = p['q_L']
+        L = self._get_L(p['inducing'], p['kernel'], p['noise'])
+        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + q_L @ jrand.normal(key,shape=(self.n_inducing_points, n_mc))
+        alpha_sample = cho_solve((L, True), q_sample) 
+        k_train = kernel_mat(X, p['inducing'], self._kernel, p['kernel']) 
+        yhat_samp = self._mean.eval(X, p['mean']).reshape(-1,1) + k_train @ alpha_sample
+        mean_error = ((yhat_samp - Y)**2).mean(axis=1)
 
-        # Return quadratic and log-determinant components
-        return quad_term + logdet_term
+        # compute log-likelihood term 
+        N = self._X.shape[0]
+        n_batch = mean_error.shape[0]
+        log_likelihood = (N / n_batch) * 0.5 * (n_batch * jnp.log(2 * jnp.pi * (softplus(p['noise']) + self.eps)) + jnp.inner(mean_error, mean_error) / (self.eps + softplus(p['noise'])))
+
+
+        # computingthe kl-divergence between the variational distribution and the prior
+        kl_term = cholesky_KL_div(p['q_mu'], q_L, p_mu.ravel(),p_L)                                                                                                    
+        return log_likelihood + kl_term 
 
     def set_optimizer(self, optimizer : BatchGradientOptimizer, optimizer_opts : OptimizerOptions):
         """Assign the optimizer (and its options) used by :meth:`fit`.
@@ -293,6 +262,8 @@ class GaussianProcess(Surrogate):
         self,
         X: np.ndarray | jax.Array,
         Y: np.ndarray | jax.Array,
+        n_monte_carlo : int = 25, 
+        random_state : int = 42 
     ):
         """Fit kernel/mean/noise hyperparameters to training data.
 
@@ -332,10 +303,28 @@ class GaussianProcess(Surrogate):
             # this makes sure that echoed value is actually the smart-initialized one. Runs
             # only this once: _calibrated flips True below and gates out every later fit() call.
             self._smart_init(X, Y)
+
+            # initializing the inducing points 
+            assert X.shape[0] > self.n_inducing_points, "you must have more training data than inducing points!"
+            self.p['inducing'], inds = greedy_k_center(jrand.PRNGKey(random_state), X, self.n_inducing_points) 
+
+            # initializing the variational output distribution parameters 
+            self.p['q_mu'] = (Y[inds] - self._mean.eval(X[inds], self.p['mean'])).ravel()
+            self.p['q_L'] = jnp.eye(self.n_inducing_points) * self.eps 
+
             self._optimizer.opts.p_init = self.p
             self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
-        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(p, X, Y), argnums=2))
+        self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(jrand.PRNGKey(random_state), X, Y, p, n_mc = n_monte_carlo), argnums=2))
+
+        # setting the constraints of the variational points 
+        # clipping the variational inputs so they stay within bounds
+        constraints = {
+            'inducing':lambda Z: jnp.maximum(X.min(axis=0).reshape(-1,1), jnp.minimum(X.max(axis=0).reshape(-1,1), Z)), 
+            'q_L': lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self.eps))
+        }
+
+        self._optimizer.opts.constraints = constraints 
 
         # run the optimizer
         new_params = self._optimizer.run(X, Y)
@@ -361,37 +350,7 @@ class GaussianProcess(Surrogate):
         Raises:
             RuntimeError: If :meth:`fit` has not been called at least once.
         """
-        if not self._calibrated:
-            raise RuntimeError("Model must be fit() at least once before calling update().")
+        raise NotImplementedError("this method is not implemented on SparseGP as there is no kernel matrix to update")
 
-        X = self._scale(jnp.array(X))
-        Y = ensure_2d(jnp.array(Y))
 
-        n = self._X.shape[0]
-        m = X.shape[0]
-
-        # cross-covariance block kernel_mat(X, X) and new diagonal block kernel_mat(X, X)
-        K12 = kernel_mat(self._X, X, self._kernel, self.p['kernel'])                     # (n, m)
-        K22 = kernel_mat(X, X, self._kernel, self.p['kernel']) \
-            + (self.eps + softplus(self.p['noise'])) * jnp.eye(m)
-
-        # Solve L @ B = K12 so the augmented Cholesky factor remains consistent
-        # with the block covariance structure K_aug = [[K11, K12], [K12^T, K22]].
-        B_T = solve_triangular(self._L, K12, lower=True)
-
-        # Schur complement, factorized directly (only m x m, cheap)
-        schur = K22 - B_T.T @ B_T
-        schur = schur + (self.eps + 1e-12) * jnp.eye(K22.shape[0])
-        C = cholesky(schur, lower=True)
-
-        # assemble the augmented lower-triangular factor
-        L_new = jnp.zeros((n + m, n + m))
-        L_new = L_new.at[:n, :n].set(self._L)
-        L_new = L_new.at[n:, :n].set(B_T.T)
-        L_new = L_new.at[n:, n:].set(C)
-
-        # update stored state
-        self._X = jnp.concatenate([self._X, X], axis=0)
-        self._Y = jnp.concatenate([self._Y, Y], axis=0)
-        self._L = L_new
-        self._alpha = self._get_alpha(self._L, self.p['mean'])
+    

@@ -85,7 +85,7 @@ def ensure_2d(X):
         return X
 
 
-def KL_div(mu_q, L_q, mu_p, L_p):
+def cholesky_KL_div(mu_q, L_q, mu_p, L_p):
     """KL divergence KL(q || p) for Gaussians parameterized by Cholesky factors.
 
     Args:
@@ -97,16 +97,10 @@ def KL_div(mu_q, L_q, mu_p, L_p):
     Returns:
         jax.Array: Scalar KL divergence KL(q || p).
     """
-    k = mu_q.shape[0]
-
-    # Covariance matrices
-    Sigma_q = L_q @ L_q.T
-    Sigma_p = L_p @ L_p.T
 
     # Trace term: tr(Sigma_p^{-1} Sigma_q)
     # Solve instead of explicitly inverting
-    Sigma_p_inv = jnp.linalg.inv(Sigma_p)
-    Tr_q = jnp.trace(Sigma_p_inv @ Sigma_q)
+    Tr_q = jnp.trace(cho_solve((L_p, True), L_q @ L_q.T))
 
     # Mean term: (mu_p - mu_q)^T Sigma_p^{-1} (mu_p - mu_q)
     diff = mu_q - mu_p
@@ -117,7 +111,7 @@ def KL_div(mu_q, L_q, mu_p, L_p):
     logdet_p = 2.0 * jnp.sum(jnp.log(jnp.diag(L_p)))
     logdet_ratio = logdet_p - logdet_q
 
-    return 0.5 * (Tr_q + mean_term - k + logdet_ratio)
+    return 0.5 * (Tr_q + mean_term - mu_q.shape[0] + logdet_ratio)
 
 def greedy_k_center(key, X:jax.Array, k:int):
     """Greedy k-centers selection of inducing inputs.
@@ -138,18 +132,18 @@ def greedy_k_center(key, X:jax.Array, k:int):
     """
     N = X.shape[0]
     selected_indices = []
-    idx = jrand.randint(key, shape = (N,))
+    idx = int(jrand.randint(key, shape = (), minval = 0, maxval = N))
     selected_indices.append(idx)
 
     distances = jnp.linalg.norm(X - X[idx], axis=1)
 
     for _ in range(1, k):
-        idx = np.argmax(distances)
+        idx = int(jnp.argmax(distances))
         selected_indices.append(idx)
         new_distances = jnp.linalg.norm(X - X[idx], axis=1)
         distances = jnp.minimum(distances, new_distances)
 
-    return X[jnp.array(selected_indices)], selected_indices
+    return X[jnp.array(selected_indices)], jnp.array(selected_indices)
 
 def sigmoid(x):
     """Sigmoid activation elementwise: ``1 / (1 + exp(-x))``.
