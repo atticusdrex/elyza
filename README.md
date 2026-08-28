@@ -80,8 +80,25 @@ See `experiments/` for end-to-end scripts demonstrating the library, including:
 - `multifidelity/surrogate/magpi_analytical.py` — fitting a `MAGPI` hierarchical surrogate on the analytical benchmark.
 - `surrogate/gp_testing.py` and `surrogate/dnn_testing.py` — fitting `GaussianProcess` and `MLPRegressor` surrogates to a single-fidelity benchmark.
 
-<!-- summary-end -->
 
+
+## Citation
+
+If you use `elyza` in your research, please cite it as:
+
+<!-- citation-start -->
+```bibtex
+@software{rex2026elyza,
+  author  = {Rex, Atticus},
+  title   = {elyza: A library for efficient multifidelity surrogate modeling, inference, and uncertainty quantification},
+  year    = {2026},
+  url     = {https://github.com/atticusdrex/elyza},
+  version = {0.1.1}
+}
+```
+<!-- citation-end -->
+
+<!-- summary-end -->
 ## License
 
 `elyza` is licensed under the [BSD 3-Clause License](LICENSE).
