@@ -119,7 +119,7 @@ def KL_div(mu_q, L_q, mu_p, L_p):
 
     return 0.5 * (Tr_q + mean_term - k + logdet_ratio)
 
-def greedy_k_center(X, k, seed=42):
+def greedy_k_center(key, X:jax.Array, k:int):
     """Greedy k-centers selection of inducing inputs.
 
     Starting from a random point, repeatedly selects the point farthest
@@ -136,21 +136,20 @@ def greedy_k_center(X, k, seed=42):
         ``selected_points`` has shape ``(k, n_features)`` and
         ``selected_indices`` is the list of row indices into ``X``.
     """
-    np.random.seed(seed)
     N = X.shape[0]
     selected_indices = []
-    idx = np.random.randint(N)
+    idx = jrand.randint(key, shape = (N,))
     selected_indices.append(idx)
 
-    distances = np.linalg.norm(X - X[idx], axis=1)
+    distances = jnp.linalg.norm(X - X[idx], axis=1)
 
     for _ in range(1, k):
         idx = np.argmax(distances)
         selected_indices.append(idx)
-        new_distances = np.linalg.norm(X - X[idx], axis=1)
-        distances = np.minimum(distances, new_distances)
+        new_distances = jnp.linalg.norm(X - X[idx], axis=1)
+        distances = jnp.minimum(distances, new_distances)
 
-    return X[np.array(selected_indices)], selected_indices
+    return X[jnp.array(selected_indices)], selected_indices
 
 def sigmoid(x):
     """Sigmoid activation elementwise: ``1 / (1 + exp(-x))``.

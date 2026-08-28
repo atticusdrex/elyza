@@ -1,0 +1,17 @@
+/* Ensure the primary-sidebar toggle button is always visible and clickable.
+   pydata-sphinx-theme's CSS sets display:none on this button at >=960px,
+   and sphinx-book-theme's re-enabling rule ties in specificity with it, so
+   the winner depends on stylesheet load order and can silently break. */
+.bd-header button.primary-toggle,
+button.sidebar-toggle.primary-toggle {
+  display: inline-flex !important;
+}
+
+/* sphinx-book-theme only defines the "hidden" state inside
+   @media(min-width:992px); make it unconditional so the toggle
+   works at every viewport width. */
+#pst-primary-sidebar.pst-sidebar-hidden {
+  margin-left: -75% !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
