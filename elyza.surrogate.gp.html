@@ -404,6 +404,11 @@
                   
   <section id="elyza-surrogate-gp-package">
 <h1>elyza.surrogate.gp package<a class="headerlink" href="#elyza-surrogate-gp-package" title="Link to this heading">#</a></h1>
+<p>Gaussian Process regression surrogate. <a class="reference internal" href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess" title="elyza.surrogate.gp.gp.GaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianProcess</span></code></a>
+pairs a pluggable <a class="reference internal" href="elyza.surrogate.gp.kernel.html#module-elyza.surrogate.gp.kernel" title="elyza.surrogate.gp.kernel"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kernel</span></code></a> with a pluggable
+<a class="reference internal" href="elyza.surrogate.gp.mean.html#module-elyza.surrogate.gp.mean" title="elyza.surrogate.gp.mean"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mean</span></code></a>, fits hyperparameters by maximizing the
+log-marginal-likelihood, and supports incremental low-rank (block Cholesky)
+updates so new data can be ingested without a full refit.</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
