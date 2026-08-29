@@ -1,6 +1,7 @@
 from elyza.util.imports import *
-from elyza.util.helpers import ensure_2d
-from jax.scipy.linalg import cholesky
+from elyza.util.helpers import ensure_2d, softmax
+from jax.scipy.linalg import cholesky, cho_solve
+
 '''
 Distribution 
 ------------
@@ -16,45 +17,68 @@ class Distribution(BaseModel):
 
 
 class Gaussian(Distribution):
-    mean : float | jax.Array = Field(default = 0.0, description = "mean of the Gaussian distribution") 
-    variance : float | jax.Array = Field(default = 1.0, description = "variance of the Gaussian distribution")
-
     # private fields
-    _dim = int | None = PrivateAttr(default = None)
-    _L : jax.Array | None = PrivateAttr(default = None) 
+    _eps : float = PrivateAttr(default = 1e-8)
+    _dim : int | None = PrivateAttr(default = None)
+    _p : dict | None = PrivateAttr(default = None) 
+    _constr : dict | None = PrivateAttr(default = None)
 
-    def model_post_init(self, __context):
-        super().model_post_init(__context) 
-
-        # converting mean and variance to jax arrays 
-        self.mean, self.variance = ensure_2d(jnp.array(self.mean)), ensure_2d(jnp.array(self.variance)) 
-
-        # ensure they have the same shape 
-        assert self.mean.shape[0] == self.variance.shape[0] == self.variance.shape[1], "mean dimension and variance dimensions mismatch" 
-        self._dim = self.mean.shape[0] 
-        self._L = cholesky(self.variance, lower=True) 
-        assert not jnp.isnan(self._L.ravel()).any(), "variance is not symmetric positive definite"
+    def __init__(self, mean:jax.Array, cov:jax.Array, **kwargs):
+        mean, cov = jnp.array(mean).ravel(), ensure_2d(jnp.array(cov)) 
+        assert mean.shape[0] == cov.shape[0] == cov.shape[1], "mean dimension and variance dimensions mismatch" 
+        L = cholesky(cov, lower=True) 
+        assert not jnp.isnan(L.ravel()).any(), "variance is not symmetric positive definite"
+        super().__init__(**kwargs)
+        self._dim = mean.shape[0] 
+        self._p = {'mean':mean, 'L':L} 
+        self._constr = {'L':lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self._eps))}
 
     def sample(self, key:jax.Array, n_points:int) -> jax.Array: 
-        return self.mean + self._L @ jrand.normal(key, shape = (self._dim, n_points))
+        return self._p['mean'] + self._p['L'] @ jrand.normal(key, shape = (self._dim, n_points))
+
+    '''
+    function for returning log-likelihood 
+    '''
+    def log_pdf(self, x:jax.Array, p : dict | None = None) -> float: 
+        if p is None:
+            mean, L = self._p['mean'], self._p['L']
+        else:
+            mean, L = p['mean'], p['L'] 
+
+        x = jnp.array(x).ravel() 
+        return -0.5*((x - mean).T @ cho_solve((L, True), x - mean) + 2.0*jnp.sum(jnp.diag(L)) - self._dim * jnp.log(2*jnp.pi)).ravel()
 
 class GaussianMixture(Distribution):
-    means : list[jax.Array] = Field(description = "list of mean vectors")
-    
-    weights : jax.Array = Field(description = "weighting of each gaussian distribution")
-
-    # private fields 
+    # private fields
+    _p : dict | None = PrivateAttr(default = None) 
     _K : int | None = PrivateAttr(default = None) 
+    _constr : dict | None = PrivateAttr(default = None) 
+    _dim : int | None = PrivateAttr(default = None) 
 
-    def model_post_init(self, __context):
-        super().model_post_init(__context) 
+    def __init__(self, means:list[jax.Array], covs:list[jax.Array], weights:list[float]|jax.Array,**kwargs):
+        super().__init__(**kwargs) 
+        self._constr = {'L':{}} 
+        stored_means, stored_Ls = [], []
+        for i, (mean, cov) in enumerate(zip(means, covs)):
+            mean, cov = jnp.array(mean).ravel(), ensure_2d(jnp.array(cov))
+            assert mean.shape[0] == cov.shape[0] == cov.shape[1], "mean dimension and variance dimensions mismatch" 
+            L = cholesky(cov, lower=True) 
+            assert not jnp.isnan(L.ravel()).any(), "variance is not symmetric positive definite"
+            stored_means.append(mean) 
+            stored_Ls.append(L) 
+            self._constr['L'][i] = lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self._eps))
+        self._p = {'mean':jnp.stack(stored_means),'L':jnp.stack(stored_Ls)}
+        self._K = len(self._p['mean']) 
+        self._dim = self._p['mean'][0].shape[0]
+        weights = jnp.array(weights).ravel()
+        assert weights.shape[0] == len(self._p['mean']), "weights must match the number of Gaussian distributions passed in" 
+        self._p['w'] = softmax(weights)
 
-        # raveling weights 
-        self.weights = self.weights.ravel()
-
-        # ensuring weights are valid 
-        assert self.weights.shape[0] == len(self.gaussians), "weights must match the number of Gaussian distributions passed in" 
-        self._K = len(self.gaussians) 
-
-         
+    def sample(self, key: jax.Array, n_points: int) -> jax.Array:
+        key_idx, key_z = jrand.split(key)
+        idx = jrand.choice(key_idx, self._K, shape=(n_points,), p=self._p['w'])
+        z = jrand.normal(key_z, shape=(n_points, self._dim))
+        L_sel = self._p['L'][idx]       # (n_points, dim, dim)
+        mean_sel = self._p['mean'][idx]  # (n_points, dim)
+        return (mean_sel + jnp.einsum('nij,nj->ni', L_sel, z)).T
 

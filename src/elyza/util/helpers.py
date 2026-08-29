@@ -192,6 +192,9 @@ def inv_softplus(y):
     """
     return jnp.log(jnp.exp(y) - 1.0)
 
+def softmax(x):
+    return jnp.exp(x) / jnp.sum(jnp.exp(x))
+
 def kernel_mat(X1, X2, kernel, kernel_params):
     """Compute the full kernel matrix between two point sets.
 
