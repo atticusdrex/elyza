@@ -21,10 +21,15 @@ jobs:
         run: |
           pip install sphinx sphinx-book-theme myst-parser
           pip install -e .
+          
+      - name: Update citation info
+        run: | 
+          python scripts/sync_citation.py
 
       - name: Build docs
         run: |
           cd docs
+          make clean
           make html
 
       - name: Deploy to GitHub Pages
