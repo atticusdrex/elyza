@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Documentation: elyza &#8212; elyza 0.1.0 documentation</title>
+    <title>Elyza Documentation &#8212; elyza 0.1.0 documentation</title>
   
   
   
@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=a700cb1d" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Surrogate Modeling Quickstart" href="quickstart.html" />
+    <link rel="next" title="The Basics: Inputs and Evaluators" href="evaluators.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -196,7 +196,10 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surrogate.html">Surrogate Modeling Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -379,7 +382,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Documentation: elyza</h1>
+    <h1>Elyza Documentation</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -413,8 +416,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="documentation-elyza">
-<h1>Documentation: <code class="docutils literal notranslate"><span class="pre">elyza</span></code><a class="headerlink" href="#documentation-elyza" title="Link to this heading">#</a></h1>
+  <section id="elyza-documentation">
+<h1>Elyza Documentation<a class="headerlink" href="#elyza-documentation" title="Link to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> is a <a class="reference external" href="https://github.com/jax-ml/jax">Jax</a>-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, <a class="reference external" href="https://docs.pydantic.dev/">Pydantic</a>-validated building blocks for defining simulation inputs and evaluators, fitting surrogate models (Gaussian processes, neural networks, and closed-form linear regression, including a multifidelity/autoregressive Gaussian process), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
@@ -422,7 +425,7 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>elyza
 </pre></div>
 </div>
-<p>Core dependencies (installed automatically): <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">jax</span></code>/<code class="docutils literal notranslate"><span class="pre">jaxlib</span></code>, <code class="docutils literal notranslate"><span class="pre">pydantic</span></code>, <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, <code class="docutils literal notranslate"><span class="pre">pillow</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>.</p>
+<p>Core dependencies (installed automatically): <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">jax</span></code>/<code class="docutils literal notranslate"><span class="pre">jaxlib</span></code>, <code class="docutils literal notranslate"><span class="pre">pydantic</span></code>, <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, <code class="docutils literal notranslate"><span class="pre">pillow</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>. NOTE: if you want <code class="docutils literal notranslate"><span class="pre">jax</span></code> to run on the GPU, you must install a CUDA-compatible version of jax using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;jax[cudaXX]&quot;</span></code> where <code class="docutils literal notranslate"><span class="pre">XX</span></code> is the version of CUDA installed on your NVIDIA-GPU-powered machine.</p>
 <p>To work on <code class="docutils literal notranslate"><span class="pre">elyza</span></code> itself, clone the repository and install it in editable mode with the development dependencies (<code class="docutils literal notranslate"><span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">twine</span></code>, <code class="docutils literal notranslate"><span class="pre">pytest</span></code>):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/atticusdrex/elyza.git
 <span class="nb">cd</span><span class="w"> </span>elyza
@@ -490,7 +493,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
-<p>Full API documentation (built with Sphinx from the docstrings in <code class="docutils literal notranslate"><span class="pre">src/</span></code>) lives under <code class="docutils literal notranslate"><span class="pre">docs/</span></code>, including a <a class="reference internal" href="#docs/source/quickstart.rst"><span class="xref myst">surrogate modeling quickstart</span></a>. To build it locally:</p>
+<p>Full API documentation (built with Sphinx from the docstrings in <code class="docutils literal notranslate"><span class="pre">src/</span></code>) lives under <code class="docutils literal notranslate"><span class="pre">docs/</span></code>, including a <a class="reference external" href="https://github.com/atticusdrex/elyza/blob/main/docs/source/surrogate.rst">surrogate modeling quickstart</a>. To build it locally:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[docs]"</span>
 sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs/source<span class="w"> </span>docs/build/html
 </pre></div>
@@ -521,19 +524,50 @@ sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w
 </pre></div>
 </div>
 <!-- citation-end -->
-<p>See the <a class="reference internal" href="quickstart.html"><span class="doc">Surrogate Modeling Quickstart</span></a> to get started, or browse the full API in <a class="reference internal" href="modules.html"><span class="doc">elyza</span></a>.</p>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Surrogate Modeling Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#describe-the-input">1. Describe the input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#fit-a-gaussian-process-surrogate">3. Fit a Gaussian Process surrogate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#other-surrogates">4. Other surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluators.html#describe-the-input">1. Describe the input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluators.html#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="surrogate.html">Surrogate Modeling Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="surrogate.html#describe-the-input">1. Describe the input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surrogate.html#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surrogate.html#fit-a-gaussian-process-surrogate">3. Fit a Gaussian Process surrogate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surrogate.html#other-surrogates">4. Other surrogates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#define-a-fidelity-hierarchy">1. Define a fidelity hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#regression-based-multifidelity-monte-carlo-r-mfmc">2. Regression-based Multifidelity Monte Carlo (R-MFMC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#related-estimators-mfmc-and-mlmc">3. Related estimators: MFMC and MLMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#magpi-a-hierarchical-surrogate">4. MAGPI: a hierarchical surrogate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html#fit-parameters-with-adam">1. Fit parameters with ADAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html#freezing-and-constraining-parameters">2. Freezing and constraining parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html#lbfgs-as-a-drop-in-replacement">3. LBFGS as a drop-in replacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html#inside-a-surrogate-model">4. Inside a surrogate model</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">elyza</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="elyza.html">elyza package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elyza.html">elyza package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="elyza.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.html">elyza.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.html">elyza.optim package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.html">elyza.surrogate package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.html">elyza.util package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.html#module-elyza">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -553,11 +587,11 @@ sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="quickstart.html"
+       href="evaluators.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Surrogate Modeling Quickstart</p>
+        <p class="prev-next-title">The Basics: Inputs and Evaluators</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
