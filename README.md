@@ -13,7 +13,7 @@
 pip install elyza
 ```
 
-Core dependencies (installed automatically): `numpy`, `jax`/`jaxlib`, `pydantic`, `tqdm`, `pillow`, `scipy`.
+Core dependencies (installed automatically): `numpy`, `jax`/`jaxlib`, `pydantic`, `tqdm`, `pillow`, `scipy`. NOTE: if you want `jax` to run on the GPU, you must install a CUDA-compatible version of jax using `pip install "jax[cudaXX]"` where `XX` is the version of CUDA installed on your NVIDIA-GPU-powered machine. 
 
 To work on `elyza` itself, clone the repository and install it in editable mode with the development dependencies (`build`, `twine`, `pytest`):
 
@@ -63,7 +63,7 @@ The library is organized into a few main packages under `src/elyza/`:
 
 ## Documentation
 
-Full API documentation (built with Sphinx from the docstrings in `src/`) lives under `docs/`, including a [surrogate modeling quickstart](docs/source/quickstart.rst). To build it locally:
+Full API documentation (built with Sphinx from the docstrings in `src/`) lives under `docs/`, including a [surrogate modeling quickstart](https://github.com/atticusdrex/elyza/blob/main/docs/source/surrogate.rst). To build it locally:
 
 ```bash
 pip install -e ".[docs]"
@@ -90,7 +90,7 @@ If you use `elyza` in your research, please cite it as:
 ```bibtex
 @software{rex2026elyza,
   author  = {Rex, Atticus},
-  title   = {elyza: A library for efficient multifidelity surrogate modeling, inference, and uncertainty quantification},
+  title   = {elyza: A jax-based library for efficient multifidelity surrogate modeling and uncertainty quantification},
   year    = {2026},
   url     = {https://github.com/atticusdrex/elyza},
   version = {0.1.1}

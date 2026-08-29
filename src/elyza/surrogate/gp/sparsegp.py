@@ -1,12 +1,48 @@
-from elyza.util.imports import * 
-from elyza.surrogate import Surrogate 
-from elyza.surrogate.gp.kernel import BaseKernel 
-from elyza.surrogate.gp.mean import BaseMean 
+"""Sparse variational Gaussian Process regression.
+
+Defines :class:`SparseGP`, a :class:`~elyza.surrogate.abstract.Surrogate`
+that approximates a full GP with a small set of inducing points and a
+variational posterior over their function values, fit by maximizing a
+Monte Carlo estimate of the evidence lower bound (ELBO). Trades the exact
+``O(n^3)`` Cholesky of a full :class:`~elyza.surrogate.gp.gp.GaussianProcess`
+for an ``O(n * m^2)`` cost in the number of inducing points ``m``, at the
+cost of an approximate (rather than exact) posterior.
+"""
+from elyza.util.imports import *
+from elyza.surrogate import Surrogate
+from elyza.surrogate.gp.kernel import BaseKernel
+from elyza.surrogate.gp.mean import BaseMean
 from elyza.optim.abstract import BatchGradientOptimizer, OptimizerOptions
 from elyza.util.helpers import ensure_2d, ls, softplus, inv_softplus, kernel_mat, greedy_k_center, cholesky_KL_div
 from jax.scipy.linalg import solve_triangular, cho_solve, cholesky
 
 class SparseGP(Surrogate):
+    """Sparse variational Gaussian Process with a pluggable kernel and mean function.
+
+    Attributes:
+        input_dim: Input dimension.
+        kernel_cls: Kernel class.
+        mean_cls: Mean class.
+        n_inducing_points: Number of inducing points.
+        calibrate_noise: Whether or not to calibrate the noise variance to
+            reduce the condition number of the inducing-point kernel matrix.
+        noise_var: Variance of Gaussian white noise in the model outputs.
+        eps: Small positive jitter value to avoid singular kernel matrices
+            and divide-by-zero errors.
+        max_cond: Maximum condition number for kernel matrices.
+        verbose: Whether or not to print the training and calibration progress.
+        p: Model parameters (``kernel``, ``mean``, ``noise``, ``inducing``,
+            ``q_mu``, ``q_L``); auto-initialized if not given.
+        _kernel: Instantiated kernel object built from ``kernel_cls``.
+        _mean: Instantiated mean object built from ``mean_cls``.
+        _X: Stored (scaled) training inputs.
+        _Y: Stored training outputs.
+        _X_mean: Per-dimension input mean used for input standardization.
+        _X_std: Per-dimension input scale used for input standardization.
+        _calibrated: Whether the model has completed at least one fit/calibration.
+        _optimizer: The optimizer instance assigned via :meth:`set_optimizer`.
+        _L: Lower-triangular Cholesky factor of the inducing-point kernel matrix.
+    """
     # public fields
     input_dim: int = Field(description = "input dimension")
     kernel_cls: type[BaseKernel] = Field(description = "kernel class")
@@ -108,7 +144,7 @@ class SparseGP(Surrogate):
 
     def _calibrate(self, X: np.ndarray | jax.Array, Y: np.ndarray | jax.Array,
                    max_cond: float, calibrate_noise: bool = False):
-        """Store training data and (re)compute the Cholesky factor and ``alpha``.
+        """Store training data and (re)compute the inducing-point Cholesky factor.
 
         Args:
             X: (Scaled) training inputs.
@@ -116,7 +152,8 @@ class SparseGP(Surrogate):
             max_cond: Maximum allowed condition number, forwarded to
                 :meth:`_calibrate_noise`.
             calibrate_noise: If ``True``, inflate the noise variance to
-                bring the kernel matrix's condition number under ``max_cond``.
+                bring the inducing-point kernel matrix's condition number
+                under ``max_cond``.
         """
         # storing training data
         if self._X is None:
@@ -153,10 +190,14 @@ class SparseGP(Surrogate):
         self.verbose and print("Calibrated white noise variance: %.4e" % (softplus(self.p['noise'])))
 
     def _get_L(self, X, k_param, noise_var) -> jax.Array:
-        """Return the lower-triangular Cholesky factor of the training kernel.
+        """Return the lower-triangular Cholesky factor of a kernel matrix.
+
+        Called with the inducing-point locations (``p['inducing']``)
+        rather than the full training set, so this factors the much
+        smaller ``(n_inducing_points, n_inducing_points)`` kernel matrix.
 
         Args:
-            X: Training inputs, shape ``(n, input_dim)``.
+            X: Points to build the kernel matrix from, shape ``(n, input_dim)``.
             k_param: Kernel parameter array.
             noise_var: Raw (softplus-inverted) noise variance.
 
@@ -167,23 +208,45 @@ class SparseGP(Surrogate):
         return cholesky(Ktrain, lower=True)
 
     def predict(self, X, key = jrand.PRNGKey(42), n_samples : int = 100) -> tuple[jax.Array]:
-        """Compute the posterior mean and covariance at new points.
+        """Estimate the posterior mean and variance at new points via Monte Carlo.
+
+        Draws ``n_samples`` posterior function samples at ``X`` (see
+        :meth:`_samp`) and returns their empirical mean and variance --
+        there is no closed-form marginal here since the variational
+        inducing-point posterior is sampled rather than solved exactly.
 
         Args:
-            X: Query inputs, shape ``(n_samples, input_dim)``.
-            full_cov: If ``True``, return the full posterior covariance
-                matrix; otherwise return only the marginal variances.
+            X: Raw (unscaled) query inputs, shape ``(n_queries, input_dim)``.
+            key: A JAX PRNG key for the Monte Carlo draws.
+            n_samples: Number of posterior samples to draw per query point.
 
         Returns:
-            tuple[jax.Array]: ``(mu, cov)`` where ``mu`` has shape
-            ``(n_samples,)`` and ``cov`` is either the full covariance
-            matrix, shape ``(n_samples, n_samples)``, or the marginal
-            variances, shape ``(n_samples,)``.
+            tuple[jax.Array]: ``(mu, var)``, each shape ``(n_queries,)`` --
+            the empirical mean and variance across the Monte Carlo samples.
         """
-        ysamp = self._samp(key, self._scale(jnp.array(X)), n_samples, self.p)
+        ysamp = self._samp(key, X, n_samples, self.p)
         return ysamp.mean(axis=1), ysamp.std(axis=1)**2
 
     def _samp(self, key, X, n_samples, p):
+        """Draw posterior function samples via the inducing-point reparameterization trick.
+
+        Samples the variational posterior ``q(u) ~ N(q_mu, q_L @ q_L.T)``
+        at the inducing points, then pushes each draw through the GP
+        conditional mean to obtain a posterior function sample at ``X``.
+
+        Args:
+            key: A JAX PRNG key.
+            X: Raw (unscaled) query inputs, shape ``(n, input_dim)`` --
+                scaled internally with :meth:`_scale` before evaluation.
+            n_samples: Number of samples to draw.
+            p: Parameter pytree (``kernel``, ``mean``, ``noise``,
+                ``inducing``, ``q_mu``, ``q_L``) to evaluate at.
+
+        Returns:
+            jax.Array: Samples, shape ``(n, n_samples)``.
+        """
+        X = self._scale(jnp.array(X))
+
         # Getting cholesky factors and solve linear system
         p_mu = self._mean.eval(p['inducing'], p['mean'])
 
@@ -194,39 +257,47 @@ class SparseGP(Surrogate):
         return self._mean.eval(X, p['mean']).reshape(-1,1) + k_train @ alpha_sample
 
     def sample(self, key, X, n_samples: int = 1) -> jax.Array:
-        """Draw samples from the GP posterior at ``X``.
+        """Draw samples from the sparse GP's variational posterior at ``X``.
 
-        Uses the reparameterization trick, treating each point
-        independently (using only the marginal variances from
-        ``predict(X, full_cov=False)`` rather than the full posterior
-        covariance) so this stays cheap for large ``X``:
-        ``z ~ N(0, I), sample = mu + sqrt(var) * z``. Keeping ``mu``/``var``
-        in the computation graph (rather than e.g.
-        ``jax.random.multivariate_normal``) makes the samples
-        differentiable w.r.t. the posterior mean and variance.
+        Delegates directly to :meth:`_samp`, which samples the inducing-point
+        variational distribution ``q(u) ~ N(q_mu, q_L @ q_L.T)`` via the
+        reparameterization trick and pushes each draw through the GP
+        conditional mean to obtain a posterior function sample. ``X`` is
+        scaled internally, same as in :meth:`predict`.
 
         Args:
             key: A JAX PRNG key.
-            X: Query inputs, shape ``(n_samples, input_dim)``.
-            n_samples: Number of independent samples to draw per point.
+            X: Raw (unscaled) query inputs, shape ``(n, input_dim)``.
+            n_samples: Number of independent samples to draw.
 
         Returns:
-            jax.Array: Samples, shape ``(n_samples_X, n_samples)``.
+            jax.Array: Samples, shape ``(n, n_samples)``.
         """
-        return self._samp(key, X, n_samples, self.p) 
+        return self._samp(key, X, n_samples, self.p)
 
 
     def _objective(self,key, X, Y, p, n_mc = 25) -> float:
-        """Compute the negative log-marginal-likelihood training objective.
+        """Compute a Monte Carlo estimate of the negative ELBO training objective.
+
+        Draws ``n_mc`` samples from the variational posterior (via the same
+        reparameterization as :meth:`_samp`) to Monte-Carlo estimate the
+        expected negative data log-likelihood on this batch, rescaled to the
+        full training set size, and adds the KL divergence between the
+        variational distribution and the GP prior at the inducing points
+        (:func:`~elyza.util.helpers.cholesky_KL_div`).
 
         Args:
-            p: Parameter pytree (``kernel``, ``mean``, ``noise``) to evaluate at.
-            X: Training inputs, shape ``(n, input_dim)``.
-            Y: Training outputs, shape ``(n, output_dim)``.
+            key: A JAX PRNG key for the Monte Carlo draws.
+            X: Training inputs (batch), shape ``(n_batch, input_dim)``.
+            Y: Training outputs (batch), shape ``(n_batch, output_dim)``.
+            p: Parameter pytree (``kernel``, ``mean``, ``noise``,
+                ``inducing``, ``q_mu``, ``q_L``) to evaluate at.
+            n_mc: Number of Monte Carlo samples used to estimate the
+                expected log-likelihood term.
 
         Returns:
-            float: Sum of the quadratic term and log-determinant term of the
-            negative log-marginal-likelihood (constant terms omitted).
+            float: The negative ELBO estimate (expected negative
+            log-likelihood plus the KL-divergence term).
         """
         p_L = self._get_L(p['inducing'], p['kernel'], p['noise'])
         p_mu = self._mean.eval(p['inducing'], p['mean'])
@@ -265,19 +336,28 @@ class SparseGP(Surrogate):
         n_monte_carlo : int = 25, 
         random_state : int = 42 
     ):
-        """Fit kernel/mean/noise hyperparameters to training data.
+        """Fit kernel/mean/noise hyperparameters and the variational inducing-point posterior.
 
         On the first call, this also fits the input standard-scaler,
         data-driven-initializes the hyperparameters (see
-        :meth:`_smart_init`), and (optionally) calibrates the noise
-        variance for numerical conditioning.
+        :meth:`_smart_init`), selects ``n_inducing_points`` inducing
+        locations via a greedy k-center heuristic
+        (:func:`~elyza.util.helpers.greedy_k_center`), initializes the
+        variational posterior (``q_mu``, ``q_L``), and (optionally)
+        calibrates the noise variance for numerical conditioning.
 
         Args:
             X: Training inputs, shape ``(n_samples, input_dim)``.
             Y: Training outputs, shape ``(n_samples, output_dim)``.
+            n_monte_carlo: Number of Monte Carlo samples used to estimate
+                the training objective (see :meth:`_objective`) at every step.
+            random_state: Random seed used for inducing-point selection
+                (on the first call) and the objective's Monte Carlo draws.
 
         Raises:
-            AssertionError: If :meth:`set_optimizer` has not been called yet.
+            AssertionError: If :meth:`set_optimizer` has not been called
+                yet, or (on the first call) if ``X`` has no more rows than
+                ``n_inducing_points``.
         """
         # making sure an optimizer has been declared
         assert self._optimizer is not None, "must declare an optimizer"
@@ -337,18 +417,15 @@ class SparseGP(Surrogate):
 
 
     def update(self, X: np.ndarray | jax.Array, Y: np.ndarray | jax.Array) -> None:
-        """Incorporate new observations via a rank-``m`` block Cholesky update.
+        """Not implemented for :class:`SparseGP`.
 
-        Extends the cached Cholesky factor ``self._L`` in place using the
-        Schur complement of the new block, avoiding a full ``O(n^3)``
-        Cholesky recomputation over all training data.
-
-        Args:
-            X: New inputs, shape ``(m, input_dim)``.
-            Y: New outputs, shape ``(m, output_dim)``.
+        Unlike the full :class:`~elyza.surrogate.gp.gp.GaussianProcess`,
+        there is no dense training kernel matrix here to rank-update --
+        incorporating new data would mean refitting (or moving) the
+        variational inducing-point posterior instead.
 
         Raises:
-            RuntimeError: If :meth:`fit` has not been called at least once.
+            NotImplementedError: Always.
         """
         raise NotImplementedError("this method is not implemented on SparseGP as there is no kernel matrix to update")
 

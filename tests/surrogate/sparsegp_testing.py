@@ -6,7 +6,7 @@ from elyza.surrogate.gp import SparseGP, ARD, Constant
 from elyza.optim import ADAM, ADAMOptions
 from elyza.optim import LBFGS, LBFGSOptions 
 # 
-n_train = int(1e6)
+n_train = int(1e5)
 input_data = x.sample(jrand.PRNGKey(42), n_train)
 output_data = hf_evaluator.evaluate(input_data) + 2e-2 * jrand.normal(jrand.PRNGKey(42), shape = (n_train,1))
 
@@ -29,9 +29,9 @@ model = SparseGP(
 # %% declaring the model options 
 adam_opts = ADAMOptions(
     p_init = deepcopy(model.p), 
-    lr = 1e-3, 
-    epochs = 10, 
-    batch_size = 5000, 
+    lr = 1e-2, 
+    epochs = 25, 
+    batch_size = 2500, 
     beta1 = 0.9, 
     beta2 = 0.999, 
     active_params = {'mean':True, 'kernel':True, 'noise':True, 'inducing':False, 'q_mu':True, 'q_L':True}, 
