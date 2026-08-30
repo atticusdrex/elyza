@@ -298,7 +298,7 @@
       
       
       
-      <li><a href="_sources/evaluators.rst" target="_blank"
+      <li><a href="_sources/evaluators.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -308,7 +308,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.rst</span>
+<span class="btn__text-container">.md</span>
 </a>
 </li>
       
@@ -452,6 +452,18 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
 the inputs it consumes, and vectorizes it over a batch via <code class="docutils literal notranslate"><span class="pre">vmap</span></code> under the
 hood. Here it stands in for a “ground truth” computer model you’d like to
 approximate:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"sinusoid"</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
+    <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">y</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">Z_train</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
+</pre></div>
+</div>
 <p>The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized <code class="docutils literal notranslate"><span class="pre">elyza</span></code> environment. Each evaluator has a built-in print method which lists all the data associated with it:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">evaluator</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 </pre></div>
