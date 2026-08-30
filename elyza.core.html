@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -422,28 +422,16 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="elyza.core.data.html">elyza.core.data module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input"><code class="docutils literal notranslate"><span class="pre">Input</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.name"><code class="docutils literal notranslate"><span class="pre">Input.name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.dim"><code class="docutils literal notranslate"><span class="pre">Input.dim</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.sampling_func"><code class="docutils literal notranslate"><span class="pre">Input.sampling_func</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.model_config"><code class="docutils literal notranslate"><span class="pre">Input.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.print"><code class="docutils literal notranslate"><span class="pre">Input.print()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input.sample"><code class="docutils literal notranslate"><span class="pre">Input.sample()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput"><code class="docutils literal notranslate"><span class="pre">ScalarInput</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput.minval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.minval</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput.maxval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.maxval</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput.model_config"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput.print"><code class="docutils literal notranslate"><span class="pre">ScalarInput.print()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput"><code class="docutils literal notranslate"><span class="pre">VectorInput</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput.minval"><code class="docutils literal notranslate"><span class="pre">VectorInput.minval</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput.maxval"><code class="docutils literal notranslate"><span class="pre">VectorInput.maxval</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput.model_config"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_post_init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable"><code class="docutils literal notranslate"><span class="pre">Variable</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.name"><code class="docutils literal notranslate"><span class="pre">Variable.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.dim"><code class="docutils literal notranslate"><span class="pre">Variable.dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.dtype"><code class="docutils literal notranslate"><span class="pre">Variable.dtype</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.lower"><code class="docutils literal notranslate"><span class="pre">Variable.lower</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.upper"><code class="docutils literal notranslate"><span class="pre">Variable.upper</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.sampling_func"><code class="docutils literal notranslate"><span class="pre">Variable.sampling_func</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.model_config"><code class="docutils literal notranslate"><span class="pre">Variable.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.model_post_init"><code class="docutils literal notranslate"><span class="pre">Variable.model_post_init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable.print"><code class="docutils literal notranslate"><span class="pre">Variable.print()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -473,9 +461,9 @@
 <section id="module-elyza.core">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-elyza.core" title="Link to this heading">#</a></h2>
 <p>Core building blocks: model inputs and the evaluator that wraps a computer model.</p>
-<p>Exposes <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a> and its
-<a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a>/<a class="reference internal" href="elyza.core.data.html#elyza.core.data.VectorInput" title="elyza.core.data.VectorInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorInput</span></code></a>
-specializations, plus <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>.</p>
+<p>Exposes <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>, plus
+<a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.core.random</span></code> for
+sampleable <code class="xref py py-class docutils literal notranslate"><span class="pre">RandomVariable</span></code> subclasses.</p>
 </section>
 </section>
 

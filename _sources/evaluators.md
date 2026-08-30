@@ -4,40 +4,38 @@ kernelspec:
   name: python3
 ---
 
-# The Basics: Inputs and Evaluators
+# The Basics: Variables and Evaluators
 
-In this page, we give an overview of the main functional building blocks within `elyza`. These include the {class}`~elyza.core.data.Input` class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an {class}`~elyza.core.evaluator.Evaluator` class. 
+In this page, we give an overview of the main functional building blocks within `elyza`. These include the {class}`~elyza.core.data.Variable` class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an {class}`~elyza.core.evaluator.Evaluator` class. 
 
-## 1. Defining inputs
+## 1. Defining Variables
 
-Every surrogate-modeling workflow starts with an {class}`~elyza.core.data.Input`.
-For a single scalar variable, use {class}`~elyza.core.data.ScalarInput` and give
-it a `sampling_func` that turns a JAX PRNG key into one draw:
+Every surrogate-modeling workflow starts with a {class}`~elyza.core.data.Variable`.
+For a single scalar variable sampled uniformly over some range, use
+{class}`~elyza.core.random.Uniform`:
 
 ```{code-cell} python
 import jax.numpy as jnp
 import jax.random as jrand
 
-from elyza.core.data import ScalarInput
+from elyza.core.random import Uniform
 
-x = ScalarInput(
+x = Uniform(
     name="x",
     dim=1,
-    sampling_func=lambda key: jrand.uniform(key, minval=0.0, maxval=1.0),
-    minval=0.0,
-    maxval=1.0,
+    lower=0.0,
+    upper=1.0,
 )
 
-y = ScalarInput(
+y = Uniform(
     name="y",
     dim=1,
-    sampling_func=lambda key: jrand.uniform(key, minval=0.0, maxval=1.0),
-    minval=0.0,
-    maxval=1.0,
+    lower=0.0,
+    upper=1.0,
 )
 ```
 
-This is a simple example, but the input sampling could be a highly complex predefined function (e.g., quasi Monte Carlo strategies). The `Input` abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. `x.sample(key, n_points)` draws a batch of `n_points` samples, splitting
+This is a simple example, but the input sampling could be a highly complex predefined distribution (e.g., quasi Monte Carlo strategies). The `RandomVariable` abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. `x.sample(key, n_points)` draws a batch of `n_points` samples, splitting
 `key` internally so every point gets its own subkey:
 
 ```{code-cell} python

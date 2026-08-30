@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -402,28 +402,16 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input"><code class="docutils literal notranslate"><span class="pre">Input</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.name"><code class="docutils literal notranslate"><span class="pre">Input.name</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.dim"><code class="docutils literal notranslate"><span class="pre">Input.dim</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.sampling_func"><code class="docutils literal notranslate"><span class="pre">Input.sampling_func</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.model_config"><code class="docutils literal notranslate"><span class="pre">Input.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.print"><code class="docutils literal notranslate"><span class="pre">Input.print()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.sample"><code class="docutils literal notranslate"><span class="pre">Input.sample()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput"><code class="docutils literal notranslate"><span class="pre">ScalarInput</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.minval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.minval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.maxval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.maxval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.model_config"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_post_init()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.print"><code class="docutils literal notranslate"><span class="pre">ScalarInput.print()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput"><code class="docutils literal notranslate"><span class="pre">VectorInput</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.minval"><code class="docutils literal notranslate"><span class="pre">VectorInput.minval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.maxval"><code class="docutils literal notranslate"><span class="pre">VectorInput.maxval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.model_config"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_post_init()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable"><code class="docutils literal notranslate"><span class="pre">Variable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.name"><code class="docutils literal notranslate"><span class="pre">Variable.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.dim"><code class="docutils literal notranslate"><span class="pre">Variable.dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.dtype"><code class="docutils literal notranslate"><span class="pre">Variable.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.lower"><code class="docutils literal notranslate"><span class="pre">Variable.lower</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.upper"><code class="docutils literal notranslate"><span class="pre">Variable.upper</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.sampling_func"><code class="docutils literal notranslate"><span class="pre">Variable.sampling_func</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.model_config"><code class="docutils literal notranslate"><span class="pre">Variable.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.model_post_init"><code class="docutils literal notranslate"><span class="pre">Variable.model_post_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.print"><code class="docutils literal notranslate"><span class="pre">Variable.print()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -440,18 +428,18 @@
   <section id="module-elyza.core.data">
 <span id="elyza-core-data-module"></span><h1>elyza.core.data module<a class="headerlink" href="#module-elyza.core.data" title="Link to this heading">#</a></h1>
 <p>A data registry containing all relevant input functionality, sampling, etc.</p>
-<p>Defines the <a class="reference internal" href="#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a> base class and its <a class="reference internal" href="#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and
-<a class="reference internal" href="#elyza.core.data.VectorInput" title="elyza.core.data.VectorInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorInput</span></code></a> specializations, which describe the inputs of an
-<a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> and know how to draw samples from
-themselves given a PRNG key.</p>
+<p>Defines <a class="reference internal" href="#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>, which describes a named, box-bounded input of an
+<a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.core.random</span></code> for
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RandomVariable</span></code> subclasses that know how to draw
+samples from themselves given a PRNG key.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="elyza.core.data.Input">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.core.data.</span></span><span class="sig-name descname"><span class="pre">Input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_ScalarMeta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'jax.numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated[callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~pydantic.functional_validators.SkipValidation()]</span> <span class="pre">|</span> <span class="pre">None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#Input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Input" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.core.data.Variable">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.core.data.</span></span><span class="sig-name descname"><span class="pre">Variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_ScalarMeta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'jax.numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated[callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~pydantic.functional_validators.SkipValidation()]</span> <span class="pre">|</span> <span class="pre">None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#Variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Variable" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
-<p>Base class for a named, sampleable model input.</p>
+<p>Base class for a named, box-bounded model input.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.Input.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#elyza.core.data.Input.name" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.core.data.Variable.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#elyza.core.data.Variable.name" title="Link to this definition">#</a></dt>
 <dd><p>Unique input name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -461,8 +449,8 @@ themselves given a PRNG key.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.Input.dim">
-<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#elyza.core.data.Input.dim" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.core.data.Variable.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#elyza.core.data.Variable.dim" title="Link to this definition">#</a></dt>
 <dd><p>Dimension of the input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -472,10 +460,47 @@ themselves given a PRNG key.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.Input.sampling_func">
-<span class="sig-name descname"><span class="pre">sampling_func</span></span><a class="headerlink" href="#elyza.core.data.Input.sampling_func" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.core.data.Variable.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#elyza.core.data.Variable.dtype" title="Link to this definition">#</a></dt>
+<dd><p>Datatype <code class="docutils literal notranslate"><span class="pre">lower</span></code>/<code class="docutils literal notranslate"><span class="pre">upper</span></code> are cast to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax._src.numpy.scalar_types._ScalarMeta</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.core.data.Variable.lower">
+<span class="sig-name descname"><span class="pre">lower</span></span><a class="headerlink" href="#elyza.core.data.Variable.lower" title="Link to this definition">#</a></dt>
+<dd><p>Lower bound(s), either a single value broadcast across every
+dimension or a per-dimension array of length <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float | jax.Array | numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.core.data.Variable.upper">
+<span class="sig-name descname"><span class="pre">upper</span></span><a class="headerlink" href="#elyza.core.data.Variable.upper" title="Link to this definition">#</a></dt>
+<dd><p>Upper bound(s), either a single value broadcast across every
+dimension or a per-dimension array of length <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float | jax.Array | numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.core.data.Variable.sampling_func">
+<span class="sig-name descname"><span class="pre">sampling_func</span></span><a class="headerlink" href="#elyza.core.data.Variable.sampling_func" title="Link to this definition">#</a></dt>
 <dd><p>Function that takes a single PRNG key and returns one
-sample; used by <a class="reference internal" href="#elyza.core.data.Input.sample" title="elyza.core.data.Input.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample()</span></code></a> to draw a batch of samples.</p>
+sample. Unused by <a class="reference internal" href="#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> itself; available for
+subclasses (see <code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.core.random</span></code>) that want to draw
+samples one PRNG key at a time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Annotated[callable, pydantic.functional_validators.SkipValidation()] | None</p>
@@ -484,133 +509,27 @@ sample; used by <a class="reference internal" href="#elyza.core.data.Input.sampl
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.Input.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.core.data.Input.model_config" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="elyza.core.data.Variable.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.core.data.Variable.model_config" title="Link to this definition">#</a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="elyza.core.data.Input.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#Input.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Input.print" title="Link to this definition">#</a></dt>
-<dd><p>Print the input’s name, dimension, and concrete type.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="elyza.core.data.Input.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/core/data.html#Input.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Input.sample" title="Link to this definition">#</a></dt>
-<dd><p>Draw a batch of samples from <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> – A JAX PRNG key, split internally into <code class="docutils literal notranslate"><span class="pre">n_points</span></code> subkeys
-(one per sample).</p></li>
-<li><p><strong>n_points</strong> – Number of samples to draw.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Samples of shape <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">dim)</span></code>.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>jax.Array</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>AssertionError</strong> – If no <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> has been set.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.core.data.</span></span><span class="sig-name descname"><span class="pre">ScalarInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_ScalarMeta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'jax.numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated[callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~pydantic.functional_validators.SkipValidation()]</span> <span class="pre">|</span> <span class="pre">None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Array(0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weak_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Array(1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weak_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#ScalarInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.ScalarInput" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a></p>
-<p>A one-dimensional input bounded by <code class="docutils literal notranslate"><span class="pre">[minval,</span> <span class="pre">maxval]</span></code>.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput.minval">
-<span class="sig-name descname"><span class="pre">minval</span></span><a class="headerlink" href="#elyza.core.data.ScalarInput.minval" title="Link to this definition">#</a></dt>
-<dd><p>Minimum input value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float | jax.Array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput.maxval">
-<span class="sig-name descname"><span class="pre">maxval</span></span><a class="headerlink" href="#elyza.core.data.ScalarInput.maxval" title="Link to this definition">#</a></dt>
-<dd><p>Maximum input value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float | jax.Array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.core.data.ScalarInput.model_config" title="Link to this definition">#</a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput.model_post_init">
-<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ScalarInput__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#ScalarInput.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.ScalarInput.model_post_init" title="Link to this definition">#</a></dt>
-<dd><p>Force <code class="docutils literal notranslate"><span class="pre">dim</span></code> to 1, since a scalar input is always one-dimensional.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="elyza.core.data.ScalarInput.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#ScalarInput.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.ScalarInput.print" title="Link to this definition">#</a></dt>
-<dd><p>Print the input’s summary along with its min/max bounds.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="elyza.core.data.VectorInput">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.core.data.</span></span><span class="sig-name descname"><span class="pre">VectorInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_ScalarMeta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'jax.numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated[callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~pydantic.functional_validators.SkipValidation()]</span> <span class="pre">|</span> <span class="pre">None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#VectorInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.VectorInput" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a></p>
-<p>A multi-dimensional input with per-dimension lower/upper bounds.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.VectorInput.minval">
-<span class="sig-name descname"><span class="pre">minval</span></span><a class="headerlink" href="#elyza.core.data.VectorInput.minval" title="Link to this definition">#</a></dt>
-<dd><p>1-d array of lower bounds, length <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>jax.Array | numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.VectorInput.maxval">
-<span class="sig-name descname"><span class="pre">maxval</span></span><a class="headerlink" href="#elyza.core.data.VectorInput.maxval" title="Link to this definition">#</a></dt>
-<dd><p>1-d array of upper bounds, length <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>jax.Array | numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="elyza.core.data.VectorInput.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></span><a class="headerlink" href="#elyza.core.data.VectorInput.model_config" title="Link to this definition">#</a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="elyza.core.data.VectorInput.model_post_init">
-<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_VectorInput__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#VectorInput.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.VectorInput.model_post_init" title="Link to this definition">#</a></dt>
-<dd><p>Validate bound shapes against <code class="docutils literal notranslate"><span class="pre">dim</span></code> and convert them to JAX arrays.</p>
+<dt class="sig sig-object py" id="elyza.core.data.Variable.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_Variable__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#Variable.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Variable.model_post_init" title="Link to this definition">#</a></dt>
+<dd><p>Cast <code class="docutils literal notranslate"><span class="pre">lower</span></code>/<code class="docutils literal notranslate"><span class="pre">upper</span></code> to <code class="docutils literal notranslate"><span class="pre">dtype</span></code> and validate their shapes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">minval</span></code> or <code class="docutils literal notranslate"><span class="pre">maxval</span></code> does not have length
-    <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">lower</span></code> or <code class="docutils literal notranslate"><span class="pre">upper</span></code> is neither a single
+    shared bound nor a per-dimension array of length <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.core.data.Variable.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/core/data.html#Variable.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.core.data.Variable.print" title="Link to this definition">#</a></dt>
+<dd><p>Print the input’s name, dimension, and concrete type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -664,28 +583,16 @@ sample; used by <a class="reference internal" href="#elyza.core.data.Input.sampl
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input"><code class="docutils literal notranslate"><span class="pre">Input</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.name"><code class="docutils literal notranslate"><span class="pre">Input.name</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.dim"><code class="docutils literal notranslate"><span class="pre">Input.dim</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.sampling_func"><code class="docutils literal notranslate"><span class="pre">Input.sampling_func</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.model_config"><code class="docutils literal notranslate"><span class="pre">Input.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.print"><code class="docutils literal notranslate"><span class="pre">Input.print()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Input.sample"><code class="docutils literal notranslate"><span class="pre">Input.sample()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput"><code class="docutils literal notranslate"><span class="pre">ScalarInput</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.minval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.minval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.maxval"><code class="docutils literal notranslate"><span class="pre">ScalarInput.maxval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.model_config"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">ScalarInput.model_post_init()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.ScalarInput.print"><code class="docutils literal notranslate"><span class="pre">ScalarInput.print()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput"><code class="docutils literal notranslate"><span class="pre">VectorInput</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.minval"><code class="docutils literal notranslate"><span class="pre">VectorInput.minval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.maxval"><code class="docutils literal notranslate"><span class="pre">VectorInput.maxval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.model_config"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.VectorInput.model_post_init"><code class="docutils literal notranslate"><span class="pre">VectorInput.model_post_init()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable"><code class="docutils literal notranslate"><span class="pre">Variable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.name"><code class="docutils literal notranslate"><span class="pre">Variable.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.dim"><code class="docutils literal notranslate"><span class="pre">Variable.dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.dtype"><code class="docutils literal notranslate"><span class="pre">Variable.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.lower"><code class="docutils literal notranslate"><span class="pre">Variable.lower</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.upper"><code class="docutils literal notranslate"><span class="pre">Variable.upper</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.sampling_func"><code class="docutils literal notranslate"><span class="pre">Variable.sampling_func</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.model_config"><code class="docutils literal notranslate"><span class="pre">Variable.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.model_post_init"><code class="docutils literal notranslate"><span class="pre">Variable.model_post_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.core.data.Variable.print"><code class="docutils literal notranslate"><span class="pre">Variable.print()</span></code></a></li>
 </ul>
 </li>
 </ul>

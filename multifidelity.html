@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -438,15 +438,14 @@ fidelity, each carrying a <code class="docutils literal notranslate"><span class
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
     <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">sampling_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-    <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">hf</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
@@ -496,12 +495,12 @@ regression coefficients:</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 1.1722e-01 (s)
-Per-evaluation time: 5.8611e-05 (s)
+Total time: 1.1760e-01 (s)
+Per-evaluation time: 5.8802e-05 (s)
 
 high-fidelity :
-Total time: 7.1573e-04 (s)
-Per-evaluation time: 3.5787e-07 (s)
+Total time: 8.9383e-04 (s)
+Per-evaluation time: 4.4692e-07 (s)
 </pre></div>
 </div>
 </div>
@@ -523,7 +522,7 @@ spending any real samples:</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5000, 150]
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0.00036901], dtype=float64)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0.00037014], dtype=float64)
 </pre></div>
 </div>
 </div>
@@ -541,7 +540,7 @@ every higher level, so the total number of <code class="docutils literal notrans
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.01905477]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.06519448]
 </pre></div>
 </div>
 </div>
@@ -558,7 +557,7 @@ evaluations, with no <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-0.17939646]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-0.01324219]
 </pre></div>
 </div>
 </div>
@@ -590,12 +589,12 @@ the section above applies unchanged with <code class="docutils literal notransla
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 1.4277e-03 (s)
-Per-evaluation time: 7.1383e-07 (s)
+Total time: 1.5624e-03 (s)
+Per-evaluation time: 7.8118e-07 (s)
 
 high-fidelity :
-Total time: 6.5136e-04 (s)
-Per-evaluation time: 3.2568e-07 (s)
+Total time: 7.6628e-04 (s)
+Per-evaluation time: 3.8314e-07 (s)
 </pre></div>
 </div>
 </div>

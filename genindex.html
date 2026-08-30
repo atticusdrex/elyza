@@ -191,7 +191,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -583,13 +583,15 @@
 </li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.degree">degree (elyza.util.preprocessing.PolynomialFeatures attribute)</a>
 </li>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input.dim">dim (elyza.core.data.Input attribute)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.dim">dim (elyza.core.data.Variable attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.dtype">dtype (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.dtype">dtype (elyza.core.data.Variable attribute)</a>
 
       <ul>
+        <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.dtype">(elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
+</li>
         <li><a href="elyza.surrogate.gp.kernel.html#elyza.surrogate.gp.kernel.BaseKernel.dtype">(elyza.surrogate.gp.kernel.BaseKernel attribute)</a>
 </li>
         <li><a href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.BaseMean.dtype">(elyza.surrogate.gp.mean.BaseMean attribute)</a>
@@ -987,8 +989,6 @@
 </li>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.init_scale">init_scale (elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
 </li>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input">Input (class in elyza.core.data)</a>
-</li>
       <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset.input_data">input_data (elyza.surrogate.abstract.SupervisedDataset attribute)</a>
 </li>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.input_dim">input_dim (elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
@@ -1061,10 +1061,10 @@
 </li>
       <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions">LBFGSOptions (class in elyza.optim.lbfgs)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale">length_scale (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean">level_mean() (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
 </li>
       <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum">level_sum() (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
@@ -1072,6 +1072,8 @@
       <li><a href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.Linear">Linear (class in elyza.surrogate.gp.mean)</a>
 </li>
       <li><a href="elyza.optim.abstract.html#elyza.optim.abstract.BatchGradientOptimizer.loss_grad_fn">loss_grad_fn (elyza.optim.abstract.BatchGradientOptimizer attribute)</a>
+</li>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.lower">lower (elyza.core.data.Variable attribute)</a>
 </li>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.lr">lr (elyza.optim.adam.ADAMOptions attribute)</a>
 
@@ -1099,26 +1101,10 @@
 </li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.max_cond">max_cond (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
-      <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.maxval">maxval (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
-
-      <ul>
-        <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput.maxval">(elyza.core.data.ScalarInput attribute)</a>
-</li>
-        <li><a href="elyza.core.data.html#elyza.core.data.VectorInput.maxval">(elyza.core.data.VectorInput attribute)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.mean_cls">mean_cls (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
       <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC">MFMC (class in elyza.multifidelity.montecarlo)</a>
 </li>
-      <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.minval">minval (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
-
-      <ul>
-        <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput.minval">(elyza.core.data.ScalarInput attribute)</a>
-</li>
-        <li><a href="elyza.core.data.html#elyza.core.data.VectorInput.minval">(elyza.core.data.VectorInput attribute)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC">MLMC (class in elyza.multifidelity.montecarlo)</a>
 </li>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor">MLPRegressor (class in elyza.surrogate.dnn.dnn)</a>
@@ -1128,11 +1114,7 @@
       <ul>
         <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.model_config">(elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
-        <li><a href="elyza.core.data.html#elyza.core.data.Input.model_config">(elyza.core.data.Input attribute)</a>
-</li>
-        <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput.model_config">(elyza.core.data.ScalarInput attribute)</a>
-</li>
-        <li><a href="elyza.core.data.html#elyza.core.data.VectorInput.model_config">(elyza.core.data.VectorInput attribute)</a>
+        <li><a href="elyza.core.data.html#elyza.core.data.Variable.model_config">(elyza.core.data.Variable attribute)</a>
 </li>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.model_config">(elyza.core.evaluator.Evaluator attribute)</a>
 </li>
@@ -1204,9 +1186,7 @@
       <ul>
         <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.model_post_init">(elyza.benchmarks.pde.darcy2d.GRFInput method)</a>
 </li>
-        <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput.model_post_init">(elyza.core.data.ScalarInput method)</a>
-</li>
-        <li><a href="elyza.core.data.html#elyza.core.data.VectorInput.model_post_init">(elyza.core.data.VectorInput method)</a>
+        <li><a href="elyza.core.data.html#elyza.core.data.Variable.model_post_init">(elyza.core.data.Variable method)</a>
 </li>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.model_post_init">(elyza.core.evaluator.Evaluator method)</a>
 </li>
@@ -1328,7 +1308,7 @@
 </li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.n_output_features_">n_output_features_ (elyza.util.preprocessing.PolynomialFeatures property)</a>
 </li>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input.name">name (elyza.core.data.Input attribute)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.name">name (elyza.core.data.Variable attribute)</a>
 
       <ul>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.name">(elyza.core.evaluator.Evaluator attribute)</a>
@@ -1420,11 +1400,9 @@
         <li><a href="elyza.surrogate.linear.linreg.html#elyza.surrogate.linear.linreg.Ridge.predict">(elyza.surrogate.linear.linreg.Ridge method)</a>
 </li>
       </ul></li>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input.print">print() (elyza.core.data.Input method)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.print">print() (elyza.core.data.Variable method)</a>
 
       <ul>
-        <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput.print">(elyza.core.data.ScalarInput method)</a>
-</li>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.print">(elyza.core.evaluator.Evaluator method)</a>
 </li>
         <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print">(elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
@@ -1474,7 +1452,7 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input.sample">sample() (elyza.core.data.Input method)</a>
+      <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.sample">sample() (elyza.benchmarks.pde.darcy2d.GRFInput method)</a>
 
       <ul>
         <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.sample">(elyza.multifidelity.surrogate.MAGPI method)</a>
@@ -1488,9 +1466,7 @@
         <li><a href="elyza.surrogate.linear.linreg.html#elyza.surrogate.linear.linreg.Ridge.sample">(elyza.surrogate.linear.linreg.Ridge method)</a>
 </li>
       </ul></li>
-      <li><a href="elyza.core.data.html#elyza.core.data.Input.sampling_func">sampling_func (elyza.core.data.Input attribute)</a>
-</li>
-      <li><a href="elyza.core.data.html#elyza.core.data.ScalarInput">ScalarInput (class in elyza.core.data)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.sampling_func">sampling_func (elyza.core.data.Variable attribute)</a>
 </li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.set_cost">set_cost() (elyza.core.evaluator.Evaluator method)</a>
 </li>
@@ -1569,12 +1545,16 @@
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable.upper">upper (elyza.core.data.Variable attribute)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.core.data.html#elyza.core.data.VectorInput">VectorInput (class in elyza.core.data)</a>
+      <li><a href="elyza.core.data.html#elyza.core.data.Variable">Variable (class in elyza.core.data)</a>
 </li>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.verbose">verbose (elyza.optim.adam.ADAMOptions attribute)</a>
 

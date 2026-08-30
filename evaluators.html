@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The Basics: Inputs and Evaluators &#8212; elyza 0.1.0 documentation</title>
+    <title>The Basics: Variables and Evaluators &#8212; elyza 0.1.0 documentation</title>
   
   
   
@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -392,7 +392,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>The Basics: Inputs and Evaluators</h1>
+    <h1>The Basics: Variables and Evaluators</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -402,7 +402,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-inputs">1. Defining inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-variables">1. Defining Variables</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
             </nav>
@@ -415,41 +415,39 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="the-basics-inputs-and-evaluators">
-<h1>The Basics: Inputs and Evaluators<a class="headerlink" href="#the-basics-inputs-and-evaluators" title="Link to this heading">#</a></h1>
-<p>In this page, we give an overview of the main functional building blocks within <code class="docutils literal notranslate"><span class="pre">elyza</span></code>. These include the <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a> class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> class.</p>
-<section id="defining-inputs">
-<h2>1. Defining inputs<a class="headerlink" href="#defining-inputs" title="Link to this heading">#</a></h2>
-<p>Every surrogate-modeling workflow starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
-For a single scalar variable, use <a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and give
-it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one draw:</p>
+  <section id="the-basics-variables-and-evaluators">
+<h1>The Basics: Variables and Evaluators<a class="headerlink" href="#the-basics-variables-and-evaluators" title="Link to this heading">#</a></h1>
+<p>In this page, we give an overview of the main functional building blocks within <code class="docutils literal notranslate"><span class="pre">elyza</span></code>. These include the <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> class.</p>
+<section id="defining-variables">
+<h2>1. Defining Variables<a class="headerlink" href="#defining-variables" title="Link to this heading">#</a></h2>
+<p>Every surrogate-modeling workflow starts with a <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>.
+For a single scalar variable sampled uniformly over some range, use
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Uniform</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
     <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">sampling_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-    <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">y</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
     <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">sampling_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-    <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>This is a simple example, but the input sampling could be a highly complex predefined function (e.g., quasi Monte Carlo strategies). The <code class="docutils literal notranslate"><span class="pre">Input</span></code> abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. <code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
+<p>This is a simple example, but the input sampling could be a highly complex predefined distribution (e.g., quasi Monte Carlo strategies). The <code class="docutils literal notranslate"><span class="pre">RandomVariable</span></code> abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. <code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
 <code class="docutils literal notranslate"><span class="pre">key</span></code> internally so every point gets its own subkey:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -491,26 +489,26 @@ approximate:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.79452372]
- [ 1.35959774]
- [-1.39402842]
- [-0.99641922]
- [-1.28963609]
- [-1.41354752]
- [-0.83025008]
- [ 1.25387271]
- [ 0.33577522]
- [ 1.37787861]
- [ 1.39957977]
- [-1.24517232]
- [ 0.90872975]
- [-1.38569847]
- [-1.4029991 ]
- [-0.20025822]
- [-1.41394361]
- [-1.37142714]
- [ 1.16405293]
- [-0.84230598]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[-0.38136929]
+ [ 1.18785256]
+ [ 0.76018374]
+ [-1.34361894]
+ [-1.18067404]
+ [ 0.17808383]
+ [ 0.07113586]
+ [-1.41261823]
+ [-1.18831301]
+ [ 1.29199458]
+ [-0.18450394]
+ [ 1.29591427]
+ [-1.40478152]
+ [ 0.96206289]
+ [-1.39949066]
+ [-0.11818621]
+ [ 0.66796067]
+ [-1.40462498]
+ [-0.41429913]
+ [ 0.51000833]]
 </pre></div>
 </div>
 </div>
@@ -527,10 +525,12 @@ approximate:</p>
 Evaluator Name: sinusoid
 Output Dimension: 1
 Inputs:
- * Name: x, Dimension: 1, Type: &lt;class 'elyza.core.data.ScalarInput'&gt;
-   - Min Value: 0.0, Max Value: 1.0
- * Name: y, Dimension: 1, Type: &lt;class 'elyza.core.data.ScalarInput'&gt;
-   - Min Value: 0.0, Max Value: 1.0
+ * Name: x, Dimension: 1, Type: &lt;class 'elyza.core.random.Uniform'&gt;
+   - Lower bounds: [0.]
+   - Upper bounds: [1.]
+ * Name: y, Dimension: 1, Type: &lt;class 'elyza.core.random.Uniform'&gt;
+   - Lower bounds: [0.]
+   - Upper bounds: [1.]
 ------------------------------------------------
 </pre></div>
 </div>
@@ -586,7 +586,7 @@ Inputs:
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-inputs">1. Defining inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-variables">1. Defining Variables</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
   </nav></div>

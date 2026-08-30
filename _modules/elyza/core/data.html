@@ -191,7 +191,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -354,25 +354,32 @@
   <h1>Source code for elyza.core.data</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""A data registry containing all relevant input functionality, sampling, etc.</span>
 
-<span class="sd">Defines the :class:`Input` base class and its :class:`ScalarInput` and</span>
-<span class="sd">:class:`VectorInput` specializations, which describe the inputs of an</span>
-<span class="sd">:class:`~elyza.core.evaluator.Evaluator` and know how to draw samples from</span>
-<span class="sd">themselves given a PRNG key.</span>
+<span class="sd">Defines :class:`Variable`, which describes a named, box-bounded input of an</span>
+<span class="sd">:class:`~elyza.core.evaluator.Evaluator`. See :mod:`elyza.core.random` for</span>
+<span class="sd">:class:`~elyza.core.random.RandomVariable` subclasses that know how to draw</span>
+<span class="sd">samples from themselves given a PRNG key.</span>
 <span class="sd">"""</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MethodType</span>
 
-<div class="viewcode-block" id="Input">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Input">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Input</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Base class for a named, sampleable model input.</span>
+<div class="viewcode-block" id="Variable">
+<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Variable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Variable</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Base class for a named, box-bounded model input.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        name: Unique input name.</span>
 <span class="sd">        dim: Dimension of the input.</span>
+<span class="sd">        dtype: Datatype ``lower``/``upper`` are cast to.</span>
+<span class="sd">        lower: Lower bound(s), either a single value broadcast across every</span>
+<span class="sd">            dimension or a per-dimension array of length ``dim``.</span>
+<span class="sd">        upper: Upper bound(s), either a single value broadcast across every</span>
+<span class="sd">            dimension or a per-dimension array of length ``dim``.</span>
 <span class="sd">        sampling_func: Function that takes a single PRNG key and returns one</span>
-<span class="sd">            sample; used by :meth:`sample` to draw a batch of samples.</span>
+<span class="sd">            sample. Unused by :class:`Variable` itself; available for</span>
+<span class="sd">            subclasses (see :mod:`elyza.core.random`) that want to draw</span>
+<span class="sd">            samples one PRNG key at a time.</span>
 <span class="sd">    """</span>
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -380,105 +387,59 @@
     <span class="n">dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"dimension of the input"</span><span class="p">)</span>
     <span class="n">dtype</span> <span class="p">:</span> <span class="n">ScalarMeta</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"input datatype"</span><span class="p">)</span>
 
+    <span class="n">lower</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"variable lower bounds"</span><span class="p">)</span>
+    <span class="n">upper</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"variable upper bounds"</span><span class="p">)</span>
+
     <span class="n">sampling_func</span> <span class="p">:</span> <span class="n">SkipValidation</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"function which takes a PRNG key as an input and returns a single sample"</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Input.sample">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Input.sample">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">n_points</span> <span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Draw a batch of samples from ``sampling_func``.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            key: A JAX PRNG key, split internally into ``n_points`` subkeys</span>
-<span class="sd">                (one per sample).</span>
-<span class="sd">            n_points: Number of samples to draw.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            jax.Array: Samples of shape ``(n_points, dim)``.</span>
+<div class="viewcode-block" id="Variable.model_post_init">
+<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Variable.model_post_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cast ``lower``/``upper`` to ``dtype`` and validate their shapes.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            AssertionError: If no ``sampling_func`` has been set.</span>
+<span class="sd">            AssertionError: If ``lower`` or ``upper`` is neither a single</span>
+<span class="sd">                shared bound nor a per-dimension array of length ``dim``.</span>
 <span class="sd">        """</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"No sampling function provided!"</span>
+        <span class="c1"># casting upper and lower bounds into correct datatypes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
-        <span class="c1"># splitting the jrand key into the number of points needed</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
-
-        <span class="c1"># using vmap to sample over the keys</span>
-        <span class="k">return</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_func</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">keys</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+        <span class="c1"># ensuring that the upper and lower bounds are the right dimension</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"lower bounds are incorrect dimension"</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"upper bounds are incorrect dimension"</span></div>
 
 
-<div class="viewcode-block" id="Input.print">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Input.print">[docs]</a>
+<div class="viewcode-block" id="Variable.print">
+<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.Variable.print">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Print the input's name, dimension, and concrete type."""</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">" * Name: </span><span class="si">%s</span><span class="s2">, Dimension: </span><span class="si">%d</span><span class="s2">, Type: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="p">))</span></div>
-</div>
+        <span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"   - Lower bounds: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"   - Upper bounds: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,))</span></div>
 
 
-<div class="viewcode-block" id="ScalarInput">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.ScalarInput">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ScalarInput</span><span class="p">(</span><span class="n">Input</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A one-dimensional input bounded by ``[minval, maxval]``.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span><span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Clip ``X`` to lie within ``[lower, upper]``, per dimension.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        minval: Minimum input value.</span>
-<span class="sd">        maxval: Maximum input value.</span>
-<span class="sd">    """</span>
-    <span class="n">minval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Minimum input value"</span><span class="p">)</span>
-    <span class="n">maxval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Maximum output value"</span><span class="p">)</span>
+<span class="sd">        Args:</span>
+<span class="sd">            X: Points to clip, shape ``(n_samples, dim)``.</span>
 
-<div class="viewcode-block" id="ScalarInput.model_post_init">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.ScalarInput.model_post_init">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Force ``dim`` to 1, since a scalar input is always one-dimensional."""</span>
-        <span class="c1"># enforcing dimension to 1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="c1"># converting minval and maxval to correct datatype</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="ScalarInput.print">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.ScalarInput.print">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Print the input's summary along with its min/max bounds."""</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"   - Min Value: </span><span class="si">%s</span><span class="s2">, Max Value: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">))</span></div>
-</div>
-
-
-<div class="viewcode-block" id="VectorInput">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.VectorInput">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorInput</span><span class="p">(</span><span class="n">Input</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A multi-dimensional input with per-dimension lower/upper bounds.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        minval: 1-d array of lower bounds, length ``dim``.</span>
-<span class="sd">        maxval: 1-d array of upper bounds, length ``dim``.</span>
-<span class="sd">    """</span>
-    <span class="n">minval</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">"1d array of lower bounds"</span><span class="p">)</span>
-    <span class="n">maxval</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">"1d array of upper bounds"</span><span class="p">)</span>
-
-<div class="viewcode-block" id="VectorInput.model_post_init">
-<a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.VectorInput.model_post_init">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Validate bound shapes against ``dim`` and convert them to JAX arrays.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: ``X`` clipped elementwise to ``[lower, upper]``, same</span>
+<span class="sd">            shape as ``X``.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            AssertionError: If ``minval`` or ``maxval`` does not have length</span>
-<span class="sd">                ``dim``.</span>
+<span class="sd">            AssertionError: If ``X`` does not have ``dim`` columns.</span>
 <span class="sd">        """</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"minimum values array != input dimension"</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"maximum values array != input dimension"</span>
-
-        <span class="c1"># converting to jax arrays</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> </div>
-</div>
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"attempting to clip data which is wrong idmension"</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">X</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -424,14 +424,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
         <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">sampling_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
-        <span class="n">minval</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">maxval</span> <span class="o">=</span> <span class="mf">5.0</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="mf">5.0</span>
     <span class="p">)</span>
 
 <span class="n">hf_evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
@@ -618,7 +617,7 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
 </pre></div>
 </div>
-<img alt="_images/fc59c88d6b35479ea43d27faba1d437ea3fb413fffe88a32bd1675af4d4e80ba.png" src="_images/fc59c88d6b35479ea43d27faba1d437ea3fb413fffe88a32bd1675af4d4e80ba.png" />
+<img alt="_images/42fbb996a86b43d764343b29aacda129db2e88d201b3fda3cc91666b6c999575.png" src="_images/42fbb996a86b43d764343b29aacda129db2e88d201b3fda3cc91666b6c999575.png" />
 </div>
 </div>
 <p>We then fit the medium-fidelity surrogate:</p>
@@ -640,7 +639,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1df8e2a9588ed672e82b33658726f71b15337d4e9d1b8fcd0a51a51b0cbfa4c7.png" src="_images/1df8e2a9588ed672e82b33658726f71b15337d4e9d1b8fcd0a51a51b0cbfa4c7.png" />
+<img alt="_images/5b8996f4ab5e4e06b06d646a5330abb3a9ca3296f81568bdbde793906eec827a.png" src="_images/5b8996f4ab5e4e06b06d646a5330abb3a9ca3296f81568bdbde793906eec827a.png" />
 </div>
 </div>
 <p>Lastly, we fit the high-fidelity surrogate</p>
@@ -665,7 +664,7 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
 </pre></div>
 </div>
-<img alt="_images/131841a095e57bc7f9ea1b75effcefdd6235c1e73703735747fb3d8fd3960a7f.png" src="_images/131841a095e57bc7f9ea1b75effcefdd6235c1e73703735747fb3d8fd3960a7f.png" />
+<img alt="_images/8c905cf3bbea6bf3f305f93668a346a459c47e178c8e5fa060acd07db3f1615a.png" src="_images/8c905cf3bbea6bf3f305f93668a346a459c47e178c8e5fa060acd07db3f1615a.png" />
 </div>
 </div>
 </section>

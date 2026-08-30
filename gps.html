@@ -196,7 +196,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
@@ -424,23 +424,22 @@ comparison of the three surrogate models the library ships with.</p>
 <p>Every example below runs as-is against a clean checkout.</p>
 <section id="vanilla-gaussian-process-regression">
 <h2>1. Vanilla Gaussian Process Regression<a class="headerlink" href="#vanilla-gaussian-process-regression" title="Link to this heading">#</a></h2>
-<p>Every surrogate modeling workflow typically starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
-For a single scalar variable, use <a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and give
-it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one random draw of the input. This isn’t required, you can call surrogate models using <code class="docutils literal notranslate"><span class="pre">Xtrain</span></code> and <code class="docutils literal notranslate"><span class="pre">Ytrain</span></code> jax arrays exactly like <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> does, but for active learning schemes or routines in which we must call an underlying function on new data, it helps to fit everything into the input/evaluator schema.</p>
+<p>Every surrogate modeling workflow typically starts with a <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>.
+For a single scalar variable sampled uniformly over some range, use
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Uniform</span></code>. This isn’t required, you can call surrogate models using <code class="docutils literal notranslate"><span class="pre">Xtrain</span></code> and <code class="docutils literal notranslate"><span class="pre">Ytrain</span></code> jax arrays exactly like <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> does, but for active learning schemes or routines in which we must call an underlying function on new data, it helps to fit everything into the input/evaluator schema.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span>
 
 <span class="c1"># instantiate the input variable</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
     <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">sampling_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-    <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># generate input training data </span>
@@ -506,7 +505,7 @@ full posterior covariance:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7d5bd29624a1a2ddee41fddf4de6fe080c80ef3dd21d74ecd64db424e05febdd.png" src="_images/7d5bd29624a1a2ddee41fddf4de6fe080c80ef3dd21d74ecd64db424e05febdd.png" />
+<img alt="_images/6f6cfe2c28a9456a641d48b168be153a523248344b628e69e19cb47aca4acac6.png" src="_images/6f6cfe2c28a9456a641d48b168be153a523248344b628e69e19cb47aca4acac6.png" />
 </div>
 </div>
 <p>New data can be folded in afterward without refitting from scratch, via a

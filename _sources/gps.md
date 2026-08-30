@@ -15,23 +15,22 @@ Every example below runs as-is against a clean checkout.
 
 ## 1. Vanilla Gaussian Process Regression
 
-Every surrogate modeling workflow typically starts with an {class}`~elyza.core.data.Input`.
-For a single scalar variable, use {class}`~elyza.core.data.ScalarInput` and give
-it a `sampling_func` that turns a JAX PRNG key into one random draw of the input. This isn't required, you can call surrogate models using `Xtrain` and `Ytrain` jax arrays exactly like `scikit-learn` does, but for active learning schemes or routines in which we must call an underlying function on new data, it helps to fit everything into the input/evaluator schema. 
+Every surrogate modeling workflow typically starts with a {class}`~elyza.core.data.Variable`.
+For a single scalar variable sampled uniformly over some range, use
+{class}`~elyza.core.random.Uniform`. This isn't required, you can call surrogate models using `Xtrain` and `Ytrain` jax arrays exactly like `scikit-learn` does, but for active learning schemes or routines in which we must call an underlying function on new data, it helps to fit everything into the input/evaluator schema. 
 
 ```{code-cell} python
 import jax.numpy as jnp
 import jax.random as jrand
 
-from elyza.core.data import ScalarInput
+from elyza.core.random import Uniform
 
 # instantiate the input variable
-x = ScalarInput(
+x = Uniform(
     name="x",
     dim=1,
-    sampling_func=lambda key: jrand.uniform(key, minval=0.0, maxval=1.0),
-    minval=0.0,
-    maxval=1.0,
+    lower=0.0,
+    upper=1.0,
 )
 
 # generate input training data 
