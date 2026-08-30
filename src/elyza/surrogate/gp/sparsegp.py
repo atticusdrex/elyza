@@ -49,8 +49,8 @@ class SparseGP(Surrogate):
     mean_cls: type[BaseMean] = Field(description = "mean class")
     n_inducing_points : int = Field(description = "number of inducing points")
     calibrate_noise: bool = Field(default = False, description = "whether or not to calibrate the noise variance to reduce the condition number of the kernel matrix")
-    noise_var: float = Field(default = 0.0, description = "variance of Gaussian white noise in the model outputs")
-    eps: float = Field(default = 1e-12, description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
+    noise_var: float | jax.Array = Field(default = jnp.array(0.0), description = "variance of Gaussian white noise in the model outputs")
+    eps: float | jax.Array = Field(default = jnp.array(1e-12), description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
     max_cond: float = Field(default = 1e5, description = "maximum condition number for kernel matrices")
     verbose: bool = Field(default = False, description = "whether or not to print the training and calibration progress")
     p: dict | None = Field(default = None, description = "an optional value depending on whether the user wants to instantiate the GP with predefined model parameters")
@@ -71,21 +71,27 @@ class SparseGP(Surrogate):
         # instantiating mean and kernel classes
         self._kernel = self.kernel_cls(
             input_dim=self.input_dim,
-            epsilon=self.eps
+            epsilon=self.eps,
+            dtype=self.dtype
         )
         self._mean = self.mean_cls(
             input_dim=self.input_dim,
-            epsilon=self.eps
+            epsilon=self.eps,
+            dtype=self.dtype
         )
+
+        # converting noise variance and eps to correct datatypes
+        self.noise_var = jnp.array(self.noise_var, dtype = self.dtype)
+        self.eps = jnp.array(self.eps, dtype = self.dtype)
 
         # instantiating the parameters
         self.p = {
-            'kernel': jnp.ones(self._kernel.p_dim),
-            'mean': jnp.ones(self._mean.p_dim),
+            'kernel': jnp.ones(self._kernel.p_dim, dtype = self.dtype),
+            'mean': jnp.ones(self._mean.p_dim, dtype = self.dtype),
             'noise': inv_softplus(self.noise_var + self.eps),
-            'inducing':None, 
-            'q_mu':None, 
-            'q_L':None 
+            'inducing':None,
+            'q_mu':None,
+            'q_L':None
         }
 
     def _scale(self, X: jax.Array) -> jax.Array:
@@ -131,14 +137,14 @@ class SparseGP(Surrogate):
             bandwidth = 2.0 * input_var + self.eps
         else:
             # kernels with a single shared bandwidth (e.g. RBF) -- use the average
-            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps)
+            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps, dtype=self.dtype)
         self.p['kernel'] = jnp.concatenate([inv_softplus(output_var).reshape(1), inv_softplus(bandwidth)])
 
         # mean: OLS fit of Y on [1, X] (Linear-style p_dim), or just mean(Y) for a
         # constant-only mean; a Zero mean (p_dim == 0) has nothing to initialize
         if self._mean.p_dim == 1 + X.shape[1]:
-            design = jnp.concatenate([jnp.ones((X.shape[0], 1)), X], axis=1)
-            self.p['mean'] = ls(design, Y).ravel()
+            design = jnp.concatenate([jnp.ones((X.shape[0], 1), dtype=self.dtype), X], axis=1)
+            self.p['mean'] = ls(design, Y).ravel().astype(self.dtype)
         elif self._mean.p_dim == 1:
             self.p['mean'] = jnp.atleast_1d(jnp.mean(Y))
 
@@ -157,9 +163,9 @@ class SparseGP(Surrogate):
         """
         # storing training data
         if self._X is None:
-            self._X = X
+            self._X = ensure_2d(X).astype(self.dtype)
         if self._Y is None:
-            self._Y = ensure_2d(Y)
+            self._Y = ensure_2d(Y).astype(self.dtype)
 
         # calibrate the noise to return a specific condition number
         if calibrate_noise:
@@ -204,7 +210,7 @@ class SparseGP(Surrogate):
         Returns:
             jax.Array: Lower-triangular Cholesky factor, shape ``(n, n)``.
         """
-        Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
+        Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0], dtype = self.dtype)
         return cholesky(Ktrain, lower=True)
 
     def predict(self, X, key = jrand.PRNGKey(42), n_samples : int = 100) -> tuple[jax.Array]:
@@ -245,13 +251,13 @@ class SparseGP(Surrogate):
         Returns:
             jax.Array: Samples, shape ``(n, n_samples)``.
         """
-        X = self._scale(jnp.array(X))
+        X = self._scale(jnp.array(X, dtype=self.dtype))
 
         # Getting cholesky factors and solve linear system
         p_mu = self._mean.eval(p['inducing'], p['mean'])
 
         L = self._get_L(p['inducing'], p['kernel'], p['noise'])
-        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + p['q_L'] @ jrand.normal(key,shape=(self.n_inducing_points, n_samples))
+        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + p['q_L'] @ jrand.normal(key,shape=(self.n_inducing_points, n_samples), dtype=self.dtype)
         alpha_sample = cho_solve((L, True), q_sample) 
         k_train = kernel_mat(X, p['inducing'], self._kernel, p['kernel']) 
         return self._mean.eval(X, p['mean']).reshape(-1,1) + k_train @ alpha_sample
@@ -303,7 +309,7 @@ class SparseGP(Surrogate):
         p_mu = self._mean.eval(p['inducing'], p['mean'])
         q_L = p['q_L']
         L = self._get_L(p['inducing'], p['kernel'], p['noise'])
-        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + q_L @ jrand.normal(key,shape=(self.n_inducing_points, n_mc))
+        q_sample = (p['q_mu'].reshape(-1,1) - p_mu) + q_L @ jrand.normal(key,shape=(self.n_inducing_points, n_mc), dtype=self.dtype)
         alpha_sample = cho_solve((L, True), q_sample) 
         k_train = kernel_mat(X, p['inducing'], self._kernel, p['kernel']) 
         yhat_samp = self._mean.eval(X, p['mean']).reshape(-1,1) + k_train @ alpha_sample
@@ -366,7 +372,7 @@ class SparseGP(Surrogate):
         self._optimizer.opts.p_init = deepcopy(self.p)
 
         # converting training data to jax arrays
-        X, Y = ensure_2d(jnp.array(X)), ensure_2d(jnp.array(Y))
+        X, Y = ensure_2d(jnp.array(X, dtype=self.dtype)), ensure_2d(jnp.array(Y, dtype=self.dtype))
 
         # fit the input scaler once, from the first-ever training batch, and reuse it for
         # every later fit/predict/update call on this model
@@ -390,7 +396,7 @@ class SparseGP(Surrogate):
 
             # initializing the variational output distribution parameters 
             self.p['q_mu'] = (Y[inds] - self._mean.eval(X[inds], self.p['mean'])).ravel()
-            self.p['q_L'] = jnp.eye(self.n_inducing_points) * self.eps 
+            self.p['q_L'] = jnp.eye(self.n_inducing_points, dtype=self.dtype) * self.eps
 
             self._optimizer.opts.p_init = self.p
             self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
@@ -400,7 +406,7 @@ class SparseGP(Surrogate):
         # setting the constraints of the variational points 
         # clipping the variational inputs so they stay within bounds
         constraints = {
-            'inducing':lambda Z: jnp.maximum(X.min(axis=0).reshape(-1,1), jnp.minimum(X.max(axis=0).reshape(-1,1), Z)), 
+            'inducing':lambda Z: jnp.maximum(X.min(axis=0).reshape(1,-1), jnp.minimum(X.max(axis=0).reshape(1,-1), Z)),
             'q_L': lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self.eps))
         }
 

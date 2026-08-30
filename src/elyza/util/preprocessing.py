@@ -33,7 +33,7 @@ class StandardScaler(BaseModel):
         self._mean = X.mean(axis=0).reshape(1,-1)
 
         # taking the standard deviations
-        self._stds = X.mean(axis=0).reshape(1,-1)
+        self._stds = X.std(axis=0).reshape(1,-1)
 
     def transform(self, X):
         """Standardize ``X`` using previously fit statistics.
@@ -143,14 +143,18 @@ class KernelFeatures(BaseModel):
         kernel_cls: Kernel class used to compute the feature map.
         eps: Small jitter to prevent division by zero; acts as L2
             regularization on the underlying decomposition.
+        dtype: Datatype the underlying kernel casts its inputs/outputs to.
         _centers: Fixed center points supplied to :meth:`fit`.
         _k_params: Softplus-inverted kernel parameters supplied to :meth:`fit`.
         _mapping_func: Unused placeholder for a custom mapping function.
         _kernel: Instantiated kernel object built from ``kernel_cls``.
     """
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     input_dim : int = Field(description = "the input dimension")
     kernel_cls : type[BaseKernel] = Field(default = ARD, description = "the kernel to use as the features")
     eps : float = Field(default = 1e-12, description = "small jitter to prevent division by zero. acts as l2 regularization on the singular value decomposition.")
+    dtype : ScalarMeta = Field(default = jnp.float64, description = "datatype the underlying kernel casts its inputs/outputs to")
 
     _centers : jax.Array | None = PrivateAttr(default = None)
     _k_params : jax.Array | None = PrivateAttr(default = None)
@@ -162,7 +166,8 @@ class KernelFeatures(BaseModel):
         # defining kernel function
         self._kernel = self.kernel_cls(
             input_dim = self.input_dim,
-            epsilon = self.eps
+            epsilon = self.eps,
+            dtype = self.dtype
         )
 
     def fit(self, kernel_params : jax.Array, centers:jax.Array):

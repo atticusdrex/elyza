@@ -22,6 +22,7 @@ class Input(BaseModel):
 
     name : int | str = Field(default = "anonymous", description = "Unique input name")
     dim : int = Field(default = 1, description = "dimension of the input")
+    dtype : ScalarMeta = Field(default = jnp.float64, description = "input datatype")
 
     sampling_func : SkipValidation[callable] | None = Field(default = None, description = "function which takes a PRNG key as an input and returns a single sample")
 
@@ -45,7 +46,7 @@ class Input(BaseModel):
         keys = jrand.split(key, n_points)
 
         # using vmap to sample over the keys
-        return ensure_2d(vmap(self.sampling_func, in_axes=0)(keys))
+        return ensure_2d(vmap(self.sampling_func, in_axes=0)(keys)).astype(self.dtype)
 
     def print(self):
         """Print the input's name, dimension, and concrete type."""
@@ -60,13 +61,18 @@ class ScalarInput(Input):
         minval: Minimum input value.
         maxval: Maximum input value.
     """
-    minval : float = Field(default = 0.0, description = "Minimum input value")
-    maxval : float = Field(default = 1.0, description = "Maximum output value")
+    minval : float | jax.Array = Field(default = jnp.array(0.0), description = "Minimum input value")
+    maxval : float | jax.Array = Field(default = jnp.array(1.0), description = "Maximum output value")
 
     def model_post_init(self, __context):
         """Force ``dim`` to 1, since a scalar input is always one-dimensional."""
         # enforcing dimension to 1
         self.dim = 1
+
+        # converting minval and maxval to correct datatype
+        self.minval = jnp.array(self.minval, dtype = self.dtype)
+        self.maxval = jnp.array(self.maxval, dtype = self.dtype)
+
 
     def print(self):
         """Print the input's summary along with its min/max bounds."""
@@ -94,5 +100,5 @@ class VectorInput(Input):
         assert self.maxval.shape[0] == self.dim, "maximum values array != input dimension"
 
         # converting to jax arrays
-        self.minval = jnp.array(self.minval)
-        self.maxval = jnp.array(self.maxval)
+        self.minval = jnp.array(self.minval).astype(self.dtype) 
+        self.maxval = jnp.array(self.maxval).astype(self.dtype) 

@@ -11,9 +11,13 @@ class BaseMean(BaseModel):
     Attributes:
         input_dim: Input dimension the mean function operates on.
         epsilon: Small positive jitter available to subclasses.
+        dtype: Datatype ``eval`` casts its inputs/outputs to.
     """
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     input_dim : int
     epsilon : float = Field(default_factory = 1e-12)
+    dtype: ScalarMeta = Field(default = jnp.float64, description = "datatype eval() casts its inputs/outputs to")
 
 class Zero(BaseMean):
     """A trivial zero-mean function."""
@@ -33,7 +37,7 @@ class Zero(BaseMean):
         Returns:
             float: Always ``0.0``.
         """
-        return jnp.zeros(shape = (x.shape[0], 1))
+        return jnp.zeros(shape = (x.shape[0], 1), dtype = self.dtype)
 
 class Constant(BaseMean):
     """A constant mean function."""
@@ -53,7 +57,8 @@ class Constant(BaseMean):
         Returns:
             The constant value ``params[0]``.
         """
-        return params[0] * jnp.ones(shape = (x.shape[0],1))
+        params = jnp.asarray(params, dtype=self.dtype)
+        return params[0] * jnp.ones(shape = (x.shape[0],1), dtype = self.dtype)
 
 class Linear(BaseMean):
     """A linear mean function."""
@@ -74,4 +79,6 @@ class Linear(BaseMean):
         Returns:
             jax.Array: The scalar value ``params[0] + params[1:] . x``.
         """
+        params = jnp.asarray(params, dtype=self.dtype)
+        x = jnp.asarray(x, dtype=self.dtype)
         return params[0] + jnp.inner(params[1:], x)

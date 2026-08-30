@@ -16,9 +16,13 @@ class BaseKernel(BaseModel):
         input_dim: Input dimension the kernel operates on.
         epsilon: Small positive jitter used by subclasses to avoid
             division-by-zero.
+        dtype: Datatype ``eval`` casts its inputs/outputs to.
     """
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     input_dim: int
     epsilon: float = 1e-12
+    dtype: ScalarMeta = Field(default = jnp.float64, description = "datatype eval() casts its inputs/outputs to")
 
 class RBF(BaseKernel):
     """Isotropic (single-bandwidth) radial basis function kernel."""
@@ -46,7 +50,8 @@ class RBF(BaseKernel):
         Returns:
             jax.Array: Scalar kernel value ``k(x1, x2)``.
         """
-        params = softplus(params.ravel()) # softplusing params for positivity constraints
+        params = softplus(jnp.asarray(params, dtype=self.dtype).ravel()) # softplusing params for positivity constraints
+        x1, x2 = jnp.asarray(x1, dtype=self.dtype), jnp.asarray(x2, dtype=self.dtype)
         return params[0]*jnp.exp(-jnp.sum(((x1 - x2).ravel())**2 / params[1]))
 
 class ARD(BaseKernel):
@@ -70,7 +75,8 @@ class ARD(BaseKernel):
         Returns:
             jax.Array: Scalar kernel value ``k(x1, x2)``.
         """
-        params = softplus(params.ravel()) # softplusing params for positivity constraints
+        params = softplus(jnp.asarray(params, dtype=self.dtype).ravel()) # softplusing params for positivity constraints
+        x1, x2 = jnp.asarray(x1, dtype=self.dtype), jnp.asarray(x2, dtype=self.dtype)
         return params[0]*jnp.exp(-jnp.sum(((x1 - x2).ravel())**2 / params[1:]))
 
 class Laplace(BaseKernel):
@@ -94,5 +100,6 @@ class Laplace(BaseKernel):
         Returns:
             jax.Array: Scalar kernel value ``k(x1, x2)``.
         """
-        params = softplus(params.ravel()) # softplusing params for positivity constraints
+        params = softplus(jnp.asarray(params, dtype=self.dtype).ravel()) # softplusing params for positivity constraints
+        x1, x2 = jnp.asarray(x1, dtype=self.dtype), jnp.asarray(x2, dtype=self.dtype)
         return params[0]*jnp.exp(-jnp.sum(jnp.abs((x1 - x2).ravel()) / params[1:]))

@@ -49,6 +49,8 @@ class Surrogate(BaseModel):
     """
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    dtype : ScalarMeta = Field(default = jnp.float64, description = "input datatype")
+
     @abstractmethod
     def fit(
         self,

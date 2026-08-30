@@ -26,12 +26,13 @@ import jax.random as jrand
 from jax import flatten_util
 import jax.numpy.linalg as jla
 from jax.scipy.linalg import cho_solve
+from jax._src.numpy.scalar_types import _ScalarMeta as ScalarMeta
 
 # 64-bit operation
 try:
     jax.config.update("jax_enable_x64", True)
 except:
-    print("Jax 64 bit is not available on your CPU!")
+    print("Jax 64-bit is not available on your CPU!")
 
 # Pydantic imports
 import pydantic

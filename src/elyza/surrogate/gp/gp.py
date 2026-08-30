@@ -31,6 +31,7 @@ class GaussianProcess(Surrogate):
         verbose: Whether or not to print the training and calibration progress.
         p: Model parameters (``kernel``, ``mean``, ``noise``); auto-initialized
             if not given.
+        dtype: jax array datatype (default is jax.numpy.float64) 
         _kernel: Instantiated kernel object built from ``kernel_cls``.
         _mean: Instantiated mean object built from ``mean_cls``.
         _X: Stored (scaled) training inputs.
@@ -47,11 +48,12 @@ class GaussianProcess(Surrogate):
     kernel_cls: type[BaseKernel] = Field(description = "kernel class")
     mean_cls: type[BaseMean] = Field(description = "mean class")
     calibrate_noise: bool = Field(default = False, description = "whether or not to calibrate the noise variance to reduce the condition number of the kernel matrix")
-    noise_var: float = Field(default = 0.0, description = "variance of Gaussian white noise in the model outputs")
-    eps: float = Field(default = 1e-12, description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
+    noise_var: float | jax.Array = Field(default = jnp.array(0.0), description = "variance of Gaussian white noise in the model outputs")
+    eps: float | jax.Array = Field(default = jnp.array(1e-12), description = "small positive jitter value to avoid singular kernel matrices and divide-by-zero errors")
     max_cond: float = Field(default = 1e5, description = "maximum condition number for kernel matrices")
     verbose: bool = Field(default = False, description = "whether or not to print the training and calibration progress")
     p: dict | None = Field(default = None, description = "an optional value depending on whether the user wants to instantiate the GP with predefined model parameters")
+    dtype : ScalarMeta = Field(default = jnp.float64, description = "input datatype")
 
     # private/internal state
     _kernel: BaseKernel | None = PrivateAttr(default=None)
@@ -71,17 +73,23 @@ class GaussianProcess(Surrogate):
         # instantiating mean and kernel classes
         self._kernel = self.kernel_cls(
             input_dim=self.input_dim,
-            epsilon=self.eps
+            epsilon=self.eps,
+            dtype=self.dtype
         )
         self._mean = self.mean_cls(
             input_dim=self.input_dim,
-            epsilon=self.eps
+            epsilon=self.eps,
+            dtype=self.dtype
         )
+
+        # converting noise variance and eps to correct datatypes 
+        self.noise_var = jnp.array(self.noise_var, dtype = self.dtype) 
+        self.eps = jnp.array(self.eps, dtype = self.dtype) 
 
         # instantiating the parameters
         self.p = {
-            'kernel': jnp.ones(self._kernel.p_dim),
-            'mean': jnp.ones(self._mean.p_dim),
+            'kernel': jnp.ones(self._kernel.p_dim, dtype = self.dtype),
+            'mean': jnp.ones(self._mean.p_dim, dtype = self.dtype),
             'noise': inv_softplus(self.noise_var + self.eps)
         }
 
@@ -128,14 +136,14 @@ class GaussianProcess(Surrogate):
             bandwidth = 2.0 * input_var + self.eps
         else:
             # kernels with a single shared bandwidth (e.g. RBF) -- use the average
-            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps)
+            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps, dtype=self.dtype)
         self.p['kernel'] = jnp.concatenate([inv_softplus(output_var).reshape(1), inv_softplus(bandwidth)])
 
         # mean: OLS fit of Y on [1, X] (Linear-style p_dim), or just mean(Y) for a
         # constant-only mean; a Zero mean (p_dim == 0) has nothing to initialize
         if self._mean.p_dim == 1 + X.shape[1]:
-            design = jnp.concatenate([jnp.ones((X.shape[0], 1)), X], axis=1)
-            self.p['mean'] = ls(design, Y).ravel()
+            design = jnp.concatenate([jnp.ones((X.shape[0], 1), dtype=self.dtype), X], axis=1)
+            self.p['mean'] = ls(design, Y).ravel().astype(self.dtype)
         elif self._mean.p_dim == 1:
             self.p['mean'] = jnp.atleast_1d(jnp.mean(Y))
 
@@ -153,9 +161,9 @@ class GaussianProcess(Surrogate):
         """
         # storing training data
         if self._X is None:
-            self._X = X
+            self._X = ensure_2d(X).astype(self.dtype)
         if self._Y is None:
-            self._Y = ensure_2d(Y)
+            self._Y = ensure_2d(Y).astype(self.dtype) 
 
         # calibrate the noise to return a specific condition number
         if calibrate_noise:
@@ -197,7 +205,7 @@ class GaussianProcess(Surrogate):
         Returns:
             jax.Array: Lower-triangular Cholesky factor, shape ``(n, n)``.
         """
-        Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0])
+        Ktrain = kernel_mat(X, X, self._kernel, k_param) + (self.eps + softplus(noise_var)) * jnp.eye(X.shape[0], dtype = self.dtype)
         return cholesky(Ktrain, lower=True)
 
     def _get_alpha(self, L, m_param) -> jax.Array:
@@ -227,7 +235,7 @@ class GaussianProcess(Surrogate):
             matrix, shape ``(n_samples, n_samples)``, or the marginal
             variances, shape ``(n_samples,)``.
         """
-        X = self._scale(jnp.array(X))
+        X = self._scale(jnp.array(X, dtype=self.dtype))
         Ktest = kernel_mat(X, self._X, self._kernel, self.p['kernel'])
         mean = ensure_2d(jnp.asarray(self._mean.eval(X, self.p['mean'])))
         mu = (Ktest @ self._alpha + mean).ravel()
@@ -324,7 +332,7 @@ class GaussianProcess(Surrogate):
         self._optimizer.opts.p_init = deepcopy(self.p)
 
         # converting training data to jax arrays
-        X, Y = ensure_2d(jnp.array(X)), ensure_2d(jnp.array(Y))
+        X, Y = ensure_2d(jnp.array(X, dtype=self.dtype)), ensure_2d(jnp.array(Y, dtype=self.dtype))
 
         # fit the input scaler once, from the first-ever training batch, and reuse it for
         # every later fit/predict/update call on this model
@@ -373,8 +381,8 @@ class GaussianProcess(Surrogate):
         if not self._calibrated:
             raise RuntimeError("Model must be fit() at least once before calling update().")
 
-        X = self._scale(jnp.array(X))
-        Y = ensure_2d(jnp.array(Y))
+        X = self._scale(jnp.array(X, dtype=self.dtype))
+        Y = ensure_2d(jnp.array(Y, dtype=self.dtype))
 
         n = self._X.shape[0]
         m = X.shape[0]
@@ -382,7 +390,7 @@ class GaussianProcess(Surrogate):
         # cross-covariance block kernel_mat(X, X) and new diagonal block kernel_mat(X, X)
         K12 = kernel_mat(self._X, X, self._kernel, self.p['kernel'])                     # (n, m)
         K22 = kernel_mat(X, X, self._kernel, self.p['kernel']) \
-            + (self.eps + softplus(self.p['noise'])) * jnp.eye(m)
+            + (self.eps + softplus(self.p['noise'])) * jnp.eye(m, dtype = self.dtype)
 
         # Solve L @ B = K12 so the augmented Cholesky factor remains consistent
         # with the block covariance structure K_aug = [[K11, K12], [K12^T, K22]].
@@ -390,11 +398,11 @@ class GaussianProcess(Surrogate):
 
         # Schur complement, factorized directly (only m x m, cheap)
         schur = K22 - B_T.T @ B_T
-        schur = schur + (self.eps + 1e-12) * jnp.eye(K22.shape[0])
+        schur = schur + (self.eps + 1e-12) * jnp.eye(K22.shape[0], dtype = self.dtype)
         C = cholesky(schur, lower=True)
 
         # assemble the augmented lower-triangular factor
-        L_new = jnp.zeros((n + m, n + m))
+        L_new = jnp.zeros((n + m, n + m), dtype = self.dtype)
         L_new = L_new.at[:n, :n].set(self._L)
         L_new = L_new.at[n:, :n].set(B_T.T)
         L_new = L_new.at[n:, n:].set(C)

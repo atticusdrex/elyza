@@ -70,12 +70,12 @@ class MLPRegressor(Surrogate):
 
                 # storing the weight matrix
                 self.p['weights'][layer] = self.init_scale * jrand.normal(
-                    weight_key, shape = (self.hidden_dims[layer], prev_dim)
+                    weight_key, shape = (self.hidden_dims[layer], prev_dim), dtype = self.dtype
                 )
 
                 # storing the bias vector
                 self.p['biases'][layer] = self.init_scale * jrand.normal(
-                    bias_key, shape = (self.hidden_dims[layer], 1)
+                    bias_key, shape = (self.hidden_dims[layer], 1), dtype = self.dtype
                 )
 
                 # setting prev_dim to this hidden layer dimension
@@ -85,10 +85,10 @@ class MLPRegressor(Surrogate):
             layer += 1
             weight_key, bias_key = jrand.split(init_keys[layer])
             self.p['weights'][layer] = self.init_scale * jrand.normal(
-                weight_key, shape = (self.output_dim, prev_dim)
+                weight_key, shape = (self.output_dim, prev_dim), dtype = self.dtype
             )
             self.p['biases'][layer] = self.init_scale * jrand.normal(
-                bias_key, shape = (self.output_dim, 1)
+                bias_key, shape = (self.output_dim, 1), dtype = self.dtype
             )
 
     def _pred(self, p, X:jax.Array) -> jax.Array:
@@ -127,7 +127,7 @@ class MLPRegressor(Surrogate):
         Returns:
             jax.Array: Network outputs, shape ``(output_dim, n_samples)``.
         """
-        return self._pred(self.p, X)
+        return self._pred(self.p, jnp.array(X, dtype=self.dtype))
 
     def fit(
             self,
@@ -150,7 +150,7 @@ class MLPRegressor(Surrogate):
         self._optimizer.opts.p_init = deepcopy(self.p)
 
         # converting training data to jax arrays
-        X, Y = ensure_2d(jnp.array(X)), ensure_2d(jnp.array(Y))
+        X, Y = ensure_2d(jnp.array(X, dtype=self.dtype)), ensure_2d(jnp.array(Y, dtype=self.dtype))
 
         self._optimizer.loss_grad_fn = jit(value_and_grad(lambda p, X, Y: self._objective(p, X, Y), argnums=2))
 
