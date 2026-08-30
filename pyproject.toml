@@ -22,7 +22,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["build", "twine", "pytest"]
-docs = ["sphinx", "sphinx_rtd_theme", "sphinx_book_theme", "myst-nb", "ipykernel"]
+docs = ["sphinx", "sphinx_rtd_theme", "sphinx_book_theme", "myst-nb", "ipykernel", "matplotlib"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

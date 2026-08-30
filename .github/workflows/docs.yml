@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx-book-theme myst-nb ipykernel
+          pip install sphinx sphinx-book-theme myst-nb ipykernel matplotlib
           pip install -e .
           
       - name: Update citation info
