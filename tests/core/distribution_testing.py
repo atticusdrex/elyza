@@ -1,6 +1,6 @@
 # %% 
 from elyza.util.imports import * 
-from elyza.core.distribution import Gaussian, GaussianMixture
+from elyza.core.random import Gaussian, GaussianMixture
 from seaborn import kdeplot
 
 # testing gaussian distribution 

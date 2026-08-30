@@ -16,14 +16,13 @@ We now demonstrate a simple analytical implementation of the MAGPI algorithm. We
 
 ```{code-cell} python
 from elyza.util.imports import *
-from elyza.core.data import ScalarInput
+from elyza.core.random import Uniform
 from elyza.core.evaluator import Evaluator
-x = ScalarInput(
+x = Uniform(
         name = "x",
         dim = 1,
-        sampling_func = lambda key: jrand.uniform(key, minval=0, maxval=5),
-        minval = 0.0,
-        maxval = 5.0
+        lower = 0.0,
+        upper = 5.0
     )
 
 hf_evaluator = Evaluator(

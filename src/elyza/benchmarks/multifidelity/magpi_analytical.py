@@ -7,15 +7,14 @@ oscillation ``sin(2*pi*x)``, and a high-fidelity model combining both,
 ``exp(-x) * sin(2*pi*x)``.
 """
 from elyza.util.imports import *
-from elyza.core.data import ScalarInput
+from elyza.core.random import Uniform
 from elyza.core.evaluator import Evaluator
 
-x = ScalarInput(
+x = Uniform(
         name = "x",
         dim = 1,
-        sampling_func = lambda key: jrand.uniform(key, minval=0, maxval=5),
-        minval = 0.0,
-        maxval = 5.0
+        lower = 0.0,
+        upper = 5.0
     )
 
 hf_evaluator = Evaluator(

@@ -1,12 +1,12 @@
 """The evaluator class: a way to evaluate external computer models and store data.
 
 Defines :class:`Evaluator`, which wraps an arbitrary evaluation function
-together with its :class:`~elyza.core.data.Input` specification, output
+together with its :class:`~elyza.core.data.Variable` specification, output
 dimension, and (optionally) a calibrated per-evaluation cost -- the unit
 that :mod:`elyza.multifidelity` estimators operate on.
 """
 from elyza.util.imports import *
-from elyza.core.data import *
+from elyza.core.data import Variable
 import time
 
 class Evaluator(BaseModel):
@@ -25,7 +25,7 @@ class Evaluator(BaseModel):
     name : int | str = Field(
         description = "the unique name for this evaluator"
     )
-    inputs : list[Input] = Field(
+    inputs : list[Variable] = Field(
         description = "the list of inputs associated for this evaluator"
     )
     output_dim : int = Field(default = 1,
@@ -57,7 +57,7 @@ class Evaluator(BaseModel):
         """
         assert len(self.inputs) == len(self._input_names), "duplicate input names detected"
 
-    def single_eval(self, *input_vals : list[Input]):
+    def single_eval(self, *input_vals : list[Variable]):
         """Evaluate the model on a single set of (unbatched) input values.
 
         Args:

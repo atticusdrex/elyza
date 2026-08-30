@@ -9,7 +9,7 @@ solver. Supporting module-private helpers build the KL eigenbasis, the
 source term, and the FD stiffness-matrix action.
 """
 from elyza.util.imports import *
-from elyza.core.data import VectorInput
+from elyza.core.random import RandomVariable
 from elyza.core.evaluator import Evaluator
 from PIL import Image
 
@@ -377,7 +377,7 @@ def _cg_solve(
 # Public API
 # ---------------------------------------------------------------------------
 
-class GRFInput(VectorInput):
+class GRFInput(RandomVariable):
     """A log-normal Gaussian random field input.
 
     Represented by a truncated KL expansion of a squared-exponential
@@ -403,8 +403,6 @@ class GRFInput(VectorInput):
             set the SAME value on multiple ``GRFInput``s (with matching
             ``length_scale``/``n_kl_terms``) to couple their sampled fields
             across resolutions. Defaults to ``grid_dim`` (no coupling).
-        minval: Unused for GRF inputs (inherited box-bound field).
-        maxval: Unused for GRF inputs (inherited box-bound field).
         _scaled_eigvecs: KL eigenvectors pre-scaled by ``sqrt(eigenvalue)``.
     """
     grid_dim : int = Field(description = "field grid resolution (grid_dim x grid_dim)")
@@ -414,33 +412,31 @@ class GRFInput(VectorInput):
     grf_std : float = Field(default = 1.0, description = "standard deviation of the underlying Gaussian random field")
     reference_grid_dim : int | None = Field(default = None, description = "grid resolution the KL eigenbasis is computed on; set the SAME value on multiple GRFInputs (with matching length_scale/n_kl_terms) to couple their sampled fields across resolutions. Defaults to grid_dim (no coupling)")
 
-    # the field is unconstrained, so the box-bound fields inherited from
-    # VectorInput aren't meaningful here
-    minval : jax.Array | np.ndarray | None = Field(default = None, description = "unused for GRF inputs")
-    maxval : jax.Array | np.ndarray | None = Field(default = None, description = "unused for GRF inputs")
-
     _scaled_eigvecs : jax.Array | None = PrivateAttr(default = None)
 
     def model_post_init(self, __context):
-        """Compute the KL eigenbasis once and wire up ``sampling_func``."""
+        """Compute the KL eigenbasis once, at construction time."""
         # each flattened field realisation has grid_dim**2 entries
         self.dim = self.grid_dim ** 2
-        if self.minval is None:
-            self.minval = -jnp.inf * jnp.ones(self.dim)
-        if self.maxval is None:
-            self.maxval = jnp.inf * jnp.ones(self.dim)
 
-        # computing the KL basis once, at construction time
         reference_grid_dim = self.grid_dim if self.reference_grid_dim is None else self.reference_grid_dim
         _, scaled_eigvecs = build_kl_basis_at(self.grid_dim, self.length_scale, self.n_kl_terms, reference_grid_dim)
-        self._scaled_eigvecs = jnp.array(scaled_eigvecs)
-
-        # wiring up the sampling function used by Input.sample()
-        def sampling_func(key):
-            return get_field(key, self.grf_mean, self.grf_std, self._scaled_eigvecs, self.n_kl_terms)
-        self.sampling_func = sampling_func
+        self._scaled_eigvecs = jnp.array(scaled_eigvecs, dtype = self.dtype)
 
         super().model_post_init(__context)
+
+    def sample(self, key:jax.Array, n_points:int) -> jax.Array:
+        """Draw ``n_points`` flattened field realisations.
+
+        Args:
+            key: A JAX PRNG key, split internally into ``n_points`` subkeys.
+            n_points: Number of field realisations to draw.
+
+        Returns:
+            jax.Array: Field realisations, shape ``(n_points, grid_dim**2)``.
+        """
+        keys = jrand.split(key, n_points)
+        return vmap(lambda k: get_field(k, self.grf_mean, self.grf_std, self._scaled_eigvecs, self.n_kl_terms))(keys).astype(self.dtype)
 
 
 class DarcyFlowEvaluator(Evaluator):

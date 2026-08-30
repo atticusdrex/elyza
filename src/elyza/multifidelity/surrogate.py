@@ -10,7 +10,6 @@ lower-fidelity surrogates' predictions.
 from elyza.surrogate.gp import GaussianProcess, ARD, Linear
 from elyza.surrogate.abstract import Surrogate, SupervisedDataset
 
-from elyza.core.data import Input
 from elyza.core.evaluator import Evaluator
 
 from elyza.util.imports import *

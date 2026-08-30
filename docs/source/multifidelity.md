@@ -26,15 +26,14 @@ fidelity, each carrying a `cost`:
 import jax.numpy as jnp
 import jax.random as jrand
 
-from elyza.core.data import ScalarInput
+from elyza.core.random import Uniform
 from elyza.core.evaluator import Evaluator
 
-x = ScalarInput(
+x = Uniform(
     name="x",
     dim=1,
-    sampling_func=lambda key: jrand.uniform(key, minval=0.0, maxval=1.0),
-    minval=0.0,
-    maxval=1.0,
+    lower=0.0,
+    upper=1.0,
 )
 
 hf = Evaluator(

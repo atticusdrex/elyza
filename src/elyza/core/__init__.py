@@ -1,8 +1,8 @@
 """Core building blocks: model inputs and the evaluator that wraps a computer model.
 
-Exposes :class:`~elyza.core.data.Input` and its
-:class:`~elyza.core.data.ScalarInput`/:class:`~elyza.core.data.VectorInput`
-specializations, plus :class:`~elyza.core.evaluator.Evaluator`.
+Exposes :class:`~elyza.core.data.Variable`, plus
+:class:`~elyza.core.evaluator.Evaluator`. See :mod:`elyza.core.random` for
+sampleable :class:`~elyza.core.random.RandomVariable` subclasses.
 """
-from elyza.core.data import Input, ScalarInput, VectorInput
+from elyza.core.data import Variable
 from elyza.core.evaluator import Evaluator
