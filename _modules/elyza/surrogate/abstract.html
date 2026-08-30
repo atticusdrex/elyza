@@ -405,6 +405,8 @@
 <span class="sd">    """</span>
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="n">dtype</span> <span class="p">:</span> <span class="n">ScalarMeta</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"input datatype"</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Surrogate.fit">
 <a class="viewcode-back" href="../../../elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.fit">[docs]</a>
     <span class="nd">@abstractmethod</span>

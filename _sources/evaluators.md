@@ -6,14 +6,9 @@ kernelspec:
 
 # The Basics: Inputs and Evaluators
 
-This page walks through the core surrogate-modeling workflow in `elyza`:
-describing an input, wrapping a model as an {class}`~elyza.core.evaluator.Evaluator`,
-generating training data, and fitting a surrogate. It ends with a short
-comparison of the three surrogate models the library ships with.
+In this page, we give an overview of the main functional building blocks within `elyza`. These include the {class}`~elyza.core.data.Input` class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an {class}`~elyza.core.evaluator.Evaluator` class. 
 
-Every example below runs as-is against a clean checkout.
-
-## 1. Instantiate the input
+## 1. Defining inputs
 
 Every surrogate-modeling workflow starts with an {class}`~elyza.core.data.Input`.
 For a single scalar variable, use {class}`~elyza.core.data.ScalarInput` and give
@@ -42,7 +37,7 @@ y = ScalarInput(
 )
 ```
 
-This is a simple example, but the input sampling could be a highly complex predefined function. The `Input` abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. `x.sample(key, n_points)` draws a batch of `n_points` samples, splitting
+This is a simple example, but the input sampling could be a highly complex predefined function (e.g., quasi Monte Carlo strategies). The `Input` abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. `x.sample(key, n_points)` draws a batch of `n_points` samples, splitting
 `key` internally so every point gets its own subkey:
 
 ```{code-cell} python
@@ -53,7 +48,7 @@ Y_train = y.sample(key, 20)
 print(X_train.shape, Y_train.shape)
 ```
 
-## 2. Wrap the model as an Evaluator
+## 2. Defining evaluators
 
 An {class}`~elyza.core.evaluator.Evaluator` pairs an `evaluation_func` with
 the inputs it consumes, and vectorizes it over a batch via `vmap` under the
@@ -74,7 +69,7 @@ Z_train = evaluator.evaluate(X_train, Y_train)   # shape (20, 1)
 print(Z_train)
 ```
 
-The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized `elyza` environment. Each evaluator has a built-in print method which lists all the data associated with it:
+The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized `elyza` environment. Each evaluator has a built-in `print()` method which lists all the attributes associated with it:
 
 ```{code-cell} python
 evaluator.print()

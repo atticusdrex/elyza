@@ -430,7 +430,7 @@
                   
   <section id="elyza-documentation">
 <h1>Elyza Documentation<a class="headerlink" href="#elyza-documentation" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> is a <a class="reference external" href="https://github.com/jax-ml/jax">Jax</a>-backed library for multifidelity surrogate modeling, inference, and uncertainty quantification. It provides a set of composable, <a class="reference external" href="https://docs.pydantic.dev/">Pydantic</a>-validated building blocks for defining simulation inputs and evaluators, fitting surrogate models (Gaussian processes, neural networks, and closed-form linear regression, including a multifidelity/autoregressive Gaussian process), and combining models of varying cost and accuracy with multifidelity Monte Carlo estimators.</p>
+<p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> is a <a class="reference external" href="https://github.com/jax-ml/jax">Jax</a>-based library for general purpose scientific computing. It provides a set of composable, <a class="reference external" href="https://docs.pydantic.dev/">Pydantic</a>-validated building blocks for defining simulation inputs and evaluators, fitting surrogate models, optimizing expensive differentiable functions, and performing uncertainty quantification.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">elyza</span></code> requires Python 3.10+.</p>
@@ -531,8 +531,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="evaluators.html#instantiate-the-input">1. Instantiate the input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="evaluators.html#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluators.html#defining-inputs">1. Defining inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluators.html#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a><ul>

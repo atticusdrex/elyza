@@ -402,8 +402,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-input">1. Instantiate the input</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-inputs">1. Defining inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
             </nav>
         </div>
@@ -417,13 +417,9 @@
                   
   <section id="the-basics-inputs-and-evaluators">
 <h1>The Basics: Inputs and Evaluators<a class="headerlink" href="#the-basics-inputs-and-evaluators" title="Link to this heading">#</a></h1>
-<p>This page walks through the core surrogate-modeling workflow in <code class="docutils literal notranslate"><span class="pre">elyza</span></code>:
-describing an input, wrapping a model as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>,
-generating training data, and fitting a surrogate. It ends with a short
-comparison of the three surrogate models the library ships with.</p>
-<p>Every example below runs as-is against a clean checkout.</p>
-<section id="instantiate-the-input">
-<h2>1. Instantiate the input<a class="headerlink" href="#instantiate-the-input" title="Link to this heading">#</a></h2>
+<p>In this page, we give an overview of the main functional building blocks within <code class="docutils literal notranslate"><span class="pre">elyza</span></code>. These include the <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a> class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> class.</p>
+<section id="defining-inputs">
+<h2>1. Defining inputs<a class="headerlink" href="#defining-inputs" title="Link to this heading">#</a></h2>
 <p>Every surrogate-modeling workflow starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
 For a single scalar variable, use <a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and give
 it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one draw:</p>
@@ -453,7 +449,7 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
 </div>
 </div>
 </div>
-<p>This is a simple example, but the input sampling could be a highly complex predefined function. The <code class="docutils literal notranslate"><span class="pre">Input</span></code> abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. <code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
+<p>This is a simple example, but the input sampling could be a highly complex predefined function (e.g., quasi Monte Carlo strategies). The <code class="docutils literal notranslate"><span class="pre">Input</span></code> abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. <code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
 <code class="docutils literal notranslate"><span class="pre">key</span></code> internally so every point gets its own subkey:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -472,8 +468,8 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
 </div>
 </div>
 </section>
-<section id="wrap-the-model-as-an-evaluator">
-<h2>2. Wrap the model as an Evaluator<a class="headerlink" href="#wrap-the-model-as-an-evaluator" title="Link to this heading">#</a></h2>
+<section id="defining-evaluators">
+<h2>2. Defining evaluators<a class="headerlink" href="#defining-evaluators" title="Link to this heading">#</a></h2>
 <p>An <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> pairs an <code class="docutils literal notranslate"><span class="pre">evaluation_func</span></code> with
 the inputs it consumes, and vectorizes it over a batch via <code class="docutils literal notranslate"><span class="pre">vmap</span></code> under the
 hood. Here it stands in for a “ground truth” computer model you’d like to
@@ -519,7 +515,7 @@ approximate:</p>
 </div>
 </div>
 </div>
-<p>The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized <code class="docutils literal notranslate"><span class="pre">elyza</span></code> environment. Each evaluator has a built-in print method which lists all the data associated with it:</p>
+<p>The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized <code class="docutils literal notranslate"><span class="pre">elyza</span></code> environment. Each evaluator has a built-in <code class="docutils literal notranslate"><span class="pre">print()</span></code> method which lists all the attributes associated with it:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">evaluator</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
@@ -590,8 +586,8 @@ Inputs:
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-input">1. Instantiate the input</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-inputs">1. Defining inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
   </nav></div>
 

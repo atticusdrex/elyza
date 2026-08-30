@@ -412,6 +412,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.max_cond"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.max_cond</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.verbose"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.verbose</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.p"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.p</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.dtype"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.dtype</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._kernel"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._kernel</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._mean"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._mean</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._X"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._X</span></code></a></li>
@@ -453,7 +454,7 @@ log-marginal-likelihood, and supports rank-1 (block Cholesky) updates for
 online data ingestion.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="elyza.surrogate.gp.gp.GaussianProcess">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.surrogate.gp.gp.</span></span><span class="sig-name descname"><span class="pre">GaussianProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.surrogate.gp.kernel.html#elyza.surrogate.gp.kernel.BaseKernel" title="elyza.surrogate.gp.kernel.BaseKernel"><span class="pre">BaseKernel</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.BaseMean" title="elyza.surrogate.gp.mean.BaseMean"><span class="pre">BaseMean</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrate_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cond</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/surrogate/gp/gp.html#GaussianProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.surrogate.gp.gp.GaussianProcess" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">elyza.surrogate.gp.gp.</span></span><span class="sig-name descname"><span class="pre">GaussianProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">dtype:</span> <span class="pre">~jax._src.numpy.scalar_types._ScalarMeta</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'jax.numpy.float64'&gt;,</span> <span class="pre">input_dim:</span> <span class="pre">int,</span> <span class="pre">kernel_cls:</span> <span class="pre">type[~elyza.surrogate.gp.kernel.BaseKernel],</span> <span class="pre">mean_cls:</span> <span class="pre">type[~elyza.surrogate.gp.mean.BaseMean],</span> <span class="pre">calibrate_noise:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">noise_var:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">~jax.Array</span> <span class="pre">=</span> <span class="pre">Array(0.,</span> <span class="pre">dtype=float64,</span> <span class="pre">weak_type=True),</span> <span class="pre">eps:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">~jax.Array</span> <span class="pre">=</span> <span class="pre">Array(1.e-12,</span> <span class="pre">dtype=float64,</span> <span class="pre">weak_type=True),</span> <span class="pre">max_cond:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">100000.0,</span> <span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">p:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/surrogate/gp/gp.html#GaussianProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.surrogate.gp.gp.GaussianProcess" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Surrogate</span></code></a></p>
 <p>Gaussian Process regression with a pluggable kernel and mean function.</p>
 <dl class="py attribute">
@@ -507,7 +508,7 @@ reduce the condition number of the kernel matrix.</p>
 <dd><p>Variance of Gaussian white noise in the model outputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p>float | jax.Array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -519,7 +520,7 @@ reduce the condition number of the kernel matrix.</p>
 and divide-by-zero errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p>float | jax.Array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -554,6 +555,17 @@ if not given.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elyza.surrogate.gp.gp.GaussianProcess.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#elyza.surrogate.gp.gp.GaussianProcess.dtype" title="Link to this definition">#</a></dt>
+<dd><p>jax array datatype (default is jax.numpy.float64)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax._src.numpy.scalar_types._ScalarMeta</p>
 </dd>
 </dl>
 </dd></dl>
@@ -850,6 +862,7 @@ Cholesky recomputation over all training data.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.max_cond"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.max_cond</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.verbose"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.verbose</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.p"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.p</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess.dtype"><code class="docutils literal notranslate"><span class="pre">GaussianProcess.dtype</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._kernel"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._kernel</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._mean"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._mean</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.surrogate.gp.gp.GaussianProcess._X"><code class="docutils literal notranslate"><span class="pre">GaussianProcess._X</span></code></a></li>

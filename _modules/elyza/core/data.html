@@ -378,6 +378,7 @@
 
     <span class="n">name</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="s2">"anonymous"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Unique input name"</span><span class="p">)</span>
     <span class="n">dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"dimension of the input"</span><span class="p">)</span>
+    <span class="n">dtype</span> <span class="p">:</span> <span class="n">ScalarMeta</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"input datatype"</span><span class="p">)</span>
 
     <span class="n">sampling_func</span> <span class="p">:</span> <span class="n">SkipValidation</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"function which takes a PRNG key as an input and returns a single sample"</span><span class="p">)</span>
 
@@ -403,7 +404,7 @@
         <span class="n">keys</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
 
         <span class="c1"># using vmap to sample over the keys</span>
-        <span class="k">return</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_func</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">keys</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_func</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">keys</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Input.print">
@@ -425,15 +426,20 @@
 <span class="sd">        minval: Minimum input value.</span>
 <span class="sd">        maxval: Maximum input value.</span>
 <span class="sd">    """</span>
-    <span class="n">minval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Minimum input value"</span><span class="p">)</span>
-    <span class="n">maxval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Maximum output value"</span><span class="p">)</span>
+    <span class="n">minval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Minimum input value"</span><span class="p">)</span>
+    <span class="n">maxval</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"Maximum output value"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ScalarInput.model_post_init">
 <a class="viewcode-back" href="../../../elyza.core.data.html#elyza.core.data.ScalarInput.model_post_init">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Force ``dim`` to 1, since a scalar input is always one-dimensional."""</span>
         <span class="c1"># enforcing dimension to 1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># converting minval and maxval to correct datatype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="ScalarInput.print">
@@ -470,8 +476,8 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="s2">"maximum values array != input dimension"</span>
 
         <span class="c1"># converting to jax arrays</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minval</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> </div>
 </div>
 
 </pre></div>
