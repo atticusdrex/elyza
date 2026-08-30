@@ -7,11 +7,29 @@
 
 ```{toctree}
 :maxdepth: 4
-:caption: Contents:
+:caption: Getting Started:
 
 evaluators
-surrogate
-multifidelity
 optimization
+```
+
+```{toctree}
+:maxdepth: 4
+:caption: Surrogate Modeling:
+
+gps
+multifidelity_surrogate
+```
+
+```{toctree}
+:maxdepth: 4
+:caption: Uncertainty Quantification:
+multifidelity
+```
+
+```{toctree}
+:maxdepth: 4
+:caption: API Reference:
+
 modules
 ```

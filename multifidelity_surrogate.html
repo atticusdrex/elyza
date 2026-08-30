@@ -1,0 +1,776 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Multifidelity Surrogate Modeling &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'multifidelity_surrogate';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Multifidelity Quickstart" href="multifidelity.html" />
+    <link rel="prev" title="Gaussian process regression" href="gps.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="_static/elyza_logo.png" class="logo__image only-dark" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="_static/elyza_logo.png" class="logo__image only-light pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Surrogate Modeling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/multifidelity_surrogate.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multifidelity Surrogate Modeling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multifidelity-augmented-gaussian-process-inputs-magpi">Multifidelity-Augmented Gaussian Process Inputs (MAGPI)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="multifidelity-surrogate-modeling">
+<h1>Multifidelity Surrogate Modeling<a class="headerlink" href="#multifidelity-surrogate-modeling" title="Link to this heading">#</a></h1>
+<p>We provide a quick overview of some of the surrogate modeling applications included in <code class="docutils literal notranslate"><span class="pre">elyza</span></code>.</p>
+<section id="multifidelity-augmented-gaussian-process-inputs-magpi">
+<h2>Multifidelity-Augmented Gaussian Process Inputs (MAGPI)<a class="headerlink" href="#multifidelity-augmented-gaussian-process-inputs-magpi" title="Link to this heading">#</a></h2>
+<p>See the <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0045782526005025">MAGPI paper</a> by Rex, Qian, &amp; Peterson (2026) for a full overview of the algorithm.</p>
+<p>We now demonstrate a simple analytical implementation of the MAGPI algorithm. We first instatiate a 1d input and evaluators for three levels of fidelity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">sampling_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jrand</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">minval</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">maxval</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="p">)</span>
+
+<span class="n">hf_evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"High-Fidelity"</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">jit_compile</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">mf_evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"Medium-Fidelity"</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">jit_compile</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">lf_evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"Low-Fidelity"</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">jit_compile</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once we instantiate the evaluator, we instantiate surrogate models to emulate each level of fidelity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAGPI</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">Constant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupervisedDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+
+<span class="c1"># declaring the ADAM optimizer options </span>
+<span class="n">adam_opts</span> <span class="o">=</span> <span class="n">ADAMOptions</span><span class="p">(</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">3e-1</span><span class="p">,</span> 
+    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> 
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+    <span class="n">beta1</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+    <span class="n">beta2</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> 
+    <span class="n">active_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'mean'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'kernel'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'noise'</span><span class="p">:</span><span class="kc">False</span><span class="p">},</span> 
+    <span class="n">constraints</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> 
+    <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> 
+    <span class="n">unroll</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="p">)</span>
+
+<span class="c1"># building the lowest-fidelity GP </span>
+<span class="n">lf_inputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="mi">250</span><span class="p">)</span>
+<span class="n">lf_outputs</span> <span class="o">=</span> <span class="n">lf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lf_inputs</span><span class="p">)</span> 
+
+<span class="n">lf_data</span> <span class="o">=</span> <span class="n">SupervisedDataset</span><span class="p">(</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">lf_inputs</span><span class="p">],</span> 
+    <span class="n">output_data</span> <span class="o">=</span> <span class="n">lf_outputs</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="n">lf_gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span>
+    <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+    <span class="n">kernel_cls</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">,</span> 
+    <span class="n">mean_cls</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="n">lf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
+    <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">calibrate_noise</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+ 
+<span class="n">lf_gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">adam_opts</span><span class="p">)</span> 
+
+
+
+<span class="c1"># building the medium-fidelity gp </span>
+<span class="n">mf_inputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">mf_outputs</span> <span class="o">=</span> <span class="n">mf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mf_inputs</span><span class="p">)</span> 
+
+<span class="n">mf_data</span> <span class="o">=</span> <span class="n">SupervisedDataset</span><span class="p">(</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">mf_inputs</span><span class="p">],</span> 
+    <span class="n">output_data</span> <span class="o">=</span> <span class="n">mf_outputs</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="n">mf_gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span>
+    <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+    <span class="n">kernel_cls</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">,</span> 
+    <span class="n">mean_cls</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="n">mf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
+    <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+ 
+
+<span class="c1"># constraint set to zero out the input part of the linear mean parameters </span>
+<span class="n">mf_gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">adam_opts</span><span class="p">)</span>
+
+<span class="n">hf_inputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">hf_outputs</span> <span class="o">=</span> <span class="n">hf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">hf_inputs</span><span class="p">)</span> 
+
+<span class="n">hf_data</span> <span class="o">=</span> <span class="n">SupervisedDataset</span><span class="p">(</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">hf_inputs</span><span class="p">],</span> 
+    <span class="n">output_data</span> <span class="o">=</span> <span class="n">hf_outputs</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="n">hf_gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span>
+    <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> 
+    <span class="n">kernel_cls</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">,</span> 
+    <span class="n">mean_cls</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="n">hf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
+    <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">calibrate_noise</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">hf_gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">adam_opts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we declare the MAGPI model and set the surrogate for each level of fidelity:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span> <span class="o">=</span> <span class="n">MAGPI</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">lf_data</span><span class="p">,</span> <span class="n">mf_data</span><span class="p">,</span> <span class="n">hf_data</span><span class="p">],</span> 
+    <span class="n">evaluators</span> <span class="o">=</span> <span class="p">[</span><span class="n">lf_evaluator</span><span class="p">,</span> <span class="n">mf_evaluator</span><span class="p">,</span> <span class="n">hf_evaluator</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># setting the surrogates for each level with prediction keyword arguments</span>
+<span class="n">magpi</span><span class="o">.</span><span class="n">set_surrogate</span><span class="p">(</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">surrogate</span> <span class="o">=</span> <span class="n">lf_gp</span><span class="p">,</span> 
+    <span class="n">full_cov</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">magpi</span><span class="o">.</span><span class="n">set_surrogate</span><span class="p">(</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">surrogate</span> <span class="o">=</span> <span class="n">mf_gp</span><span class="p">,</span> 
+    <span class="n">full_cov</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># </span>
+<span class="n">magpi</span><span class="o">.</span><span class="n">set_surrogate</span><span class="p">(</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">surrogate</span> <span class="o">=</span> <span class="n">hf_gp</span><span class="p">,</span> 
+    <span class="n">full_cov</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once the surrogates have been linked to the MAGPI model, we then fit each level of fidelity starting from level 0 (lowest-fidelity).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># fitting to the level-zero data</span>
+
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">lf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+
+<span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
+<span class="n">scatter</span><span class="p">(</span><span class="n">lf_inputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">lf_outputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
+</pre></div>
+</div>
+<img alt="_images/fc59c88d6b35479ea43d27faba1d437ea3fb413fffe88a32bd1675af4d4e80ba.png" src="_images/fc59c88d6b35479ea43d27faba1d437ea3fb413fffe88a32bd1675af4d4e80ba.png" />
+</div>
+</div>
+<p>We then fit the medium-fidelity surrogate:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> 
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">mf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+
+<span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
+<span class="n">scatter</span><span class="p">(</span><span class="n">mf_inputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">mf_outputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1df8e2a9588ed672e82b33658726f71b15337d4e9d1b8fcd0a51a51b0cbfa4c7.png" src="_images/1df8e2a9588ed672e82b33658726f71b15337d4e9d1b8fcd0a51a51b0cbfa4c7.png" />
+</div>
+</div>
+<p>Lastly, we fit the high-fidelity surrogate</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> 
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">hf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+
+<span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
+<span class="n">scatter</span><span class="p">(</span><span class="n">hf_inputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">hf_outputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
+</pre></div>
+</div>
+<img alt="_images/131841a095e57bc7f9ea1b75effcefdd6235c1e73703735747fb3d8fd3960a7f.png" src="_images/131841a095e57bc7f9ea1b75effcefdd6235c1e73703735747fb3d8fd3960a7f.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gps.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Gaussian process regression</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="multifidelity.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Multifidelity Quickstart</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multifidelity-augmented-gaussian-process-inputs-magpi">Multifidelity-Augmented Gaussian Process Inputs (MAGPI)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

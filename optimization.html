@@ -32,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
   
   <!-- So that users can add custom icons -->
@@ -48,8 +49,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="elyza" href="modules.html" />
-    <link rel="prev" title="Multifidelity Quickstart" href="multifidelity.html" />
+    <link rel="next" title="Gaussian process regression" href="gps.html" />
+    <link rel="prev" title="The Basics: Inputs and Evaluators" href="evaluators.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -193,12 +194,22 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surrogate.html">Surrogate Modeling Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -413,7 +424,7 @@ surrogate model parameters – <a class="reference internal" href="elyza.optim.a
 <a class="reference internal" href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGS" title="elyza.optim.lbfgs.LBFGS"><code class="xref py py-class docutils literal notranslate"><span class="pre">LBFGS</span></code></a>, both implementing the shared
 <a class="reference internal" href="elyza.optim.abstract.html#elyza.optim.abstract.BatchGradientOptimizer" title="elyza.optim.abstract.BatchGradientOptimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BatchGradientOptimizer</span></code></a> interface. Surrogates
 like <a class="reference internal" href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess" title="elyza.surrogate.gp.gp.GaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianProcess</span></code></a> use them internally via
-<code class="docutils literal notranslate"><span class="pre">set_optimizer</span></code> (see the <a class="reference internal" href="surrogate.html"><span class="doc">surrogate quickstart</span></a>), but they
+<code class="docutils literal notranslate"><span class="pre">set_optimizer</span></code> (see the <span class="xref std std-doc">surrogate quickstart</span>), but they
 work standalone on any pytree of parameters too.</p>
 <p>Every example below runs as-is against a clean checkout.</p>
 <section id="fit-parameters-with-adam">
@@ -421,7 +432,9 @@ work standalone on any pytree of parameters too.</p>
 <p>An optimizer needs two things: a pytree of initial parameters (<code class="docutils literal notranslate"><span class="pre">p_init</span></code>)
 and a <code class="docutils literal notranslate"><span class="pre">loss_grad_fn</span></code> in the form <code class="docutils literal notranslate"><span class="pre">(Xbatch,</span> <span class="pre">Ybatch,</span> <span class="pre">p)</span> <span class="pre">-&gt;</span> <span class="pre">(loss,</span> <span class="pre">grad)</span></code>.
 Here’s a plain linear fit <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">w*x</span> <span class="pre">+</span> <span class="pre">b</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">jax</span><span class="w"> </span><span class="kn">import</span> <span class="n">value_and_grad</span><span class="p">,</span> <span class="n">jit</span>
 
@@ -441,7 +454,15 @@ Here’s a plain linear fit <code class="docutils literal notranslate"><span cla
 <span class="n">adam</span><span class="o">.</span><span class="n">loss_grad_fn</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">value_and_grad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="n">p_fit</span> <span class="o">=</span> <span class="n">adam</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>   <span class="c1"># {'w': ~3.0, 'b': ~0.5}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p_fit</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'b': Array(0.50481694, dtype=float64, weak_type=True), 'w': Array(2.98506475, dtype=float64, weak_type=True)}
+</pre></div>
+</div>
+</div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">ADAMOptions.batch_size</span></code> defaults to the full dataset (full-batch
 gradient descent); set it to mini-batch instead. <code class="docutils literal notranslate"><span class="pre">run</span></code> shuffles and
@@ -454,7 +475,9 @@ batches <code class="docutils literal notranslate"><span class="pre">X</span></c
 for e.g. keeping a noise variance positive. Both accept a value for any
 subset of <code class="docutils literal notranslate"><span class="pre">p_init</span></code>’s structure; anything unspecified defaults to
 active/unconstrained:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_init</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"w"</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="s2">"b"</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)}</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_init</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"w"</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="s2">"b"</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)}</span>
 
 <span class="n">adam</span> <span class="o">=</span> <span class="n">ADAM</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="n">ADAMOptions</span><span class="p">(</span>
     <span class="n">p_init</span><span class="o">=</span><span class="n">p_init</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
@@ -464,7 +487,15 @@ active/unconstrained:</p>
 <span class="n">adam</span><span class="o">.</span><span class="n">loss_grad_fn</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">value_and_grad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="n">p_fit</span> <span class="o">=</span> <span class="n">adam</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>   <span class="c1"># b stays 10.0; w is clamped at 0.0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p_fit</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'b': Array(10., dtype=float64, weak_type=True), 'w': Array(0., dtype=float64, weak_type=True)}
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="lbfgs-as-a-drop-in-replacement">
@@ -475,13 +506,23 @@ means swapping the class and its options. It uses a two-loop recursion
 over recent curvature pairs plus a backtracking line search rather than
 ADAM’s per-parameter moment estimates, and its <code class="docutils literal notranslate"><span class="pre">lr</span></code> is an initial step
 scale for that line search rather than a fixed learning rate:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">LBFGS</span><span class="p">,</span> <span class="n">LBFGSOptions</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">LBFGS</span><span class="p">,</span> <span class="n">LBFGSOptions</span>
 
 <span class="n">lbfgs</span> <span class="o">=</span> <span class="n">LBFGS</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="n">LBFGSOptions</span><span class="p">(</span><span class="n">p_init</span><span class="o">=</span><span class="n">p_init</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
 <span class="n">lbfgs</span><span class="o">.</span><span class="n">loss_grad_fn</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">value_and_grad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="n">p_fit</span> <span class="o">=</span> <span class="n">lbfgs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p_fit</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'b': Array(0.50175891, dtype=float64), 'w': Array(2.99084187, dtype=float64)}
+</pre></div>
+</div>
+</div>
 </div>
 <p>LBFGS typically needs far fewer epochs than ADAM to reach the same
 accuracy, at the cost of a pricier per-step line search – a good default
@@ -493,12 +534,16 @@ to reach for once ADAM’s convergence feels too slow.</p>
 <code class="docutils literal notranslate"><span class="pre">loss_grad_fn</span></code> for you from its own internal objective (e.g. negative
 log-marginal-likelihood for a GP) and stores it for <code class="docutils literal notranslate"><span class="pre">fit</span></code>/<code class="docutils literal notranslate"><span class="pre">update</span></code> to
 call – so the pattern above is exactly what’s running under the hood:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
 
 <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_cls</span><span class="o">=</span><span class="n">ARD</span><span class="p">,</span> <span class="n">mean_cls</span><span class="o">=</span><span class="n">Constant</span><span class="p">)</span>
 <span class="n">gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">))</span>
 <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -515,20 +560,20 @@ call – so the pattern above is exactly what’s running under the hood:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="multifidelity.html"
+       href="evaluators.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Multifidelity Quickstart</p>
+        <p class="prev-next-title">The Basics: Inputs and Evaluators</p>
       </div>
     </a>
     <a class="right-next"
-       href="modules.html"
+       href="gps.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">elyza</p>
+        <p class="prev-next-title">Gaussian process regression</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

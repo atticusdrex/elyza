@@ -32,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
   
   <!-- So that users can add custom icons -->
@@ -48,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Surrogate Modeling Quickstart" href="surrogate.html" />
+    <link rel="next" title="Optimization Quickstart" href="optimization.html" />
     <link rel="prev" title="Elyza Documentation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -193,12 +194,22 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">The Basics: Inputs and Evaluators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surrogate.html">Surrogate Modeling Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -391,7 +402,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#describe-the-input">1. Describe the input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-input">1. Instantiate the input</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
 </ul>
             </nav>
@@ -411,12 +422,14 @@ describing an input, wrapping a model as an <a class="reference internal" href="
 generating training data, and fitting a surrogate. It ends with a short
 comparison of the three surrogate models the library ships with.</p>
 <p>Every example below runs as-is against a clean checkout.</p>
-<section id="describe-the-input">
-<h2>1. Describe the input<a class="headerlink" href="#describe-the-input" title="Link to this heading">#</a></h2>
+<section id="instantiate-the-input">
+<h2>1. Instantiate the input<a class="headerlink" href="#instantiate-the-input" title="Link to this heading">#</a></h2>
 <p>Every surrogate-modeling workflow starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
 For a single scalar variable, use <a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and give
 it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one draw:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
@@ -438,12 +451,25 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>This is a simple example, but the input sampling could be a highly complex predefined function. The <code class="docutils literal notranslate"><span class="pre">Input</span></code> abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. <code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
 <code class="docutils literal notranslate"><span class="pre">key</span></code> internally so every point gets its own subkey:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">X_train</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
 <span class="n">Y_train</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(20, 1) (20, 1)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="wrap-the-model-as-an-evaluator">
@@ -452,7 +478,9 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
 the inputs it consumes, and vectorizes it over a batch via <code class="docutils literal notranslate"><span class="pre">vmap</span></code> under the
 hood. Here it stands in for a “ground truth” computer model you’d like to
 approximate:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
 
 <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"sinusoid"</span><span class="p">,</span>
@@ -462,11 +490,55 @@ approximate:</p>
 <span class="p">)</span>
 
 <span class="n">Z_train</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Z_train</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized <code class="docutils literal notranslate"><span class="pre">elyza</span></code> environment. Each evaluator has a built-in print method which lists all the data associated with it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">evaluator</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.79452372]
+ [ 1.35959774]
+ [-1.39402842]
+ [-0.99641922]
+ [-1.28963609]
+ [-1.41354752]
+ [-0.83025008]
+ [ 1.25387271]
+ [ 0.33577522]
+ [ 1.37787861]
+ [ 1.39957977]
+ [-1.24517232]
+ [ 0.90872975]
+ [-1.38569847]
+ [-1.4029991 ]
+ [-0.20025822]
+ [-1.41394361]
+ [-1.37142714]
+ [ 1.16405293]
+ [-0.84230598]]
 </pre></div>
+</div>
+</div>
+</div>
+<p>The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized <code class="docutils literal notranslate"><span class="pre">elyza</span></code> environment. Each evaluator has a built-in print method which lists all the data associated with it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">evaluator</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>------------------------------------------------
+Evaluator Name: sinusoid
+Output Dimension: 1
+Inputs:
+ * Name: x, Dimension: 1, Type: &lt;class 'elyza.core.data.ScalarInput'&gt;
+   - Min Value: 0.0, Max Value: 1.0
+ * Name: y, Dimension: 1, Type: &lt;class 'elyza.core.data.ScalarInput'&gt;
+   - Min Value: 0.0, Max Value: 1.0
+------------------------------------------------
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -492,11 +564,11 @@ approximate:</p>
       </div>
     </a>
     <a class="right-next"
-       href="surrogate.html"
+       href="optimization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Surrogate Modeling Quickstart</p>
+        <p class="prev-next-title">Optimization Quickstart</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -518,7 +590,7 @@ approximate:</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#describe-the-input">1. Describe the input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-input">1. Instantiate the input</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
 </ul>
   </nav></div>

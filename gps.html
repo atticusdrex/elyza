@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surrogate Modeling Quickstart &#8212; elyza 0.1.0 documentation</title>
+    <title>Gaussian process regression &#8212; elyza 0.1.0 documentation</title>
   
   
   
@@ -32,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
   
   <!-- So that users can add custom icons -->
@@ -44,12 +45,12 @@
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'surrogate';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'gps';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Multifidelity Quickstart" href="multifidelity.html" />
-    <link rel="prev" title="The Basics: Inputs and Evaluators" href="evaluators.html" />
+    <link rel="next" title="Multifidelity Surrogate Modeling" href="multifidelity_surrogate.html" />
+    <link rel="prev" title="Optimization Quickstart" href="optimization.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -193,12 +194,22 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Surrogate Modeling Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -298,7 +309,7 @@
       
       
       
-      <li><a href="_sources/surrogate.md" target="_blank"
+      <li><a href="_sources/gps.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -381,7 +392,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Surrogate Modeling Quickstart</h1>
+    <h1>Gaussian process regression</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -391,10 +402,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#describe-the-input">1. Describe the input</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-a-gaussian-process-surrogate">3. Fit a Gaussian Process surrogate</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-surrogates">4. Other surrogates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vanilla-gaussian-process-regression">1. Vanilla Gaussian Process Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sparse-gaussian-process-regression">Sparse Gaussian Process Regression</a></li>
 </ul>
             </nav>
         </div>
@@ -406,23 +415,26 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="surrogate-modeling-quickstart">
-<h1>Surrogate Modeling Quickstart<a class="headerlink" href="#surrogate-modeling-quickstart" title="Link to this heading">#</a></h1>
+  <section id="gaussian-process-regression">
+<h1>Gaussian process regression<a class="headerlink" href="#gaussian-process-regression" title="Link to this heading">#</a></h1>
 <p>This page walks through the core surrogate-modeling workflow in <code class="docutils literal notranslate"><span class="pre">elyza</span></code>:
 describing an input, wrapping a model as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>,
 generating training data, and fitting a surrogate. It ends with a short
 comparison of the three surrogate models the library ships with.</p>
 <p>Every example below runs as-is against a clean checkout.</p>
-<section id="describe-the-input">
-<h2>1. Describe the input<a class="headerlink" href="#describe-the-input" title="Link to this heading">#</a></h2>
-<p>Every surrogate-modeling workflow starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
+<section id="vanilla-gaussian-process-regression">
+<h2>1. Vanilla Gaussian Process Regression<a class="headerlink" href="#vanilla-gaussian-process-regression" title="Link to this heading">#</a></h2>
+<p>Every surrogate modeling workflow typically starts with an <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Input" title="elyza.core.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>.
 For a single scalar variable, use <a class="reference internal" href="elyza.core.data.html#elyza.core.data.ScalarInput" title="elyza.core.data.ScalarInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarInput</span></code></a> and give
-it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one draw:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+it a <code class="docutils literal notranslate"><span class="pre">sampling_func</span></code> that turns a JAX PRNG key into one random draw of the input. This isn’t required, you can call surrogate models using <code class="docutils literal notranslate"><span class="pre">Xtrain</span></code> and <code class="docutils literal notranslate"><span class="pre">Ytrain</span></code> jax arrays exactly like <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> does, but for active learning schemes or routines in which we must call an underlying function on new data, it helps to fit everything into the input/evaluator schema.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
 
+<span class="c1"># instantiate the input variable</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">ScalarInput</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
     <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -430,23 +442,15 @@ it a <code class="docutils literal notranslate"><span class="pre">sampling_func<
     <span class="n">minval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
     <span class="n">maxval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">x.sample(key,</span> <span class="pre">n_points)</span></code> draws a batch of <code class="docutils literal notranslate"><span class="pre">n_points</span></code> samples, splitting
-<code class="docutils literal notranslate"><span class="pre">key</span></code> internally so every point gets its own subkey:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">X_train</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
-</pre></div>
-</div>
-</section>
-<section id="wrap-the-model-as-an-evaluator">
-<h2>2. Wrap the model as an Evaluator<a class="headerlink" href="#wrap-the-model-as-an-evaluator" title="Link to this heading">#</a></h2>
-<p>An <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> pairs an <code class="docutils literal notranslate"><span class="pre">evaluation_func</span></code> with
-the inputs it consumes, and vectorizes it over a batch via <code class="docutils literal notranslate"><span class="pre">vmap</span></code> under the
-hood. Here it stands in for a “ground truth” computer model you’d like to
-approximate:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
 
+<span class="c1"># generate input training data </span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span> 
+
+<span class="c1"># instantiate the output function </span>
 <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"sinusoid"</span><span class="p">,</span>
     <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
@@ -454,75 +458,71 @@ approximate:</p>
     <span class="n">evaluation_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
 <span class="p">)</span>
 
-<span class="n">Y_train</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>   <span class="c1"># shape (20, 1)</span>
+<span class="c1"># generate the output training data </span>
+<span class="n">Y_train</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>  <span class="o">+</span> <span class="mf">1e-1</span> <span class="o">*</span> <span class="n">jrand</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># shape (20, 1)</span>
 </pre></div>
 </div>
-</section>
-<section id="fit-a-gaussian-process-surrogate">
-<h2>3. Fit a Gaussian Process surrogate<a class="headerlink" href="#fit-a-gaussian-process-surrogate" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess" title="elyza.surrogate.gp.gp.GaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianProcess</span></code></a> is the flagship surrogate:
-it takes a kernel and a mean function, and fits their hyperparameters by
-maximizing the log-marginal-likelihood with a pluggable
+</div>
+</div>
+<p><a class="reference internal" href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess" title="elyza.surrogate.gp.gp.GaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianProcess</span></code></a> is the class for the vanilla dense kernel matrix Gaussian process regression as described in Rasmussen &amp; Williams et al. 2008. It takes a kernel and a mean function, and fits their hyperparameters by maximizing the log-marginal-likelihood with an
 <a class="reference internal" href="elyza.optim.html#module-elyza.optim" title="elyza.optim"><code class="xref py py-mod docutils literal notranslate"><span class="pre">optim</span></code></a> optimizer.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span>
 
-<span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_cls</span><span class="o">=</span><span class="n">ARD</span><span class="p">,</span> <span class="n">mean_cls</span><span class="o">=</span><span class="n">Constant</span><span class="p">)</span>
-<span class="n">gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">))</span>
+<span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_cls</span><span class="o">=</span><span class="n">ARD</span><span class="p">,</span> <span class="n">mean_cls</span><span class="o">=</span><span class="n">Constant</span><span class="p">,</span> <span class="n">noise_var</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">)</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
 </div>
 <p>Every surrogate in <code class="docutils literal notranslate"><span class="pre">elyza</span></code> shares the same <code class="docutils literal notranslate"><span class="pre">fit</span></code> / <code class="docutils literal notranslate"><span class="pre">predict</span></code> /
 <code class="docutils literal notranslate"><span class="pre">sample</span></code> interface (see <a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Surrogate</span></code></a>).
 <code class="docutils literal notranslate"><span class="pre">predict</span></code> returns a mean and, for a GP, either the marginal variance or the
 full posterior covariance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">mu</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>              <span class="c1"># marginal variance</span>
-<span class="n">mu</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># full posterior covariance</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">Y_test</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">mu</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>              <span class="c1"># analytical posterior mean and variance</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="c1"># plus/minus two standard deviation confidence interval </span>
 
-<span class="n">samples</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># (5, 3)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># sampling from the GP posterior</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">color</span> <span class="o">=</span> <span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">"Target function"</span><span class="p">)</span> 
+<span class="n">fill_between</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">conf</span><span class="p">,</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">conf</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">"$</span><span class="se">\\</span><span class="s2">pm 2 </span><span class="se">\\</span><span class="s2">sigma$ confidence interval"</span><span class="p">)</span>
+<span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y_train</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'red'</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">'+'</span><span class="p">)</span> 
+<span class="n">legend</span><span class="p">()</span> 
+<span class="n">xlabel</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)</span> 
+<span class="n">ylabel</span><span class="p">(</span><span class="s2">"f(x)"</span><span class="p">)</span> 
+<span class="n">title</span><span class="p">(</span><span class="s2">"GP Approximation of Target Function"</span><span class="p">)</span>
+<span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>On this problem the fit is essentially exact – with 20 training points the
-posterior mean tracks <code class="docutils literal notranslate"><span class="pre">sin(2*pi*x)</span></code> to within <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> and the posterior
-variance collapses to near zero.</p>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/7d5bd29624a1a2ddee41fddf4de6fe080c80ef3dd21d74ecd64db424e05febdd.png" src="_images/7d5bd29624a1a2ddee41fddf4de6fe080c80ef3dd21d74ecd64db424e05febdd.png" />
+</div>
+</div>
 <p>New data can be folded in afterward without refitting from scratch, via a
 rank-<code class="docutils literal notranslate"><span class="pre">m</span></code> Cholesky update:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_new</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_new</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">Y_new</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
 <span class="n">gp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">X_new</span><span class="p">,</span> <span class="n">Y_new</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 </section>
-<section id="other-surrogates">
-<h2>4. Other surrogates<a class="headerlink" href="#other-surrogates" title="Link to this heading">#</a></h2>
-<p>Every <a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Surrogate</span></code></a> subclass is a drop-in
-replacement for the GP above – only construction and fitting differ.</p>
-<p><strong>MLPRegressor</strong> – a feedforward network, also trained with
-<a class="reference internal" href="elyza.optim.html#module-elyza.optim" title="elyza.optim"><code class="xref py py-mod docutils literal notranslate"><span class="pre">optim</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.dnn</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPRegressor</span>
-
-<span class="n">mlp</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden_dims</span><span class="o">=</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
-<span class="n">mlp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">3e-2</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3000</span><span class="p">))</span>
-<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
-<span class="n">mlp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">MLPRegressor</span></code> does not implement <code class="docutils literal notranslate"><span class="pre">sample</span></code> – call <code class="docutils literal notranslate"><span class="pre">predict</span></code> for a
-point estimate.</p>
-<p><strong>Ridge</strong> – closed-form L2-regularized linear regression, with no optimizer
-to configure:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
-
-<span class="n">ridge</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">l2_reg</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
-<span class="n">ridge</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
-<span class="n">ridge</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">Ridge</span></code> fits a straight line, so it underfits a sinusoid by construction –
-a reminder to reach for the GP or MLP once the response is nonlinear.
-<code class="docutils literal notranslate"><span class="pre">Ridge</span></code> also has no optimizer or posterior: <code class="docutils literal notranslate"><span class="pre">set_optimizer</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">sample</span></code> all raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
+<section id="sparse-gaussian-process-regression">
+<h2>Sparse Gaussian Process Regression<a class="headerlink" href="#sparse-gaussian-process-regression" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -538,20 +538,20 @@ and <code class="docutils literal notranslate"><span class="pre">sample</span></
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="evaluators.html"
+       href="optimization.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">The Basics: Inputs and Evaluators</p>
+        <p class="prev-next-title">Optimization Quickstart</p>
       </div>
     </a>
     <a class="right-next"
-       href="multifidelity.html"
+       href="multifidelity_surrogate.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Multifidelity Quickstart</p>
+        <p class="prev-next-title">Multifidelity Surrogate Modeling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -573,10 +573,8 @@ and <code class="docutils literal notranslate"><span class="pre">sample</span></
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#describe-the-input">1. Describe the input</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-the-model-as-an-evaluator">2. Wrap the model as an Evaluator</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-a-gaussian-process-surrogate">3. Fit a Gaussian Process surrogate</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-surrogates">4. Other surrogates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vanilla-gaussian-process-regression">1. Vanilla Gaussian Process Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sparse-gaussian-process-regression">Sparse Gaussian Process Regression</a></li>
 </ul>
   </nav></div>
 

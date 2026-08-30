@@ -32,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
   
   <!-- So that users can add custom icons -->
@@ -48,8 +49,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Optimization Quickstart" href="optimization.html" />
-    <link rel="prev" title="Surrogate Modeling Quickstart" href="surrogate.html" />
+    <link rel="next" title="elyza" href="modules.html" />
+    <link rel="prev" title="Multifidelity Surrogate Modeling" href="multifidelity_surrogate.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -193,12 +194,22 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Inputs and Evaluators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surrogate.html">Surrogate Modeling Quickstart</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -422,7 +433,9 @@ that chains per-level models together.</p>
 <p>A fidelity hierarchy is just a list of <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>
 instances that share the same input(s), ordered from lowest to highest
 fidelity, each carrying a <code class="docutils literal notranslate"><span class="pre">cost</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarInput</span>
@@ -453,6 +466,8 @@ fidelity, each carrying a <code class="docutils literal notranslate"><span class
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">lf</span></code> is a cheap (100x lower cost) but biased approximation of <code class="docutils literal notranslate"><span class="pre">hf</span></code> –
 exactly the setting multifidelity methods are built for.</p>
 </section>
@@ -469,36 +484,84 @@ release.</p>
 <p>Like every estimator in this module, R-MFMC starts from pilot samples that
 estimate the cross-level covariance, then converts that covariance into
 regression coefficients:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMFMC</span><span class="p">,</span> <span class="n">HFMC</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMFMC</span><span class="p">,</span> <span class="n">HFMC</span>
 
 <span class="n">rmfmc</span> <span class="o">=</span> <span class="n">RMFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>   <span class="c1"># index 0 is lowest-fidelity</span>
 <span class="n">rmfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
 <span class="n">rmfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 1.0391e-01 (s)
+Per-evaluation time: 5.1957e-05 (s)
+
+high-fidelity :
+Total time: 6.7353e-04 (s)
+Per-evaluation time: 3.3677e-07 (s)
+</pre></div>
+</div>
+</div>
+</div>
 <p>With coefficients in hand, <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.budget_alloc" title="elyza.multifidelity.montecarlo.RMFMC.budget_alloc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code></a>
 turns a total evaluation budget into a per-level sample allocation, and
 <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_entry_variance" title="elyza.multifidelity.montecarlo.RMFMC.get_entry_variance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_entry_variance()</span></code></a> reports the
 resulting estimator variance – useful for comparing allocations before
 spending any real samples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ms</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="mf">200.0</span><span class="p">)</span>     <span class="c1"># e.g. [5000, 150]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="mf">200.0</span><span class="p">)</span>     <span class="c1"># e.g. [5000, 150]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms</span><span class="p">)</span>
 <span class="n">rmfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>              <span class="c1"># per-output-dimension variance</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5000, 150]
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0.00036901], dtype=float64)
+</pre></div>
+</div>
+</div>
 </div>
 <p>Finally, <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.evaluate" title="elyza.multifidelity.montecarlo.RMFMC.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a> draws fresh
 samples and computes the estimate. Its <code class="docutils literal notranslate"><span class="pre">sample_sizes</span></code> are <em>incremental</em>
 per-level batch sizes for a nested design – level 0’s batch is shared with
 every higher level, so the total number of <code class="docutils literal notranslate"><span class="pre">lf</span></code> evaluations here is
 <code class="docutils literal notranslate"><span class="pre">150</span> <span class="pre">+</span> <span class="pre">50</span> <span class="pre">=</span> <span class="pre">200</span></code> while <code class="docutils literal notranslate"><span class="pre">hf</span></code> is only evaluated 50 times:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">estimate</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sample_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">estimate</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sample_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.01905477]
+</pre></div>
+</div>
+</div>
 </div>
 <p>Compare against a plain high-fidelity-only baseline
 (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a>) spending the same 50 <code class="docutils literal notranslate"><span class="pre">hf</span></code>
 evaluations, with no <code class="docutils literal notranslate"><span class="pre">lf</span></code> samples at all:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hfmc</span> <span class="o">=</span> <span class="n">HFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hfmc</span> <span class="o">=</span> <span class="n">HFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
 <span class="n">baseline</span> <span class="o">=</span> <span class="n">hfmc</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">sample_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-0.17939646]
+</pre></div>
+</div>
+</div>
 </div>
 <p>For evaluators that all share the same output dimension,
 <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_vector_coefs()</span></code></a> and
@@ -515,12 +578,27 @@ in which each level’s coefficient is restricted to its own
 covariance/cross-covariance with <code class="docutils literal notranslate"><span class="pre">hf</span></code>, ignoring correlations between the
 lower-fidelity levels. It shares the exact same interface as <code class="docutils literal notranslate"><span class="pre">RMFMC</span></code>, so
 the section above applies unchanged with <code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> swapped for <code class="docutils literal notranslate"><span class="pre">MFMC</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MFMC</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MFMC</span>
 
 <span class="n">mfmc</span> <span class="o">=</span> <span class="n">MFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
 <span class="n">mfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
 <span class="n">mfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 1.5223e-03 (s)
+Per-evaluation time: 7.6115e-07 (s)
+
+high-fidelity :
+Total time: 6.8426e-04 (s)
+Per-evaluation time: 3.4213e-07 (s)
+</pre></div>
+</div>
+</div>
 </div>
 <p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a> (Giles, 2015 <a class="footnote-reference brackets" href="#giles2015" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>)
 takes a different approach entirely: rather than regression coefficients,
@@ -537,7 +615,9 @@ to compute).</p>
 fidelity level, using the lower-fidelity surrogates’ <em>predictions</em> as extra
 input features for the level above. Each level needs its own
 <a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset" title="elyza.surrogate.abstract.SupervisedDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupervisedDataset</span></code></a> and surrogate model:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupervisedDataset</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupervisedDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcess</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span>
 
@@ -557,28 +637,48 @@ input features for the level above. Each level needs its own
 <span class="n">hf_gp</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">))</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>Assemble the <a class="reference internal" href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI" title="elyza.multifidelity.surrogate.MAGPI"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAGPI</span></code></a> model from the
 datasets and evaluators, and assign each level’s surrogate with
 <a class="reference internal" href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.set_surrogate" title="elyza.multifidelity.surrogate.MAGPI.set_surrogate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_surrogate()</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAGPI</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.surrogate</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAGPI</span>
 
 <span class="n">magpi</span> <span class="o">=</span> <span class="n">MAGPI</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">lf_data</span><span class="p">,</span> <span class="n">hf_data</span><span class="p">],</span> <span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
 <span class="n">magpi</span><span class="o">.</span><span class="n">set_surrogate</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">surrogate</span><span class="o">=</span><span class="n">lf_gp</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">magpi</span><span class="o">.</span><span class="n">set_surrogate</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">surrogate</span><span class="o">=</span><span class="n">hf_gp</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>Levels must be fit from lowest to highest fidelity, since fitting level
 <code class="docutils literal notranslate"><span class="pre">l</span></code> needs predictions from every surrogate below it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
 </div>
 <p><a class="reference internal" href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.predict" title="elyza.multifidelity.surrogate.MAGPI.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a> chains through the same
 lower-fidelity predictions automatically, so predicting at the top level
 only requires the raw input:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">mu</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># each shape (200,)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mu</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(200,) (200,)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="references">
@@ -614,20 +714,20 @@ https://doi.org/10.1017/S096249291500001X</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="surrogate.html"
+       href="multifidelity_surrogate.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Surrogate Modeling Quickstart</p>
+        <p class="prev-next-title">Multifidelity Surrogate Modeling</p>
       </div>
     </a>
     <a class="right-next"
-       href="optimization.html"
+       href="modules.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Optimization Quickstart</p>
+        <p class="prev-next-title">elyza</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
