@@ -1,3 +1,9 @@
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
+
 # Optimization Quickstart
 
 `elyza.optim` provides the gradient-based optimizers used to fit
@@ -16,7 +22,7 @@ An optimizer needs two things: a pytree of initial parameters (`p_init`)
 and a `loss_grad_fn` in the form `(Xbatch, Ybatch, p) -> (loss, grad)`.
 Here's a plain linear fit `y = w*x + b`:
 
-```python
+```{code-cell} python
 import jax.numpy as jnp
 import jax.random as jrand
 from jax import value_and_grad, jit
@@ -37,6 +43,7 @@ adam = ADAM(opts=ADAMOptions(p_init=p_init, lr=1e-1, epochs=200))
 adam.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: loss_fn(p, X, Y), argnums=2))
 
 p_fit = adam.run(X, Y)   # {'w': ~3.0, 'b': ~0.5}
+print(p_fit)
 ```
 
 `ADAMOptions.batch_size` defaults to the full dataset (full-batch
@@ -51,7 +58,7 @@ for e.g. keeping a noise variance positive. Both accept a value for any
 subset of `p_init`'s structure; anything unspecified defaults to
 active/unconstrained:
 
-```python
+```{code-cell} python
 p_init = {"w": jnp.array(-1.0), "b": jnp.array(10.0)}
 
 adam = ADAM(opts=ADAMOptions(
@@ -62,6 +69,7 @@ adam = ADAM(opts=ADAMOptions(
 adam.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: loss_fn(p, X, Y), argnums=2))
 
 p_fit = adam.run(X, Y)   # b stays 10.0; w is clamped at 0.0
+print(p_fit)
 ```
 
 ## 3. LBFGS as a drop-in replacement
@@ -73,13 +81,14 @@ over recent curvature pairs plus a backtracking line search rather than
 ADAM's per-parameter moment estimates, and its `lr` is an initial step
 scale for that line search rather than a fixed learning rate:
 
-```python
+```{code-cell} python
 from elyza.optim import LBFGS, LBFGSOptions
 
 lbfgs = LBFGS(opts=LBFGSOptions(p_init=p_init, lr=1.0, epochs=20))
 lbfgs.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: loss_fn(p, X, Y), argnums=2))
 
 p_fit = lbfgs.run(X, Y)
+print(p_fit)
 ```
 
 LBFGS typically needs far fewer epochs than ADAM to reach the same
@@ -93,7 +102,7 @@ Every surrogate's `set_optimizer(optimizer_cls, optimizer_opts)` builds
 log-marginal-likelihood for a GP) and stores it for `fit`/`update` to
 call -- so the pattern above is exactly what's running under the hood:
 
-```python
+```{code-cell} python
 from elyza.surrogate.gp import GaussianProcess, ARD, Constant
 
 gp = GaussianProcess(input_dim=1, kernel_cls=ARD, mean_cls=Constant)

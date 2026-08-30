@@ -1,3 +1,9 @@
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
+
 # Multifidelity Quickstart
 
 `elyza.multifidelity` provides two tools for combining
@@ -16,7 +22,7 @@ A fidelity hierarchy is just a list of {class}`~elyza.core.evaluator.Evaluator`
 instances that share the same input(s), ordered from lowest to highest
 fidelity, each carrying a `cost`:
 
-```python
+```{code-cell} python
 import jax.numpy as jnp
 import jax.random as jrand
 
@@ -66,7 +72,7 @@ Like every estimator in this module, R-MFMC starts from pilot samples that
 estimate the cross-level covariance, then converts that covariance into
 regression coefficients:
 
-```python
+```{code-cell} python
 from elyza.multifidelity.montecarlo import RMFMC, HFMC
 
 rmfmc = RMFMC(evaluators=[lf, hf])   # index 0 is lowest-fidelity
@@ -80,8 +86,9 @@ turns a total evaluation budget into a per-level sample allocation, and
 resulting estimator variance -- useful for comparing allocations before
 spending any real samples:
 
-```python
+```{code-cell} python
 ms = rmfmc.budget_alloc(budget=200.0)     # e.g. [5000, 150]
+print("budget allocation:", ms)
 rmfmc.get_entry_variance(ms)              # per-output-dimension variance
 ```
 
@@ -91,17 +98,19 @@ per-level batch sizes for a nested design -- level 0's batch is shared with
 every higher level, so the total number of `lf` evaluations here is
 `150 + 50 = 200` while `hf` is only evaluated 50 times:
 
-```python
+```{code-cell} python
 estimate = rmfmc.evaluate(jrand.PRNGKey(1), sample_sizes=[150, 50])
+print(estimate)
 ```
 
 Compare against a plain high-fidelity-only baseline
 ({class}`~elyza.multifidelity.montecarlo.HFMC`) spending the same 50 `hf`
 evaluations, with no `lf` samples at all:
 
-```python
+```{code-cell} python
 hfmc = HFMC(evaluators=[lf, hf])
 baseline = hfmc.evaluate(jrand.PRNGKey(2), sample_sizes=[0, 50])
+print(baseline)
 ```
 
 For evaluators that all share the same output dimension,
@@ -120,7 +129,7 @@ covariance/cross-covariance with `hf`, ignoring correlations between the
 lower-fidelity levels. It shares the exact same interface as `RMFMC`, so
 the section above applies unchanged with `RMFMC` swapped for `MFMC`:
 
-```python
+```{code-cell} python
 from elyza.multifidelity.montecarlo import MFMC
 
 mfmc = MFMC(evaluators=[lf, hf])
@@ -144,7 +153,7 @@ fidelity level, using the lower-fidelity surrogates' *predictions* as extra
 input features for the level above. Each level needs its own
 {class}`~elyza.surrogate.abstract.SupervisedDataset` and surrogate model:
 
-```python
+```{code-cell} python
 from elyza.surrogate import SupervisedDataset
 from elyza.surrogate.gp import GaussianProcess, ARD, Constant
 from elyza.optim import ADAM, ADAMOptions
@@ -169,7 +178,7 @@ Assemble the {class}`~elyza.multifidelity.surrogate.MAGPI` model from the
 datasets and evaluators, and assign each level's surrogate with
 {meth}`~elyza.multifidelity.surrogate.MAGPI.set_surrogate`:
 
-```python
+```{code-cell} python
 from elyza.multifidelity.surrogate import MAGPI
 
 magpi = MAGPI(data=[lf_data, hf_data], evaluators=[lf, hf])
@@ -180,7 +189,7 @@ magpi.set_surrogate(level=1, surrogate=hf_gp, full_cov=False)
 Levels must be fit from lowest to highest fidelity, since fitting level
 `l` needs predictions from every surrogate below it:
 
-```python
+```{code-cell} python
 magpi.fit(0)
 magpi.fit(1)
 ```
@@ -189,9 +198,10 @@ magpi.fit(1)
 lower-fidelity predictions automatically, so predicting at the top level
 only requires the raw input:
 
-```python
+```{code-cell} python
 x_test = jnp.linspace(0.0, 1.0, 200).reshape(-1, 1)
 mu, var = magpi.predict(x_test, level=1)   # each shape (200,)
+print(mu.shape, var.shape)
 ```
 
 ## References

@@ -23,11 +23,17 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',   # if you use Google or NumPy style docstrings
     'sphinx.ext.viewcode',   # adds links to highlighted source code
-    'myst_parser',           # lets .rst pages include Markdown (e.g. the README)
+    'myst_nb',               # Markdown support + executes code-cell blocks and embeds output
 ]
 
 templates_path = ['_templates']
 exclude_patterns = []
+
+# -- MyST-NB (code execution) -------------------------------------------------
+# https://myst-nb.readthedocs.io/en/latest/configuration.html
+nb_execution_mode = 'cache'         # execute notebooks/code-cells and cache results
+nb_execution_timeout = 120
+nb_execution_raise_on_error = True  # fail the build if a doc's code errors out
 
 
 
@@ -41,3 +47,8 @@ html_context = {
     'default_mode': 'dark',
 }
 html_css_files = ['custom.css']
+html_theme_options = {
+    "show_nav_level": 1, 
+    "navigation_depth": 3,
+    "collapse_navigation": True,
+}

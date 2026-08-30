@@ -1,3 +1,9 @@
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
+
 # The Basics: Inputs and Evaluators
 
 This page walks through the core surrogate-modeling workflow in `elyza`:
@@ -7,13 +13,13 @@ comparison of the three surrogate models the library ships with.
 
 Every example below runs as-is against a clean checkout.
 
-## 1. Describe the input
+## 1. Instantiate the input
 
 Every surrogate-modeling workflow starts with an {class}`~elyza.core.data.Input`.
 For a single scalar variable, use {class}`~elyza.core.data.ScalarInput` and give
 it a `sampling_func` that turns a JAX PRNG key into one draw:
 
-```python
+```{code-cell} python
 import jax.numpy as jnp
 import jax.random as jrand
 
@@ -39,10 +45,12 @@ y = ScalarInput(
 This is a simple example, but the input sampling could be a highly complex predefined function. The `Input` abstract class provides a standard interface to manage different inputs which may have their own unique sampling routines. `x.sample(key, n_points)` draws a batch of `n_points` samples, splitting
 `key` internally so every point gets its own subkey:
 
-```python
+```{code-cell} python
 key = jrand.PRNGKey(0)
 X_train = x.sample(key, 20)   # shape (20, 1)
 Y_train = y.sample(key, 20)
+
+print(X_train.shape, Y_train.shape)
 ```
 
 ## 2. Wrap the model as an Evaluator
@@ -52,7 +60,7 @@ the inputs it consumes, and vectorizes it over a batch via `vmap` under the
 hood. Here it stands in for a "ground truth" computer model you'd like to
 approximate:
 
-```python
+```{code-cell} python
 from elyza.core.evaluator import Evaluator
 
 evaluator = Evaluator(
@@ -63,10 +71,11 @@ evaluator = Evaluator(
 )
 
 Z_train = evaluator.evaluate(X_train, Y_train)   # shape (20, 1)
+print(Z_train)
 ```
 
 The evaluator is meant to serve as a standard wrapper for any function which maps a set of inputs to some numerical quantity of interest. This is meant to wrap complex engineering simulations and integrate them into the standardized `elyza` environment. Each evaluator has a built-in print method which lists all the data associated with it:
 
-```python
+```{code-cell} python
 evaluator.print()
 ```
