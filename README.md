@@ -61,17 +61,6 @@ The library is organized into a few main packages under `src/elyza/`:
 - **`helpers`**: Covariance/correlation utilities (`matrix_cov`, `matrix_corr`), a regularized least-squares solver (`ls`), activation functions, and other small numerical helpers.
 - **`preprocessing`**: `StandardScaler`, `OrthonormalScaler`, `KernelFeatures`, and `PolynomialFeatures` for feature preprocessing.
 
-## Documentation
-
-Full API documentation (built with Sphinx from the docstrings in `src/`) lives under `docs/`, including a [surrogate modeling quickstart](https://github.com/atticusdrex/elyza/blob/main/docs/source/surrogate.rst). To build it locally:
-
-```bash
-pip install -e ".[docs]"
-sphinx-build -b html docs/source docs/build/html
-```
-
-Then open `docs/build/html/index.html`.
-
 ## Examples
 
 See `experiments/` for end-to-end scripts demonstrating the library, including:
@@ -99,6 +88,18 @@ If you use `elyza` in your research, please cite it as:
 <!-- citation-end -->
 
 <!-- summary-end -->
+
+## Documentation
+
+Full API documentation (built with Sphinx from the docstrings in `src/`) lives under `docs/`, including a [surrogate modeling quickstart](https://github.com/atticusdrex/elyza/blob/main/docs/source/surrogate.rst). To build it locally:
+
+```bash
+pip install -e ".[docs]"
+sphinx-build -b html docs/source docs/build/html
+```
+
+Then open `docs/build/html/index.html`.
+
 ## License
 
 `elyza` is licensed under the [BSD 3-Clause License](LICENSE).
