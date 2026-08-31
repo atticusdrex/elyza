@@ -1,6 +1,6 @@
 # %% 
 from elyza.util.imports import * 
-from elyza.core.random import Gaussian, GaussianMixture
+from elyza.core.random import Uniform, Gaussian, GaussianMixture
 from seaborn import kdeplot
 
 # testing gaussian distribution 
@@ -19,3 +19,12 @@ x = GaussianMixture([0.0, 5.0, 10.0], [1.0, 1.0, 2.0], [0.25, 0.5, 0.25])
 sample = x.sample(jrand.PRNGKey(42), int(1e6)) 
 
 kdeplot(sample.ravel(), fill=True, alpha = 0.3, bw_adjust = 0.25) 
+
+# %% testing uniform distribution 
+x = Uniform(name = "uniform", dim = 1, dtype = jnp.float64, lower = 0.0, upper = 5.0) 
+
+sample = x.sample(jrand.PRNGKey(42), int(1e6)) 
+
+kdeplot(sample.ravel(), fill=True, alpha = 0.3, bw_adjust = 0.25) 
+
+
