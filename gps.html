@@ -522,6 +522,112 @@ rank-<code class="docutils literal notranslate"><span class="pre">m</span></code
 </section>
 <section id="sparse-gaussian-process-regression">
 <h2>Sparse Gaussian Process Regression<a class="headerlink" href="#sparse-gaussian-process-regression" title="Link to this heading">#</a></h2>
+<p>In this section, we describe how to implement a sparse Gaussian Process, which scales to much larger datasets. First, we generate training data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span><span class="p">,</span> <span class="n">Evaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+
+<span class="c1"># define a uniform input on [0,5] </span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="p">)</span>
+
+<span class="c1"># define a jit-compiled evaluator on the input </span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"y=f(x)"</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">jit_compile</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># generate noisy training data </span>
+<span class="n">n_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">)</span>
+<span class="n">key_input</span><span class="p">,</span> <span class="n">key_noise</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key_input</span><span class="p">,</span> <span class="n">n_train</span><span class="p">)</span>
+<span class="n">output_data</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2e-2</span> <span class="o">*</span> <span class="n">jrand</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key_noise</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_train</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># visualize the training data </span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span>
+<span class="n">scatter</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">output_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/61456b26759e7363097f4163650790a48d064b837e1735e6a3926608b4231a57.png" src="_images/61456b26759e7363097f4163650790a48d064b837e1735e6a3926608b4231a57.png" />
+</div>
+</div>
+<p>Next, we instantiate a <code class="docutils literal notranslate"><span class="pre">SparseGP</span></code> and <code class="docutils literal notranslate"><span class="pre">ADAM</span></code> optimizer.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.surrogate.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseGP</span><span class="p">,</span> <span class="n">ARD</span><span class="p">,</span> <span class="n">Constant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADAM</span><span class="p">,</span> <span class="n">ADAMOptions</span>
+
+<span class="c1"># instantiate a sparse Gaussian Process </span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SparseGP</span><span class="p">(</span>
+    <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+    <span class="n">kernel_cls</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">,</span> 
+    <span class="n">mean_cls</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">,</span> 
+    <span class="n">n_inducing_points</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="c1"># number of inducing points</span>
+    <span class="n">calibrate_noise</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">noise_var</span> <span class="o">=</span> <span class="mf">4e-4</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># declaring the optimizer options </span>
+<span class="n">adam_opts</span> <span class="o">=</span> <span class="n">ADAMOptions</span><span class="p">(</span>
+    <span class="n">p_init</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p</span><span class="p">),</span> 
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span> 
+    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> 
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2500</span><span class="p">,</span> 
+    <span class="n">beta1</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+    <span class="n">beta2</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> 
+    <span class="n">active_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'mean'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'kernel'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'noise'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'inducing'</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> <span class="s1">'q_mu'</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">'q_L'</span><span class="p">:</span><span class="kc">True</span><span class="p">},</span> <span class="c1"># q_mu and q_L are the mean and cholesky factor of the variacne of the variational distribution. </span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> 
+    <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> 
+    <span class="n">unroll</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># setting the optimizer to the model </span>
+<span class="n">model</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">ADAM</span><span class="p">,</span> <span class="n">adam_opts</span><span class="p">)</span>
+
+<span class="c1"># fitting to the data </span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">,</span> <span class="n">n_monte_carlo</span> <span class="o">=</span> <span class="mi">250</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># predicting on new data </span>
+<span class="n">test_inputs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_inputs</span><span class="p">)</span> 
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
+
+<span class="c1"># plotting the model predictions </span>
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">test_inputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_inputs</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">"True function"</span><span class="p">)</span>
+<span class="n">fill_between</span><span class="p">(</span><span class="n">test_inputs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ymean</span><span class="o">-</span><span class="n">yconf</span><span class="p">,</span> <span class="n">ymean</span><span class="o">+</span><span class="n">yconf</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span>  <span class="s1">'green'</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">"SparseGP $</span><span class="se">\\</span><span class="s2">pm 2 </span><span class="se">\\</span><span class="s2">sigma$ confidence interval"</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s2">"x"</span><span class="p">);</span> <span class="n">ylabel</span><span class="p">(</span><span class="s2">"y=f(x)"</span><span class="p">)</span>
+<span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 4.0100e-04
+</pre></div>
+</div>
+<img alt="_images/f3499ecc248486e40aaf49722fe7d670455e0bd965a7f4256f24ba49dbbb6dc0.png" src="_images/f3499ecc248486e40aaf49722fe7d670455e0bd965a7f4256f24ba49dbbb6dc0.png" />
+</div>
+</div>
 </section>
 </section>
 
