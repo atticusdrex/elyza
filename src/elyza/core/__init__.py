@@ -6,3 +6,4 @@ sampleable :class:`~elyza.core.random.RandomVariable` subclasses.
 """
 from elyza.core.data import Variable
 from elyza.core.evaluator import Evaluator
+from elyza.core.random import RandomVariable, Uniform, Gaussian, GaussianMixture

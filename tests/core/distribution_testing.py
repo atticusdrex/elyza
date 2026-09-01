@@ -14,7 +14,7 @@ print(x.log_pdf(jnp.array([0.5, 0.5]), p=None))
 
 # %% testing gaussian mixture model 
 
-x = GaussianMixture([0.0, 5.0, 10.0], [1.0, 1.0, 2.0], [0.25, 0.5, 0.25]) 
+x = GaussianMixture([0.0, 5.0, 10.0], [1.0, 1.0, 2.0], [0.25, 0.5, 0.25])
 
 sample = x.sample(jrand.PRNGKey(42), int(1e6)) 
 
