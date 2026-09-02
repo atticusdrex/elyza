@@ -67,8 +67,8 @@ from matplotlib.pyplot import *
 
 # declaring the ADAM optimizer options 
 adam_opts = ADAMOptions(
-    lr = 3e-1, 
-    epochs = 500, 
+    lr = 5e-1, 
+    epochs = 1000, 
     batch_size = None, 
     beta1 = 0.9, 
     beta2 = 0.999, 
@@ -97,7 +97,7 @@ lf_gp = GaussianProcess(
     noise_var = lf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
-    verbose = True, 
+    verbose = False, 
     calibrate_noise = True
 )
  
@@ -122,7 +122,7 @@ mf_gp = GaussianProcess(
     noise_var = mf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
-    verbose = True
+    verbose = False
 )
  
 
@@ -145,7 +145,7 @@ hf_gp = GaussianProcess(
     noise_var = hf_data.noise_var, 
     eps = 1e-12, 
     max_cond = 1e5, 
-    verbose = True, 
+    verbose = False, 
     calibrate_noise = True
 )
 
@@ -184,13 +184,17 @@ magpi.set_surrogate(
 Once the surrogates have been linked to the MAGPI model, we then fit each level of fidelity starting from level 0 (lowest-fidelity). 
 
 ```{code-cell} python 
-magpi.fit(0) # fitting to the level-zero data
+# number of posterior samples used to estimate the mean/confidence band
+n_samples = 500
+
+magpi.fit(0)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 0) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = lf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(0), level = 0, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = lf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
@@ -203,10 +207,11 @@ We then fit the medium-fidelity surrogate:
 magpi.fit(1)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 1) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = mf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(1), level = 1, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = mf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
@@ -220,10 +225,11 @@ Lastly, we fit the high-fidelity surrogate
 magpi.fit(2)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 2) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = hf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(2), level = 2, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = hf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')

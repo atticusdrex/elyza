@@ -109,7 +109,7 @@ class Surrogate(BaseModel):
         raise NotImplementedError("This feature is not implemented yet.")
 
     @abstractmethod
-    def sample(self, key, X:jax.Array, n_samples: int = 1) -> jax.Array:
+    def sample(self, key, X:jax.Array, n_samples: int = 1, **kwargs) -> jax.Array:
         """Draw samples from the posterior/predictive distribution.
 
         Args:

@@ -41,6 +41,7 @@ class HierarchicalSurrogate(BaseModel):
     _K : int | None = PrivateAttr(default = None)
     _surrogates : list[Surrogate] | None = PrivateAttr(default = None)
     _pred_kwargs : list[list] | None = PrivateAttr(default = None)
+    _samp_kwargs : list[list] | None = PrivateAttr(default = None)
 
     def model_post_init(self, __context):
         """Validate ``data``/``evaluators`` and initialize per-level slots.
@@ -60,6 +61,9 @@ class HierarchicalSurrogate(BaseModel):
         # initializing prediction keyword arguments
         self._pred_kwargs = [[]] * self._K
 
+        # initializing sampling keyword arguments
+        self._samp_kwargs = [[]] * self._K
+
 class MAGPI(HierarchicalSurrogate):
     """Multifidelity-augmented Gaussian Process inputs model.
 
@@ -71,13 +75,16 @@ class MAGPI(HierarchicalSurrogate):
         """Initialize base hierarchical-surrogate state."""
         super().model_post_init(__context)
 
-    def set_surrogate(self, level : int, surrogate : Surrogate, **pred_kwargs):
+    def set_surrogate(self, level : int, surrogate : Surrogate, samp_kwargs : dict | None = None, **pred_kwargs):
         """Assign the surrogate model used for a given level of fidelity.
 
         Args:
             level: Fidelity level index to assign the surrogate to.
             surrogate: A pre-constructed :class:`~elyza.surrogate.abstract.Surrogate`
                 instance for this level.
+            samp_kwargs: Keyword arguments forwarded to this surrogate's
+                ``sample`` calls when it is used as a lower-fidelity input
+                to another level.
             **pred_kwargs: Keyword arguments forwarded to this surrogate's
                 ``predict`` calls when it is used as a lower-fidelity input
                 to another level.
@@ -86,6 +93,8 @@ class MAGPI(HierarchicalSurrogate):
         self._surrogates[level] = surrogate
         # setting the prediction keyword arguments
         self._pred_kwargs[level] = pred_kwargs
+        # setting the sampling keyword arguments
+        self._samp_kwargs[level] = samp_kwargs if samp_kwargs is not None else {}
 
     def set_optimizer(self, level:int, optimizer:Optimizer, optimizer_opts:OptimizerOptions):
         """Assign the optimizer used to fit a given level's surrogate.
@@ -199,10 +208,46 @@ class MAGPI(HierarchicalSurrogate):
             features, **pred_kwargs
         )
 
-    def sample(self, *new_inputs : jax.Array, level:int):
-        """Not yet implemented.
+    def sample(self, *new_inputs : jax.Array, key: jax.Array, level:int, n_points:int, **kwargs) -> jax.Array:
+        """Draw posterior samples at a given level of fidelity for new inputs.
 
-        Raises:
-            NotImplementedError: Always.
+        Propagates a single posterior sample through every lower-fidelity
+        level first (mirroring :meth:`predict`), using it as that level's
+        contribution to this level's input features, then draws
+        ``n_points`` posterior samples from the level-``level`` surrogate.
+
+        Args:
+            *new_inputs: Raw input arrays for the query points.
+            key: A JAX PRNG key, split into ``self._K`` per-level keys.
+            level: Fidelity level to sample at.
+            n_points: Number of posterior samples to draw at ``level``.
+            **kwargs: Keyword arguments forwarded to this level's
+                surrogate ``sample`` call.
+
+        Returns:
+            jax.Array: The samples returned by the level-``level``
+            surrogate's ``sample`` method.
         """
-        raise NotImplementedError("this method has not been implemented yet")
+        # split the key into one unique key per level of fidelity
+        level_keys = jrand.split(key, self._K)
+
+        # compute the level inputs
+        features = jnp.concatenate(new_inputs)
+
+        # propagate a posterior sample through every lower-fidelity level
+        for lower_level in range(level):
+            samples = self._surrogates[lower_level].sample(
+                level_keys[lower_level], features, **self._samp_kwargs[lower_level]
+            )
+
+            # if the model returns multiple outputs always take the first argument
+            if type(samples) is tuple:
+                samples = samples[0]
+
+            # append the sampled output to the features
+            features = jnp.concatenate((features, ensure_2d(samples)), axis=1)
+
+        # drawing n_points posterior samples at this level
+        return self._surrogates[level].sample(
+            level_keys[level], features, n_points, **kwargs
+        )

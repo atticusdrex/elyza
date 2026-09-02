@@ -162,10 +162,8 @@ class SparseGP(Surrogate):
                 under ``max_cond``.
         """
         # storing training data
-        if self._X is None:
-            self._X = ensure_2d(X).astype(self.dtype)
-        if self._Y is None:
-            self._Y = ensure_2d(Y).astype(self.dtype)
+        self._X = ensure_2d(X).astype(self.dtype)
+        self._Y = ensure_2d(Y).astype(self.dtype)
 
         # calibrate the noise to return a specific condition number
         if calibrate_noise:
@@ -399,7 +397,9 @@ class SparseGP(Surrogate):
             self.p['q_L'] = jnp.eye(self.n_inducing_points, dtype=self.dtype) * self.eps
 
             self._optimizer.opts.p_init = self.p
-            self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
+
+        # calibrate the model before every fit() call 
+        self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
         self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(jrand.PRNGKey(random_state), X, Y, p, n_mc = n_monte_carlo), argnums=2))
 

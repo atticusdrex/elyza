@@ -764,6 +764,40 @@ class MLMC(MultifidelityMonteCarlo):
 
         return jnp.sum(jnp.array(self._info_coefs) / jnp.array(ms))
 
+    def _get_level_variance(self, level):
+        """Compute the per-output-dimension (differenced, for level > 0) variance at ``level``.
+
+        Args:
+            level: Fidelity level index.
+
+        Returns:
+            jax.Array: Per-dimension variance vector, shape ``(hf_dim,)``.
+        """
+        if level == 0:
+            return jnp.diag(self.covs[0][0])
+        else:
+            diff_cov = (
+                self.covs[level][level] + self.covs[level-1][level-1]
+                - self.covs[level][level-1] - self.covs[level-1][level]
+            )
+            return jnp.diag(diff_cov)
+
+    def get_entry_variance(self, ms : list[int]):
+        """Compute the per-output-dimension estimator variance for given sample sizes.
+
+        Args:
+            ms: Per-level sample sizes.
+
+        Returns:
+            jax.Array: Per-dimension variance, shape ``(hf_dim,)``.
+        """
+        result = jnp.zeros(self._hf_dim)
+
+        for level in range(self._K):
+            result += self._get_level_variance(level) / ms[level]
+
+        return result
+
     def _budget_fractional_alloc(self, budget:float):
         """Solve the (real-valued) Lagrangian-relaxed budget allocation problem.
 

@@ -160,10 +160,8 @@ class GaussianProcess(Surrogate):
                 bring the kernel matrix's condition number under ``max_cond``.
         """
         # storing training data
-        if self._X is None:
-            self._X = ensure_2d(X).astype(self.dtype)
-        if self._Y is None:
-            self._Y = ensure_2d(Y).astype(self.dtype) 
+        self._X = ensure_2d(X).astype(self.dtype)
+        self._Y = ensure_2d(Y).astype(self.dtype) 
 
         # calibrate the noise to return a specific condition number
         if calibrate_noise:
@@ -350,7 +348,9 @@ class GaussianProcess(Surrogate):
             # only this once: _calibrated flips True below and gates out every later fit() call.
             self._smart_init(X, Y)
             self._optimizer.opts.p_init = self.p
-            self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
+
+        # calibrating the model before each fit call
+        self._calibrate(X, Y, max_cond=self.max_cond, calibrate_noise=self.calibrate_noise)
 
         self._optimizer.loss_grad_fn = jit(value_and_grad(lambda X, Y, p: self._objective(p, X, Y), argnums=2))
 

@@ -120,14 +120,18 @@ magpi.set_surrogate(
     full_cov = False
 )
 
-# %%training the lowest-fidelity surrogate 
+# number of posterior samples used to estimate the mean/confidence band
+n_samples = 500
+
+# %%training the lowest-fidelity surrogate
 magpi.fit(0)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 0) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = lf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(0), level = 0, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = lf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
@@ -138,23 +142,25 @@ show()
 magpi.fit(1)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 1) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = mf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(1), level = 1, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = mf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
 scatter(mf_inputs.ravel(), mf_outputs.ravel())
 show() 
-# training the medium-fidelity surrogate
+# %% training the highest-fidelity surrogate
 magpi.fit(2)
 
 figure()
-x_test = jnp.linspace(0,5,1000).reshape(-1,1) 
-ymean, yvar = magpi.predict(x_test, level = 2) 
-yconf = 2 * jnp.sqrt(yvar) 
-ytrue = hf_evaluator.evaluate(x_test) 
+x_test = jnp.linspace(0,5,1000).reshape(-1,1)
+samples = magpi.sample(x_test, key = jrand.PRNGKey(2), level = 2, n_points = n_samples)
+ymean = samples.mean(axis=1)
+yconf = 2 * samples.std(axis=1)
+ytrue = hf_evaluator.evaluate(x_test)
 
 fill_between(x_test.ravel(), (ymean - yconf).ravel(), (ymean + yconf).ravel(), alpha = 0.3, color = 'green')
 plot(x_test.ravel(), ytrue.ravel(), linestyle = 'dotted', color = 'black')
