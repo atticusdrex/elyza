@@ -43,7 +43,7 @@ The library is organized into a few main packages under `src/elyza/`:
   - `HFMC` — plain high-fidelity-only Monte Carlo (baseline).
   - `MLMC` — multilevel Monte Carlo, telescoping sums across fidelity levels.
   - `MFMC` — multifidelity Monte Carlo with optimal per-level control-variate coefficients.
-  - `RMFMC` — regression-based multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.
+  - `RMFMC` — recursive multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.
 
   These estimators use pilot samples to estimate cross-fidelity covariances, then allocate sampling budgets across fidelity levels to minimize estimator variance for a fixed computational cost.
 
