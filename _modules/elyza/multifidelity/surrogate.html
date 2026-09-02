@@ -191,17 +191,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -397,6 +397,7 @@
     <span class="n">_K</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">_surrogates</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Surrogate</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">_pred_kwargs</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_samp_kwargs</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HierarchicalSurrogate.model_post_init">
 <a class="viewcode-back" href="../../../elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate.model_post_init">[docs]</a>
@@ -416,7 +417,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_surrogates</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_K</span>
 
         <span class="c1"># initializing prediction keyword arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pred_kwargs</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_K</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pred_kwargs</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_K</span>
+
+        <span class="c1"># initializing sampling keyword arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_samp_kwargs</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_K</span></div>
 </div>
 
 
@@ -438,13 +442,16 @@
 
 <div class="viewcode-block" id="MAGPI.set_surrogate">
 <a class="viewcode-back" href="../../../elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.set_surrogate">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">surrogate</span> <span class="p">:</span> <span class="n">Surrogate</span><span class="p">,</span> <span class="o">**</span><span class="n">pred_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">surrogate</span> <span class="p">:</span> <span class="n">Surrogate</span><span class="p">,</span> <span class="n">samp_kwargs</span> <span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">pred_kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Assign the surrogate model used for a given level of fidelity.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            level: Fidelity level index to assign the surrogate to.</span>
 <span class="sd">            surrogate: A pre-constructed :class:`~elyza.surrogate.abstract.Surrogate`</span>
 <span class="sd">                instance for this level.</span>
+<span class="sd">            samp_kwargs: Keyword arguments forwarded to this surrogate's</span>
+<span class="sd">                ``sample`` calls when it is used as a lower-fidelity input</span>
+<span class="sd">                to another level.</span>
 <span class="sd">            **pred_kwargs: Keyword arguments forwarded to this surrogate's</span>
 <span class="sd">                ``predict`` calls when it is used as a lower-fidelity input</span>
 <span class="sd">                to another level.</span>
@@ -452,7 +459,9 @@
         <span class="c1"># declaring the surrogate using the keyword arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_surrogates</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">surrogate</span>
         <span class="c1"># setting the prediction keyword arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pred_kwargs</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_kwargs</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pred_kwargs</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_kwargs</span>
+        <span class="c1"># setting the sampling keyword arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_samp_kwargs</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">samp_kwargs</span> <span class="k">if</span> <span class="n">samp_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="MAGPI.set_optimizer">
@@ -581,13 +590,49 @@
 
 <div class="viewcode-block" id="MAGPI.sample">
 <a class="viewcode-back" href="../../../elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.sample">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">new_inputs</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Not yet implemented.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">new_inputs</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">n_points</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Draw posterior samples at a given level of fidelity for new inputs.</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: Always.</span>
+<span class="sd">        Propagates a single posterior sample through every lower-fidelity</span>
+<span class="sd">        level first (mirroring :meth:`predict`), using it as that level's</span>
+<span class="sd">        contribution to this level's input features, then draws</span>
+<span class="sd">        ``n_points`` posterior samples from the level-``level`` surrogate.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *new_inputs: Raw input arrays for the query points.</span>
+<span class="sd">            key: A JAX PRNG key, split into ``self._K`` per-level keys.</span>
+<span class="sd">            level: Fidelity level to sample at.</span>
+<span class="sd">            n_points: Number of posterior samples to draw at ``level``.</span>
+<span class="sd">            **kwargs: Keyword arguments forwarded to this level's</span>
+<span class="sd">                surrogate ``sample`` call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: The samples returned by the level-``level``</span>
+<span class="sd">            surrogate's ``sample`` method.</span>
 <span class="sd">        """</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"this method has not been implemented yet"</span><span class="p">)</span></div>
+        <span class="c1"># split the key into one unique key per level of fidelity</span>
+        <span class="n">level_keys</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_K</span><span class="p">)</span>
+
+        <span class="c1"># compute the level inputs</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">new_inputs</span><span class="p">)</span>
+
+        <span class="c1"># propagate a posterior sample through every lower-fidelity level</span>
+        <span class="k">for</span> <span class="n">lower_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surrogates</span><span class="p">[</span><span class="n">lower_level</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                <span class="n">level_keys</span><span class="p">[</span><span class="n">lower_level</span><span class="p">],</span> <span class="n">features</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_samp_kwargs</span><span class="p">[</span><span class="n">lower_level</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># if the model returns multiple outputs always take the first argument</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># append the sampled output to the features</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">features</span><span class="p">,</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">samples</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># drawing n_points posterior samples at this level</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surrogates</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+            <span class="n">level_keys</span><span class="p">[</span><span class="n">level</span><span class="p">],</span> <span class="n">features</span><span class="p">,</span> <span class="n">n_points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The Basics: Variables and Evaluators &#8212; elyza 0.1.0 documentation</title>
+    <title>Variables and Evaluators &#8212; elyza 0.1.0 documentation</title>
   
   
   
@@ -196,17 +196,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -392,7 +392,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>The Basics: Variables and Evaluators</h1>
+    <h1>Variables and Evaluators</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -415,8 +415,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="the-basics-variables-and-evaluators">
-<h1>The Basics: Variables and Evaluators<a class="headerlink" href="#the-basics-variables-and-evaluators" title="Link to this heading">#</a></h1>
+  <section id="variables-and-evaluators">
+<h1>Variables and Evaluators<a class="headerlink" href="#variables-and-evaluators" title="Link to this heading">#</a></h1>
 <p>In this page, we give an overview of the main functional building blocks within <code class="docutils literal notranslate"><span class="pre">elyza</span></code>. These include the <a class="reference internal" href="elyza.core.data.html#elyza.core.data.Variable" title="elyza.core.data.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> class.</p>
 <section id="defining-variables">
 <h2>1. Defining Variables<a class="headerlink" href="#defining-variables" title="Link to this heading">#</a></h2>

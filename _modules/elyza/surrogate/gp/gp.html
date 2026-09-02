@@ -191,17 +191,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../../evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../../multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -519,10 +519,8 @@
 <span class="sd">                bring the kernel matrix's condition number under ``max_cond``.</span>
 <span class="sd">        """</span>
         <span class="c1"># storing training data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_Y</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Y</span> <span class="o">=</span> <span class="n">ensure_2d</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> 
 
         <span class="c1"># calibrate the noise to return a specific condition number</span>
         <span class="k">if</span> <span class="n">calibrate_noise</span><span class="p">:</span>
@@ -720,7 +718,9 @@
             <span class="c1"># only this once: _calibrated flips True below and gates out every later fit() call.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_smart_init</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">p_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calibrate</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">max_cond</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_cond</span><span class="p">,</span> <span class="n">calibrate_noise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">calibrate_noise</span><span class="p">)</span>
+
+        <span class="c1"># calibrating the model before each fit call</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calibrate</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">max_cond</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_cond</span><span class="p">,</span> <span class="n">calibrate_noise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">calibrate_noise</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">loss_grad_fn</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">value_and_grad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objective</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 

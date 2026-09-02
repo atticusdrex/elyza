@@ -18,13 +18,13 @@ optimization
 :caption: Surrogate Modeling:
 
 gps
-multifidelity_surrogate
 ```
 
 ```{toctree}
 :maxdepth: 4
-:caption: Uncertainty Quantification:
-multifidelity
+:caption: Multifidelity Methods 
+multifidelity_surrogate
+multifidelity_monte_carlo
 ```
 
 ```{toctree}

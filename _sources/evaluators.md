@@ -4,7 +4,7 @@ kernelspec:
   name: python3
 ---
 
-# The Basics: Variables and Evaluators
+# Variables and Evaluators
 
 In this page, we give an overview of the main functional building blocks within `elyza`. These include the {class}`~elyza.core.data.Variable` class for defining arbitrary scalar- and vector-valued system inputs and wrapping existing functions as an {class}`~elyza.core.evaluator.Evaluator` class. 
 

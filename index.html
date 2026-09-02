@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="The Basics: Variables and Evaluators" href="evaluators.html" />
+    <link rel="next" title="Variables and Evaluators" href="evaluators.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -197,17 +197,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -530,7 +530,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="evaluators.html#defining-variables">1. Defining Variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="evaluators.html#defining-evaluators">2. Defining evaluators</a></li>
 </ul>
@@ -552,21 +552,23 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li class="toctree-l2"><a class="reference internal" href="gps.html#sparse-gaussian-process-regression">Sparse Gaussian Process Regression</a></li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="multifidelity_surrogate.html#multifidelity-augmented-gaussian-process-inputs-magpi">Multifidelity-Augmented Gaussian Process Inputs (MAGPI)</a></li>
 </ul>
 </li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#define-a-fidelity-hierarchy">1. Define a fidelity hierarchy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#regression-based-multifidelity-monte-carlo-r-mfmc">2. Regression-based Multifidelity Monte Carlo (R-MFMC)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#related-estimators-mfmc-and-mlmc">3. Related estimators: MFMC and MLMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#magpi-a-hierarchical-surrogate">4. MAGPI: a hierarchical surrogate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multifidelity.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#define-a-fidelity-hierarchy">1. Define a fidelity hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#baseline-high-fidelity-only-monte-carlo-hfmc">2. Baseline: high-fidelity-only Monte Carlo (HFMC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#mlmc-telescoping-multilevel-monte-carlo">3. MLMC: telescoping multilevel Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#mfmc-multifidelity-monte-carlo">4. MFMC: multifidelity Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#r-mfmc-recursive-multifidelity-monte-carlo">5. R-MFMC: Recursive Multifidelity Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#comparing-all-four-estimator-variances">6. Comparing all four estimator variances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multifidelity_monte_carlo.html#references">References</a></li>
 </ul>
 </li>
 </ul>
@@ -611,7 +613,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">The Basics: Variables and Evaluators</p>
+        <p class="prev-next-title">Variables and Evaluators</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

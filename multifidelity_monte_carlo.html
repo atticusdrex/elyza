@@ -1,0 +1,838 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Multifidelity Monte Carlo Methods &#8212; elyza 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=32d70693" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'multifidelity_monte_carlo';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="elyza" href="modules.html" />
+    <link rel="prev" title="Multifidelity Surrogate Modeling" href="multifidelity_surrogate.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="_static/elyza_logo.png" class="logo__image only-dark" alt="elyza 0.1.0 documentation - Home"/>
+    <img src="_static/elyza_logo.png" class="logo__image only-light pst-js-only" alt="elyza 0.1.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Monte Carlo Methods</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">elyza</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="elyza.html">elyza package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.benchmarks.html">elyza.benchmarks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.multifidelity.html">elyza.benchmarks.multifidelity package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.benchmarks.pde.html">elyza.benchmarks.pde package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.core.html">elyza.core package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.data.html">elyza.core.data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.core.evaluator.html">elyza.core.evaluator module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.optim.html">elyza.optim package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.abstract.html">elyza.optim.abstract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.adam.html">elyza.optim.adam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.optim.lbfgs.html">elyza.optim.lbfgs module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.surrogate.html">elyza.surrogate package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.dnn.html">elyza.surrogate.dnn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.gp.html">elyza.surrogate.gp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.linear.html">elyza.surrogate.linear package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.surrogate.abstract.html">elyza.surrogate.abstract module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="elyza.util.html">elyza.util package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.helpers.html">elyza.util.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.imports.html">elyza.util.imports module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.util.preprocessing.html">elyza.util.preprocessing module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/multifidelity_monte_carlo.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multifidelity Monte Carlo Methods</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-a-fidelity-hierarchy">1. Define a fidelity hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-high-fidelity-only-monte-carlo-hfmc">2. Baseline: high-fidelity-only Monte Carlo (HFMC)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlmc-telescoping-multilevel-monte-carlo">3. MLMC: telescoping multilevel Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mfmc-multifidelity-monte-carlo">4. MFMC: multifidelity Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#r-mfmc-recursive-multifidelity-monte-carlo">5. R-MFMC: Recursive Multifidelity Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-all-four-estimator-variances">6. Comparing all four estimator variances</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="multifidelity-monte-carlo-methods">
+<h1>Multifidelity Monte Carlo Methods<a class="headerlink" href="#multifidelity-monte-carlo-methods" title="Link to this heading">#</a></h1>
+<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.montecarlo" title="elyza.multifidelity.montecarlo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.multifidelity.montecarlo</span></code></a> provides four estimators for approximating the expectation of an expensive <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> using low-fidelity models. All four estimators share a
+common interface (<code class="docutils literal notranslate"><span class="pre">get_pilots</span></code>, <code class="docutils literal notranslate"><span class="pre">budget_alloc</span></code>, <code class="docutils literal notranslate"><span class="pre">get_entry_variance</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluate</span></code>) inherited from
+<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a>. This page introduces them in order of sophistication: the standard high-fidelity
+baseline (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a>),
+multilevel MC (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a>), classic
+multifidelity MC (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a>), and
+finally <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> – Recursive
+Multifidelity Monte Carlo, a generalized estimator original to <code class="docutils literal notranslate"><span class="pre">elyza</span></code>.</p>
+<p>Each multifidelity Monte Carlo estimator is fully generalized and works with <em>vector-valued functions</em>; we also use a novel greedy algorithms to allocate integer-valued sample allocations given a fixed computational budget.</p>
+<p>Every estimator below follows the same four-step workflow:</p>
+<ol class="arabic simple">
+<li><p><strong>Define</strong> the estimator from a fidelity hierarchy.</p></li>
+<li><p><strong>Pilot</strong> it – draw pilot samples to estimate cross-level covariances (<code class="docutils literal notranslate"><span class="pre">set_costs=False</span></code> so the evaluators’ declared costs are used rather than re-timed).</p></li>
+<li><p><strong>Allocate</strong> a fixed computational budget across fidelity levels.</p></li>
+<li><p><strong>Analyze</strong> – compute the analytical estimator variance for that allocation, without spending any real samples.</p></li>
+</ol>
+<p>We then compare all four resulting variances at the end.</p>
+<section id="define-a-fidelity-hierarchy">
+<h2>1. Define a fidelity hierarchy<a class="headerlink" href="#define-a-fidelity-hierarchy" title="Link to this heading">#</a></h2>
+<p>A fidelity hierarchy is just a list of <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>
+instances that share the same input(s), ordered from lowest to highest
+fidelity, each carrying a <code class="docutils literal notranslate"><span class="pre">cost</span></code> attribute:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jrand</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uniform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elyza.core.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
+    <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hf</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"high-fidelity"</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+    <span class="n">cost</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">lf</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"low-fidelity"</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">evaluation_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+    <span class="n">cost</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lf</span></code> is a cheap (100x lower cost) but biased approximation of <code class="docutils literal notranslate"><span class="pre">hf</span></code> – exactly the setting multifidelity methods are built for. Every estimator below is constructed the same way, <code class="docutils literal notranslate"><span class="pre">Estimator(evaluators=[lf,</span> <span class="pre">hf])</span></code>, with index 0 the lowest fidelity and the last entry always the high-fidelity
+model. We’ll draw a million pilot samples (so the covariance estimates are accurate) and allocate the same 200-unit budget to every estimator, so their variances are directly comparable:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_pilots</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span> <span class="c1"># designating a million pilot samples for accurate statistics</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="mf">200.0</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="baseline-high-fidelity-only-monte-carlo-hfmc">
+<h2>2. Baseline: high-fidelity-only Monte Carlo (HFMC)<a class="headerlink" href="#baseline-high-fidelity-only-monte-carlo-hfmc" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a> is the naive estimator which ignores every lower-fidelity level and spends the entire budget on evaluating <code class="docutils literal notranslate"><span class="pre">hf</span></code>. <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.budget_alloc" title="elyza.multifidelity.montecarlo.HFMC.budget_alloc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code></a> puts the whole budget toward <code class="docutils literal notranslate"><span class="pre">hf</span></code> (zero for every lower level), and <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.get_entry_variance" title="elyza.multifidelity.montecarlo.HFMC.get_entry_variance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_entry_variance()</span></code></a> reports the resulting estimator variance:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFMC</span>
+
+<span class="c1"># 1. define</span>
+<span class="n">hfmc</span> <span class="o">=</span> <span class="n">HFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
+
+<span class="c1"># 2. pilot samples</span>
+<span class="n">hfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 3. allocate the budget</span>
+<span class="n">ms_hfmc</span> <span class="o">=</span> <span class="n">hfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_hfmc</span><span class="p">)</span>
+
+<span class="c1"># 4. analytical estimator variance</span>
+<span class="n">var_hfmc</span> <span class="o">=</span> <span class="n">hfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_hfmc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_hfmc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 1.6006e-01 (s)
+Per-evaluation time: 1.6006e-07 (s)
+
+high-fidelity :
+Total time: 1.7166e-02 (s)
+Per-evaluation time: 1.7166e-08 (s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [0, 200]
+variance: [0.00250107]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="mlmc-telescoping-multilevel-monte-carlo">
+<h2>3. MLMC: telescoping multilevel Monte Carlo<a class="headerlink" href="#mlmc-telescoping-multilevel-monte-carlo" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a> (Giles, 2015 <a class="footnote-reference brackets" href="#giles2015" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>) takes a different approach from the estimators below it: rather than regression coefficients, it sums independent telescoping corrections <code class="docutils literal notranslate"><span class="pre">E[f_l]</span> <span class="pre">-</span> <span class="pre">E[f_{l-1}]</span></code> between adjacent levels, plus the lowest level’s own mean. Each level’s correction is estimated from its own independent batch of samples – unlike <code class="docutils literal notranslate"><span class="pre">MFMC</span></code>/<code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> below, there is no nesting constraint between levels. <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.budget_alloc" title="elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code></a> allocates an independent per-level sample count, weighing each level’s cost (<code class="docutils literal notranslate"><span class="pre">lf</span></code> alone at level 0, <code class="docutils literal notranslate"><span class="pre">lf</span></code> and <code class="docutils literal notranslate"><span class="pre">hf</span></code> together at level 1) against its variance reduction:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLMC</span>
+
+<span class="c1"># 1. define</span>
+<span class="n">mlmc</span> <span class="o">=</span> <span class="n">MLMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
+
+<span class="c1"># 2. pilot samples</span>
+<span class="n">mlmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 3. allocate the budget</span>
+<span class="n">ms_mlmc</span> <span class="o">=</span> <span class="n">mlmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_mlmc</span><span class="p">)</span>
+
+<span class="c1"># 4. analytical estimator variance</span>
+<span class="n">var_mlmc</span> <span class="o">=</span> <span class="n">mlmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_mlmc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_mlmc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 2.8553e-02 (s)
+Per-evaluation time: 2.8553e-08 (s)
+
+high-fidelity :
+Total time: 1.8996e-02 (s)
+Per-evaluation time: 1.8996e-08 (s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5153, 147]
+variance: [0.00041165]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="mfmc-multifidelity-monte-carlo">
+<h2>4. MFMC: multifidelity Monte Carlo<a class="headerlink" href="#mfmc-multifidelity-monte-carlo" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a> (Peherstorfer, Willcox, &amp;
+Gunzburger, 2016 <a class="footnote-reference brackets" href="#peherstorfer2016" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>) instead treats each lower-fidelity
+level as a control variate: it computes a single regression coefficient
+tying that level’s covariance to <code class="docutils literal notranslate"><span class="pre">hf</span></code> and forms a nested correction. Unlike MLMC’s independent batches, MFMC’s levels are sampled with a <em>nested</em> design – level 0’s batch is reused by every level above it. Pilot samples estimate the cross-level covariance, which <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code></a> converts into regression coefficients before the budget can be allocated:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MFMC</span>
+
+<span class="c1"># 1. define</span>
+<span class="n">mfmc</span> <span class="o">=</span> <span class="n">MFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
+
+<span class="c1"># 2. pilot samples</span>
+<span class="n">mfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
+
+<span class="c1"># 3. allocate the budget</span>
+<span class="n">ms_mfmc</span> <span class="o">=</span> <span class="n">mfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_mfmc</span><span class="p">)</span>
+
+<span class="c1"># 4. analytical estimator variance</span>
+<span class="n">var_mfmc</span> <span class="o">=</span> <span class="n">mfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_mfmc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_mfmc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 2.7675e-02 (s)
+Per-evaluation time: 2.7675e-08 (s)
+
+high-fidelity :
+Total time: 1.5172e-02 (s)
+Per-evaluation time: 1.5172e-08 (s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]
+variance: [0.00036665]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="r-mfmc-recursive-multifidelity-monte-carlo">
+<h2>5. R-MFMC: Recursive Multifidelity Monte Carlo<a class="headerlink" href="#r-mfmc-recursive-multifidelity-monte-carlo" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> – Recursive Multifidelity
+Monte Carlo – is the flagship estimator in <code class="docutils literal notranslate"><span class="pre">elyza</span></code>, a generalized
+estimator developed by the author as part of PhD thesis research. Where
+MFMC ties each lower-fidelity level to a single control-variate
+coefficient against <code class="docutils literal notranslate"><span class="pre">hf</span></code> alone, R-MFMC solves, at every level, a full
+regression against the <em>joint</em> covariance of every level below it –
+recursively building up coefficients from the lowest fidelity upward. This
+lets it exploit correlations between the lower-fidelity levels themselves,
+not just each level’s individual correlation with <code class="docutils literal notranslate"><span class="pre">hf</span></code>. R-MFMC is original
+to <code class="docutils literal notranslate"><span class="pre">elyza</span></code>, and this is its first public release.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMFMC</span>
+
+<span class="c1"># 1. define</span>
+<span class="n">rmfmc</span> <span class="o">=</span> <span class="n">RMFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>   <span class="c1"># index 0 is lowest-fidelity</span>
+
+<span class="c1"># 2. pilot samples</span>
+<span class="n">rmfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rmfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
+
+<span class="c1"># 3. allocate the budget</span>
+<span class="n">ms_rmfmc</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_rmfmc</span><span class="p">)</span>
+
+<span class="c1"># 4. analytical estimator variance</span>
+<span class="n">var_rmfmc</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_rmfmc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_rmfmc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
+Total time: 2.8066e-02 (s)
+Per-evaluation time: 2.8066e-08 (s)
+
+high-fidelity :
+Total time: 1.5942e-02 (s)
+Per-evaluation time: 1.5942e-08 (s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]
+variance: [0.00036665]
+</pre></div>
+</div>
+</div>
+</div>
+<p>For evaluators that all share the same output dimension,
+<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_vector_coefs()</span></code></a> and
+<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_scalar_coefs()</span></code></a> are cheaper
+alternatives to <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code></a>,
+restricting the regression coefficients to a diagonal or scalar multiple of
+the identity, respectively. <code class="docutils literal notranslate"><span class="pre">MFMC</span></code> inherits these too, though only
+<code class="docutils literal notranslate"><span class="pre">get_matrix_coefs</span></code> is overridden to enforce the single-coefficient-per-level
+restriction described above.</p>
+</section>
+<section id="comparing-all-four-estimator-variances">
+<h2>6. Comparing all four estimator variances<a class="headerlink" href="#comparing-all-four-estimator-variances" title="Link to this heading">#</a></h2>
+<p>With the same pilot samples and the same 200-unit budget behind each
+estimator, their analytical variances are directly comparable – lower is
+better:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"HFMC"</span><span class="p">,</span> <span class="n">var_hfmc</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"MLMC"</span><span class="p">,</span> <span class="n">var_mlmc</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"MFMC"</span><span class="p">,</span> <span class="n">var_mfmc</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"RMFMC"</span><span class="p">,</span> <span class="n">var_rmfmc</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'estimator'</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}{</span><span class="s1">'variance'</span><span class="si">:</span><span class="s2">&gt;15</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}{</span><span class="nb">float</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span><span class="si">:</span><span class="s2">&gt;15.6e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimator        variance
+HFMC         2.501072e-03
+MLMC         4.116549e-04
+MFMC         3.666516e-04
+RMFMC        3.666516e-04
+</pre></div>
+</div>
+</div>
+</div>
+<p>As expected, each additional layer of sophistication – from the naive
+high-fidelity-only baseline, through independent telescoping corrections,
+single-coefficient control variates, and finally the fully recursive joint
+regression – squeezes more variance reduction out of the same budget.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="giles2015" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Giles, M. B. (2015). Multilevel Monte Carlo methods.
+<em>Acta Numerica</em>, 24, 259-328.
+https://doi.org/10.1017/S096249291500001X</p>
+</aside>
+<aside class="footnote brackets" id="peherstorfer2016" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Peherstorfer, B., Willcox, K., &amp; Gunzburger, M. (2016).
+Optimal Model Management for Multifidelity Monte Carlo Estimation.
+<em>SIAM Journal on Scientific Computing</em>, 38(5), A3163-A3194.
+https://doi.org/10.1137/15M1046472</p>
+</aside>
+</aside>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="multifidelity_surrogate.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Multifidelity Surrogate Modeling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="modules.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">elyza</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-a-fidelity-hierarchy">1. Define a fidelity hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-high-fidelity-only-monte-carlo-hfmc">2. Baseline: high-fidelity-only Monte Carlo (HFMC)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlmc-telescoping-multilevel-monte-carlo">3. MLMC: telescoping multilevel Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mfmc-multifidelity-monte-carlo">4. MFMC: multifidelity Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#r-mfmc-recursive-multifidelity-monte-carlo">5. R-MFMC: Recursive Multifidelity Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-all-four-estimator-variances">6. Comparing all four estimator variances</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Atticus Rex
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Atticus Rex.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

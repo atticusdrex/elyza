@@ -191,17 +191,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -1173,6 +1173,43 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_info_coefs</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_coefs</span><span class="p">)</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ms</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_level_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute the per-output-dimension (differenced, for level &gt; 0) variance at ``level``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            level: Fidelity level index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Per-dimension variance vector, shape ``(hf_dim,)``.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diff_cov</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">covs</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="n">level</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">covs</span><span class="p">[</span><span class="n">level</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">level</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">covs</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="n">level</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">covs</span><span class="p">[</span><span class="n">level</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">level</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diff_cov</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MLMC.get_entry_variance">
+<a class="viewcode-back" href="../../../elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.get_entry_variance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_entry_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ms</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Compute the per-output-dimension estimator variance for given sample sizes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ms: Per-level sample sizes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            jax.Array: Per-dimension variance, shape ``(hf_dim,)``.</span>
+<span class="sd">        """</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hf_dim</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_K</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_level_variance</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="n">ms</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_budget_fractional_alloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span><span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Solve the (real-valued) Lagrangian-relaxed budget allocation problem.</span>

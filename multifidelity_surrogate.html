@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Multifidelity Quickstart" href="multifidelity.html" />
+    <link rel="next" title="Multifidelity Monte Carlo Methods" href="multifidelity_monte_carlo.html" />
     <link rel="prev" title="Gaussian process regression" href="gps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -196,17 +196,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Surrogate Modeling</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="nav bd-sidenav">
@@ -477,8 +477,8 @@
 
 <span class="c1"># declaring the ADAM optimizer options </span>
 <span class="n">adam_opts</span> <span class="o">=</span> <span class="n">ADAMOptions</span><span class="p">(</span>
-    <span class="n">lr</span> <span class="o">=</span> <span class="mf">3e-1</span><span class="p">,</span> 
-    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> 
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">5e-1</span><span class="p">,</span> 
+    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> 
     <span class="n">batch_size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
     <span class="n">beta1</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
     <span class="n">beta2</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> 
@@ -507,7 +507,7 @@
     <span class="n">noise_var</span> <span class="o">=</span> <span class="n">lf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
     <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
     <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
-    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
     <span class="n">calibrate_noise</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span>
  
@@ -532,7 +532,7 @@
     <span class="n">noise_var</span> <span class="o">=</span> <span class="n">mf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
     <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
     <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
-    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span>
  
 
@@ -555,7 +555,7 @@
     <span class="n">noise_var</span> <span class="o">=</span> <span class="n">hf_data</span><span class="o">.</span><span class="n">noise_var</span><span class="p">,</span> 
     <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
     <span class="n">max_cond</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">,</span> 
-    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
     <span class="n">calibrate_noise</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span>
 
@@ -598,13 +598,17 @@
 <p>Once the surrogates have been linked to the MAGPI model, we then fit each level of fidelity starting from level 0 (lowest-fidelity).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># fitting to the level-zero data</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of posterior samples used to estimate the mean/confidence band</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">figure</span><span class="p">()</span>
-<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
-<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> 
-<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
-<span class="n">ytrue</span> <span class="o">=</span> <span class="n">lf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n_points</span> <span class="o">=</span> <span class="n">n_samples</span><span class="p">)</span>
+<span class="n">ymean</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">samples</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">lf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 
 <span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
@@ -614,10 +618,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
-</pre></div>
-</div>
-<img alt="_images/42fbb996a86b43d764343b29aacda129db2e88d201b3fda3cc91666b6c999575.png" src="_images/42fbb996a86b43d764343b29aacda129db2e88d201b3fda3cc91666b6c999575.png" />
+<img alt="_images/4db7ba6dff2fdb11f614e7e4c20620315a9359d2da5a259a26f5bd094d3241d5.png" src="_images/4db7ba6dff2fdb11f614e7e4c20620315a9359d2da5a259a26f5bd094d3241d5.png" />
 </div>
 </div>
 <p>We then fit the medium-fidelity surrogate:</p>
@@ -626,10 +627,11 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">figure</span><span class="p">()</span>
-<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
-<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> 
-<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
-<span class="n">ytrue</span> <span class="o">=</span> <span class="n">mf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_points</span> <span class="o">=</span> <span class="n">n_samples</span><span class="p">)</span>
+<span class="n">ymean</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">samples</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">mf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 
 <span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
@@ -639,7 +641,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5b8996f4ab5e4e06b06d646a5330abb3a9ca3296f81568bdbde793906eec827a.png" src="_images/5b8996f4ab5e4e06b06d646a5330abb3a9ca3296f81568bdbde793906eec827a.png" />
+<img alt="_images/fd950195b4713d88376c511dd8babe50eec99188bf3a5702d3390c927e0091b6.png" src="_images/fd950195b4713d88376c511dd8babe50eec99188bf3a5702d3390c927e0091b6.png" />
 </div>
 </div>
 <p>Lastly, we fit the high-fidelity surrogate</p>
@@ -648,10 +650,11 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">magpi</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="n">figure</span><span class="p">()</span>
-<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> 
-<span class="n">ymean</span><span class="p">,</span> <span class="n">yvar</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> 
-<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span><span class="p">)</span> 
-<span class="n">ytrue</span> <span class="o">=</span> <span class="n">hf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> 
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">magpi</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_points</span> <span class="o">=</span> <span class="n">n_samples</span><span class="p">)</span>
+<span class="n">ymean</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">yconf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">samples</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ytrue</span> <span class="o">=</span> <span class="n">hf_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 
 <span class="n">fill_between</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">-</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">ymean</span> <span class="o">+</span> <span class="n">yconf</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">ytrue</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'dotted'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">)</span>
@@ -661,10 +664,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calibrated white noise variance: 1.0000e-04
-</pre></div>
-</div>
-<img alt="_images/8c905cf3bbea6bf3f305f93668a346a459c47e178c8e5fa060acd07db3f1615a.png" src="_images/8c905cf3bbea6bf3f305f93668a346a459c47e178c8e5fa060acd07db3f1615a.png" />
+<img alt="_images/c7f43b9f7e774f2de077b48b33b141dd20ccbd8ba916263053add760122a9180.png" src="_images/c7f43b9f7e774f2de077b48b33b141dd20ccbd8ba916263053add760122a9180.png" />
 </div>
 </div>
 </section>
@@ -691,11 +691,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="multifidelity.html"
+       href="multifidelity_monte_carlo.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Multifidelity Quickstart</p>
+        <p class="prev-next-title">Multifidelity Monte Carlo Methods</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

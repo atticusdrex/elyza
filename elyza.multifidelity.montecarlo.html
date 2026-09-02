@@ -196,17 +196,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="current nav bd-sidenav">
@@ -423,6 +423,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">MLMC._info_coefs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">MLMC.budget_alloc()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.evaluate"><code class="docutils literal notranslate"><span class="pre">MLMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">MLMC.get_entry_variance()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_config"><code class="docutils literal notranslate"><span class="pre">MLMC.model_config</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MLMC.model_post_init()</span></code></a></li>
 </ul>
@@ -694,6 +695,23 @@ level.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The MLMC estimate, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elyza.multifidelity.montecarlo.MLMC.get_entry_variance">
+<span class="sig-name descname"><span class="pre">get_entry_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/montecarlo.html#MLMC.get_entry_variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.montecarlo.MLMC.get_entry_variance" title="Link to this definition">#</a></dt>
+<dd><p>Compute the per-output-dimension estimator variance for given sample sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ms</strong> – Per-level sample sizes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Per-dimension variance, shape <code class="docutils literal notranslate"><span class="pre">(hf_dim,)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>jax.Array</p>
@@ -1138,6 +1156,7 @@ Populates <code class="docutils literal notranslate"><span class="pre">self._coe
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC._info_coefs"><code class="docutils literal notranslate"><span class="pre">MLMC._info_coefs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="docutils literal notranslate"><span class="pre">MLMC.budget_alloc()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.evaluate"><code class="docutils literal notranslate"><span class="pre">MLMC.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.get_entry_variance"><code class="docutils literal notranslate"><span class="pre">MLMC.get_entry_variance()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_config"><code class="docutils literal notranslate"><span class="pre">MLMC.model_config</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elyza.multifidelity.montecarlo.MLMC.model_post_init"><code class="docutils literal notranslate"><span class="pre">MLMC.model_post_init()</span></code></a></li>
 </ul>

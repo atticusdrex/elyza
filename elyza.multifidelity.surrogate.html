@@ -196,17 +196,17 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="evaluators.html">The Basics: Variables and Evaluators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluators.html">Variables and Evaluators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization Quickstart</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Uncertainty Quantification:</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="multifidelity.html">Multifidelity Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_surrogate.html">Multifidelity Surrogate Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multifidelity_monte_carlo.html">Multifidelity Monte Carlo Methods</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul class="current nav bd-sidenav">
@@ -588,11 +588,29 @@ level-<code class="docutils literal notranslate"><span class="pre">level</span><
 
 <dl class="py method">
 <dt class="sig sig-object py" id="elyza.multifidelity.surrogate.MAGPI.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">new_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/surrogate.html#MAGPI.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.surrogate.MAGPI.sample" title="Link to this definition">#</a></dt>
-<dd><p>Not yet implemented.</p>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">new_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="reference internal" href="_modules/elyza/multifidelity/surrogate.html#MAGPI.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.surrogate.MAGPI.sample" title="Link to this definition">#</a></dt>
+<dd><p>Draw posterior samples at a given level of fidelity for new inputs.</p>
+<p>Propagates a single posterior sample through every lower-fidelity
+level first (mirroring <a class="reference internal" href="#elyza.multifidelity.surrogate.MAGPI.predict" title="elyza.multifidelity.surrogate.MAGPI.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a>), using it as that level’s
+contribution to this level’s input features, then draws
+<code class="docutils literal notranslate"><span class="pre">n_points</span></code> posterior samples from the level-<code class="docutils literal notranslate"><span class="pre">level</span></code> surrogate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – Always.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*new_inputs</strong> – Raw input arrays for the query points.</p></li>
+<li><p><strong>key</strong> – A JAX PRNG key, split into <code class="docutils literal notranslate"><span class="pre">self._K</span></code> per-level keys.</p></li>
+<li><p><strong>level</strong> – Fidelity level to sample at.</p></li>
+<li><p><strong>n_points</strong> – Number of posterior samples to draw at <code class="docutils literal notranslate"><span class="pre">level</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments forwarded to this level’s
+surrogate <code class="docutils literal notranslate"><span class="pre">sample</span></code> call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The samples returned by the level-<code class="docutils literal notranslate"><span class="pre">level</span></code>
+surrogate’s <code class="docutils literal notranslate"><span class="pre">sample</span></code> method.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jax.Array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -619,7 +637,7 @@ instance configuring that optimizer.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="elyza.multifidelity.surrogate.MAGPI.set_surrogate">
-<span class="sig-name descname"><span class="pre">set_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><span class="pre">Surrogate</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">pred_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/surrogate.html#MAGPI.set_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.surrogate.MAGPI.set_surrogate" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><span class="pre">Surrogate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">pred_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elyza/multifidelity/surrogate.html#MAGPI.set_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elyza.multifidelity.surrogate.MAGPI.set_surrogate" title="Link to this definition">#</a></dt>
 <dd><p>Assign the surrogate model used for a given level of fidelity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -627,6 +645,9 @@ instance configuring that optimizer.</p></li>
 <li><p><strong>level</strong> – Fidelity level index to assign the surrogate to.</p></li>
 <li><p><strong>surrogate</strong> – A pre-constructed <a class="reference internal" href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate" title="elyza.surrogate.abstract.Surrogate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Surrogate</span></code></a>
 instance for this level.</p></li>
+<li><p><strong>samp_kwargs</strong> – Keyword arguments forwarded to this surrogate’s
+<code class="docutils literal notranslate"><span class="pre">sample</span></code> calls when it is used as a lower-fidelity input
+to another level.</p></li>
 <li><p><strong>**pred_kwargs</strong> – Keyword arguments forwarded to this surrogate’s
 <code class="docutils literal notranslate"><span class="pre">predict</span></code> calls when it is used as a lower-fidelity input
 to another level.</p></li>
