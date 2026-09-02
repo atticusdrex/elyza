@@ -473,7 +473,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li><p><code class="docutils literal notranslate"><span class="pre">HFMC</span></code> — plain high-fidelity-only Monte Carlo (baseline).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MLMC</span></code> — multilevel Monte Carlo, telescoping sums across fidelity levels.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MFMC</span></code> — multifidelity Monte Carlo with optimal per-level control-variate coefficients.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> — regression-based multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> — recursive multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.</p></li>
 </ul>
 <p>These estimators use pilot samples to estimate cross-fidelity covariances, then allocate sampling budgets across fidelity levels to minimize estimator variance for a fixed computational cost.</p>
 </li>
