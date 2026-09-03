@@ -11,7 +11,7 @@ surrogate model parameters -- {class}`~elyza.optim.adam.ADAM` and
 {class}`~elyza.optim.lbfgs.LBFGS`, both implementing the shared
 {class}`~elyza.optim.abstract.BatchGradientOptimizer` interface. Surrogates
 like {class}`~elyza.surrogate.gp.gp.GaussianProcess` use them internally via
-`set_optimizer` (see the {doc}`surrogate quickstart <surrogate>`), but they
+`set_optimizer`, but they
 work standalone on any pytree of parameters too.
 
 Every example below runs as-is against a clean checkout.

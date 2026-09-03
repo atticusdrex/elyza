@@ -47,6 +47,7 @@
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'multifidelity_monte_carlo';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://w3.org&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;20&#39; fill=&#39;%234B6CB7&#39;/&gt;&lt;text y=&#39;75&#39; x=&#39;50&#39; font-family=&#39;sans-serif&#39; font-size=&#39;70&#39; font-weight=&#39;bold&#39; fill=&#39;white&#39; text-anchor=&#39;middle&#39;&gt;S&lt;/text&gt;&lt;/svg&gt;"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="elyza" href="modules.html" />
@@ -202,6 +203,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_models.html">Linear Models</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="current nav bd-sidenav">
@@ -514,12 +516,12 @@ model. We’ll draw a million pilot samples (so the covariance estimates are acc
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 1.4738e-01 (s)
-Per-evaluation time: 1.4738e-07 (s)
+Total time: 1.5506e-01 (s)
+Per-evaluation time: 1.5506e-07 (s)
 
 high-fidelity :
-Total time: 2.3404e-02 (s)
-Per-evaluation time: 2.3404e-08 (s)
+Total time: 1.7830e-02 (s)
+Per-evaluation time: 1.7830e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [0, 200]
@@ -554,12 +556,12 @@ variance: [0.00250107]
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 3.2256e-02 (s)
-Per-evaluation time: 3.2256e-08 (s)
+Total time: 3.0946e-02 (s)
+Per-evaluation time: 3.0946e-08 (s)
 
 high-fidelity :
-Total time: 1.6476e-02 (s)
-Per-evaluation time: 1.6476e-08 (s)
+Total time: 1.5093e-02 (s)
+Per-evaluation time: 1.5093e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5153, 147]
@@ -598,12 +600,12 @@ tying that level’s covariance to <code class="docutils literal notranslate"><s
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 3.5679e-02 (s)
-Per-evaluation time: 3.5679e-08 (s)
+Total time: 2.7639e-02 (s)
+Per-evaluation time: 2.7639e-08 (s)
 
 high-fidelity :
-Total time: 1.8528e-02 (s)
-Per-evaluation time: 1.8528e-08 (s)
+Total time: 1.6398e-02 (s)
+Per-evaluation time: 1.6398e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]
@@ -648,12 +650,12 @@ to <code class="docutils literal notranslate"><span class="pre">elyza</span></co
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 3.1856e-02 (s)
-Per-evaluation time: 3.1856e-08 (s)
+Total time: 2.9637e-02 (s)
+Per-evaluation time: 2.9637e-08 (s)
 
 high-fidelity :
-Total time: 1.5982e-02 (s)
-Per-evaluation time: 1.5982e-08 (s)
+Total time: 1.4592e-02 (s)
+Per-evaluation time: 1.4592e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]

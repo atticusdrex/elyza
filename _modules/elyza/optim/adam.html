@@ -46,6 +46,7 @@
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/elyza/optim/adam';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://w3.org&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;20&#39; fill=&#39;%234B6CB7&#39;/&gt;&lt;text y=&#39;75&#39; x=&#39;50&#39; font-family=&#39;sans-serif&#39; font-size=&#39;70&#39; font-weight=&#39;bold&#39; fill=&#39;white&#39; text-anchor=&#39;middle&#39;&gt;S&lt;/text&gt;&lt;/svg&gt;"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -197,6 +198,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Surrogate Modeling:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../gps.html">Gaussian process regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../linear_models.html">Linear Models</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Multifidelity Methods</span></p>
 <ul class="nav bd-sidenav">
@@ -552,9 +554,12 @@
 <span class="sd">        carry: Scan carry dict with keys ``p`` (parameters), ``m``</span>
 <span class="sd">            (first-moment estimates), ``s`` (second-moment estimates),</span>
 <span class="sd">            ``loss``, and ``iter_num``.</span>
-<span class="sd">        batch: A tuple ``(Xbatch, Ybatch)`` for this scan step.</span>
+<span class="sd">        batch: A tuple of per-row data arrays for this scan step (e.g.</span>
+<span class="sd">            ``(Xbatch, Ybatch)``, optionally followed by extra data such as</span>
+<span class="sd">            per-epoch PRNG keys), forwarded positionally to ``loss_grad_fn``.</span>
 <span class="sd">        loss_grad_fn: Function returning ``(loss, grad)`` for the current</span>
-<span class="sd">            parameters and batch.</span>
+<span class="sd">            batch (unpacked from ``batch``) and parameters, called as</span>
+<span class="sd">            ``loss_grad_fn(*batch, p)``.</span>
 <span class="sd">        lr: Learning rate.</span>
 <span class="sd">        beta1: First momentum decay rate.</span>
 <span class="sd">        beta2: Second momentum decay rate.</span>
@@ -568,11 +573,10 @@
 <span class="sd">        tuple: ``(carry, loss)`` -- the updated carry dict and this batch's</span>
 <span class="sd">        loss, as required by ``lax.scan``.</span>
 <span class="sd">    """</span>
-    <span class="c1"># extract batches</span>
-    <span class="n">Xbatch</span><span class="p">,</span> <span class="n">Ybatch</span> <span class="o">=</span> <span class="n">batch</span>
-
-    <span class="c1"># obtaining the loss function and gradient</span>
-    <span class="n">loss</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">loss_grad_fn</span><span class="p">(</span><span class="n">Xbatch</span><span class="p">,</span> <span class="n">Ybatch</span><span class="p">,</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'p'</span><span class="p">])</span>
+    <span class="c1"># obtaining the loss function and gradient (batch may hold extra</span>
+    <span class="c1"># per-row data beyond X, Y -- e.g. per-epoch PRNG keys -- forwarded</span>
+    <span class="c1"># positionally to loss_grad_fn ahead of the parameters)</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">loss_grad_fn</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">,</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'p'</span><span class="p">])</span>
 
     <span class="c1"># setting the loss for this batch</span>
     <span class="n">carry</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>
