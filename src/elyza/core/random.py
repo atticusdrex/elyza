@@ -143,8 +143,9 @@ class GaussianMixture(RandomVariable):
             are stacked across components (leading axis of size ``_K``) and
             ``w`` holds the (softmax-normalized) mixture weights.
         _K: Number of mixture components.
-        _constr: Per-component constraint dict enforcing each ``L`` stays
-            lower-triangular with a positive diagonal.
+        _constr: Constraint dict enforcing the stacked ``L`` (shape
+            ``(_K, dim, dim)``) stays lower-triangular with a positive
+            diagonal, applied component-wise via :func:`jax.vmap`.
         _dim: Dimension of each Gaussian component, inferred from ``means``.
         _eps: Small positive jitter added to the diagonal of each ``L`` by
             :attr:`_constr`, to keep it a valid (non-singular)
@@ -175,16 +176,15 @@ class GaussianMixture(RandomVariable):
                 or if ``weights`` doesn't have one entry per component.
         """
         super().__init__(**kwargs)
-        self._constr = {'L':{}} 
         stored_means, stored_Ls = [], []
-        for i, (mean, cov) in enumerate(zip(means, covs)):
+        for mean, cov in zip(means, covs):
             mean, cov = jnp.array(mean).ravel(), ensure_2d(jnp.array(cov))
-            assert mean.shape[0] == cov.shape[0] == cov.shape[1], "mean dimension and variance dimensions mismatch" 
-            L = cholesky(cov, lower=True) 
+            assert mean.shape[0] == cov.shape[0] == cov.shape[1], "mean dimension and variance dimensions mismatch"
+            L = cholesky(cov, lower=True)
             assert not jnp.isnan(L.ravel()).any(), "variance is not symmetric positive definite"
-            stored_means.append(mean) 
-            stored_Ls.append(L) 
-            self._constr['L'][i] = lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self._eps))
+            stored_means.append(mean)
+            stored_Ls.append(L)
+        self._constr = {'L': vmap(lambda L: jnp.tril(L, k=-1) + jnp.diag(jnp.maximum(jnp.diag(L), self._eps)))}
         self._p = {'mean':jnp.stack(stored_means),'L':jnp.stack(stored_Ls)}
         self._K = len(self._p['mean']) 
         self._dim = self._p['mean'][0].shape[0]

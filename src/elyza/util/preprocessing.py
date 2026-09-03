@@ -195,6 +195,10 @@ class KernelFeatures(BaseModel):
         """
         return kernel_mat(X, self._centers, self._kernel, self._k_params)
 
+    def fit_transform(self, X: jax.Array, kernel_params:jax.Array, centers:jax.Array):
+        self.fit(kernel_params, centers) 
+        return self.transform(X) 
+
 class PolynomialFeatures(BaseModel):
     """Expands inputs into polynomial (and optionally interaction-only) features.
 

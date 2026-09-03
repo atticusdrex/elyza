@@ -18,6 +18,7 @@ optimization
 :caption: Surrogate Modeling:
 
 gps
+linear_models
 ```
 
 ```{toctree}

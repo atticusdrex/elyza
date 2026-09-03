@@ -52,3 +52,12 @@ html_theme_options = {
     "navigation_depth": 3,
     "collapse_navigation": True,
 }
+# Use an inline SVG to display a letter as the favicon
+html_favicon = (
+    "data:image/svg+xml,"
+    "<svg xmlns='http://w3.org' viewBox='0 0 100 100'>"
+    "<rect width='100' height='100' rx='20' fill='%234B6CB7'/>"  # %23 is the hex '#' for the background color
+    "<text y='75' x='50' font-family='sans-serif' font-size='70' font-weight='bold' "
+    "fill='white' text-anchor='middle'>S</text>"                 # Change 'S' to your preferred letter
+    "</svg>"
+)

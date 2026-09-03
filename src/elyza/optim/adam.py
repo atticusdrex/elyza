@@ -183,9 +183,12 @@ def _batch_adam_scan(carry, batch, loss_grad_fn : Callable, lr:float, beta1:floa
         carry: Scan carry dict with keys ``p`` (parameters), ``m``
             (first-moment estimates), ``s`` (second-moment estimates),
             ``loss``, and ``iter_num``.
-        batch: A tuple ``(Xbatch, Ybatch)`` for this scan step.
+        batch: A tuple of per-row data arrays for this scan step (e.g.
+            ``(Xbatch, Ybatch)``, optionally followed by extra data such as
+            per-epoch PRNG keys), forwarded positionally to ``loss_grad_fn``.
         loss_grad_fn: Function returning ``(loss, grad)`` for the current
-            parameters and batch.
+            batch (unpacked from ``batch``) and parameters, called as
+            ``loss_grad_fn(*batch, p)``.
         lr: Learning rate.
         beta1: First momentum decay rate.
         beta2: Second momentum decay rate.
@@ -199,11 +202,10 @@ def _batch_adam_scan(carry, batch, loss_grad_fn : Callable, lr:float, beta1:floa
         tuple: ``(carry, loss)`` -- the updated carry dict and this batch's
         loss, as required by ``lax.scan``.
     """
-    # extract batches
-    Xbatch, Ybatch = batch
-
-    # obtaining the loss function and gradient
-    loss, grad = loss_grad_fn(Xbatch, Ybatch, carry['p'])
+    # obtaining the loss function and gradient (batch may hold extra
+    # per-row data beyond X, Y -- e.g. per-epoch PRNG keys -- forwarded
+    # positionally to loss_grad_fn ahead of the parameters)
+    loss, grad = loss_grad_fn(*batch, carry['p'])
 
     # setting the loss for this batch
     carry['loss'] = loss
