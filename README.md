@@ -61,14 +61,6 @@ The library is organized into a few main packages under `src/elyza/`:
 - **`helpers`**: Covariance/correlation utilities (`matrix_cov`, `matrix_corr`), a regularized least-squares solver (`ls`), activation functions, and other small numerical helpers.
 - **`preprocessing`**: `StandardScaler`, `OrthonormalScaler`, `KernelFeatures`, and `PolynomialFeatures` for feature preprocessing.
 
-## Examples
-
-See `experiments/` for end-to-end scripts demonstrating the library, including:
-- `multifidelity/monte-carlo/legendre_benchmark.py` — multifidelity Monte Carlo estimation on an analytical benchmark.
-- `multifidelity/monte-carlo/darcy_benchmark.py` — multifidelity Monte Carlo estimation on the 2D Darcy flow PDE benchmark.
-- `multifidelity/surrogate/magpi_analytical.py` — fitting a `MAGPI` hierarchical surrogate on the analytical benchmark.
-- `surrogate/gp_testing.py` and `surrogate/dnn_testing.py` — fitting `GaussianProcess` and `MLPRegressor` surrogates to a single-fidelity benchmark.
-
 
 
 ## Citation
@@ -87,7 +79,24 @@ If you use `elyza` in your research, please cite it as:
 ```
 <!-- citation-end -->
 
+
+## License
+
+`elyza` is licensed under the [BSD 3-Clause License](LICENSE).
+
+## Artificial Intelligence statement 
+
+Artificial intelligence (AI) tools were used in part to generate the `elyza` codebse. Such tools were mainly used for bug identification and troubleshooting, test development, documentation, and, in rare cases, implementing simple methods. All testing code was written explicitly by a human. 
+
 <!-- summary-end -->
+
+## Examples
+
+See `experiments/` for end-to-end scripts demonstrating the library, including:
+- `multifidelity/monte-carlo/legendre_benchmark.py` — multifidelity Monte Carlo estimation on an analytical benchmark.
+- `multifidelity/monte-carlo/darcy_benchmark.py` — multifidelity Monte Carlo estimation on the 2D Darcy flow PDE benchmark.
+- `multifidelity/surrogate/magpi_analytical.py` — fitting a `MAGPI` hierarchical surrogate on the analytical benchmark.
+- `surrogate/gp_testing.py` and `surrogate/dnn_testing.py` — fitting `GaussianProcess` and `MLPRegressor` surrogates to a single-fidelity benchmark.
 
 ## Documentation
 
@@ -100,8 +109,5 @@ sphinx-build -b html docs/source docs/build/html
 
 Then open `docs/build/html/index.html`.
 
-## License
-
-`elyza` is licensed under the [BSD 3-Clause License](LICENSE).
 
 
