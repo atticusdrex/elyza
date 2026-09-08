@@ -2,7 +2,7 @@
 from elyza.core.data import ScalarInput 
 from elyza.core.evaluator import Evaluator 
 
-from elyza.multifidelity.montecarlo import RMFMC, MFMC, MLMC, HFMC
+from elyza.multifidelity.uq.montecarlo import RMFMC, MFMC, MLMC, HFMC
 
 import jax.random as jrand 
 import jax.numpy as jnp

@@ -1,7 +1,10 @@
 # %% importing evaluators and dependencies
+import os
+os.environ["JAX_PLATFORMS"] = "cpu"
+
 from elyza.benchmarks.pde.darcy2d import GRFInput, DarcyFlowEvaluator 
 
-from elyza.multifidelity.montecarlo import RMFMC, MFMC, MLMC, HFMC
+from elyza.multifidelity.uq.montecarlo import RMFMC, MFMC, MLMC, HFMC
 
 import jax.random as jrand 
 import jax.numpy as jnp
@@ -11,7 +14,7 @@ from matplotlib.pyplot import *
 
 # declaring the permeability fields
 REFERENCE_DIM, HF_DIM, MF_DIM, LF_DIM = 64, 64, 32, 16
-LENGTH_SCALE, KL_TERMS, GRF_MEAN, GRF_STD = 0.15, 64, 0.0, 1.0 
+LENGTH_SCALE, KL_TERMS, GRF_MEAN, GRF_STD = 0.15, 64, 0.0, 1.0
 
 lf_perm = GRFInput(name='permeability', grid_dim=LF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=REFERENCE_DIM)
 mf_perm = GRFInput(name='permeability', grid_dim=MF_DIM, length_scale=LENGTH_SCALE, n_kl_terms=KL_TERMS, grf_mean=GRF_MEAN, grf_std=GRF_STD, reference_grid_dim=REFERENCE_DIM)
@@ -40,7 +43,7 @@ rcParams.update(
         "ytick.labelsize": 14,
     }
 )
-seed = 48
+seed = 360
 # 
 perm_eval = hf_perm.sample(jrand.PRNGKey(seed), 1)
 
@@ -120,11 +123,11 @@ rmfmc = RMFMC(
     rcond = 1e-8
 )
 
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 200, set_costs = True)
+rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 10000, set_costs = True)
 true_covs = rmfmc.covs 
 
 #%%
-rmfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 175, set_costs = False, noise_std = 1e-10)
+rmfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 200, set_costs = False, noise_std = 1e-10)
 bad_covs = rmfmc.covs 
 
 # %% examining regularized least squares solve
@@ -177,19 +180,19 @@ from matplotlib import colors
 
 figure(figsize=(16,4), dpi = 300)
 subplot(1,3,1)
-imshow(jnp.diag(true_covs[-1][-1]).reshape(HF_DIM, HF_DIM) / jnp.diag(true_covs[-1][-1]).max(), cmap = "Oranges", vmin=0.0, vmax = 1.0)
+imshow(jnp.diag(true_covs[-1][-1]).reshape(HF_DIM, HF_DIM) / jnp.diag(true_covs[-1][-1]).max(), cmap = "Blues", vmin=0.0, vmax = 1.0)
 colorbar()
 title("High-Fidelity Variance")
 xticks([]); yticks([])
 
 subplot(1,3,2)
-imshow(hfmc_var / unreg_var, cmap = "GnBu", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
+imshow(hfmc_var / unreg_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
 title("R-MFMC Variance Reduction\nWithout Regularization")
 xticks([]); yticks([])
 
 subplot(1,3,3)
-imshow(hfmc_var / rmfmc_var, cmap = "GnBu", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
+imshow(hfmc_var / rmfmc_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
 title("R-MFMC Variance Reduction\nwith Regularization")
 xticks([]); yticks([])

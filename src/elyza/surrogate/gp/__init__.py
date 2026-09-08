@@ -8,3 +8,4 @@ from elyza.surrogate.gp.gp import GaussianProcess
 from elyza.surrogate.gp.kernel import BaseKernel, RBF, ARD, Laplace
 from elyza.surrogate.gp.mean import BaseMean, Zero, Constant, Linear
 from elyza.surrogate.gp.sparsegp import SparseGP
+from elyza.surrogate.gp.deltagp import DeltaGP

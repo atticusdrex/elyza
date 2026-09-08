@@ -1,5 +1,5 @@
 # %% 
-from elyza.multifidelity.surrogate import MAGPI 
+from elyza.multifidelity.surrogate.magpi import MAGPI 
 from elyza.benchmarks.multifidelity.magpi_analytical import * 
 from elyza.surrogate.gp import GaussianProcess, ARD, Linear, Constant
 from elyza.optim import ADAM, ADAMOptions

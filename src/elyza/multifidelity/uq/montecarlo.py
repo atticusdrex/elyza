@@ -100,6 +100,19 @@ class MultifidelityMonteCarlo(BaseModel):
         if compute_correlation:
             self.corrs = corrs
 
+        # refreshing any cached per-evaluator cost arrays now that
+        # evaluate_timed has updated each evaluator's calibrated .cost
+        if set_costs:
+            self._sync_costs()
+
+    def _sync_costs(self):
+        """Refresh cached cost arrays from the evaluators' ``.cost`` fields.
+
+        No-op by default; overridden by subclasses that cache derived cost
+        arrays (e.g. ``RMFMC._costs``, ``MLMC._level_costs``).
+        """
+        pass
+
     def level_mean(self, key, level, n_points):
         """Estimate the mean output of a given fidelity level from fresh samples.
 
@@ -181,6 +194,10 @@ class RMFMC(MultifidelityMonteCarlo):
             self._betas.append([None for _ in range(level + 1)])
 
         # initializing the costs
+        self._costs = jnp.array([eval.cost for eval in self.evaluators])
+
+    def _sync_costs(self):
+        """Recompute ``_costs`` from the evaluators' (possibly just-calibrated) ``.cost``."""
         self._costs = jnp.array([eval.cost for eval in self.evaluators])
 
     def evaluate(self, key, sample_sizes : list[int]) -> jax.Array:
@@ -702,6 +719,13 @@ class MLMC(MultifidelityMonteCarlo):
             [self._costs[0]] + [self._costs[l-1] + self._costs[l] for l in range(1, self._K)]
         )
 
+    def _sync_costs(self):
+        """Recompute ``_costs``/``_level_costs`` from the evaluators' (possibly just-calibrated) ``.cost``."""
+        self._costs = jnp.array([eval.cost for eval in self.evaluators])
+        self._level_costs = jnp.array(
+            [self._costs[0]] + [self._costs[l-1] + self._costs[l] for l in range(1, self._K)]
+        )
+
     def evaluate(self, key, sample_sizes : list[int]) -> jax.Array:
         """Compute the MLMC telescoping-sum estimate of the high-fidelity mean.
 
@@ -890,6 +914,10 @@ class HFMC(MultifidelityMonteCarlo):
         """Compute per-evaluator costs."""
         super().model_post_init(__context)
 
+        self._costs = jnp.array([eval.cost for eval in self.evaluators])
+
+    def _sync_costs(self):
+        """Recompute ``_costs`` from the evaluators' (possibly just-calibrated) ``.cost``."""
         self._costs = jnp.array([eval.cost for eval in self.evaluators])
 
     def evaluate(self, key, sample_sizes : list[int]) -> jax.Array:
