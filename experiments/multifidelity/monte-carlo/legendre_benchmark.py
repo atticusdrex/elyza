@@ -1,5 +1,5 @@
 # %% 
-from elyza.core.data import ScalarInput 
+from elyza.core import Uniform 
 from elyza.core.evaluator import Evaluator 
 
 from elyza.multifidelity.uq.montecarlo import RMFMC, MFMC, MLMC, HFMC
@@ -9,31 +9,7 @@ import jax.numpy as jnp
 
 
 # defining the data sources
-x = ScalarInput(name = "x", dim = 1, sampling_func = lambda key: jrand.uniform(key, minval = -1.0, maxval = 1.0))
-
-hf = Evaluator(
-    name = "high-fidelity", 
-    inputs = [x], 
-    output_dim = 3, 
-    evaluation_func = lambda x: jnp.array([jnp.sqrt(11) * x ** 5, x **4, jnp.sin(2 * jnp.pi * x)]), 
-    cost = 1.0 
-)
-
-mf = Evaluator(
-    name = "medium-fidelity", 
-    inputs = [x], 
-    output_dim = 3, 
-    evaluation_func = lambda x: jnp.array([jnp.sqrt(7) * x ** 3, x ** 2, jnp.cos(2 * jnp.pi * x + jnp.pi /2)]), 
-    cost = 1e-2
-)
-
-lf = Evaluator(
-    name = "low-fidelity", 
-    inputs = [x], 
-    output_dim = 3, 
-    evaluation_func = lambda x: jnp.array([jnp.sqrt(3) * x ** 2/2, jnp.sqrt(3) * x / 2, jnp.cos(2 * jnp.pi * x + jnp.pi /4)]), 
-    cost = 1e-3
-)
+x = Uniform(name = "x", dim = 1, lower=-1, upper=1)
 
 # alternative levels of fidelity: hf is built as the sum of two mutually
 # ORTHOGONAL components (the standard Legendre polynomials, which are exactly
@@ -87,20 +63,20 @@ budgets = jnp.logspace(jnp.log10(5), jnp.log10(300), num = 8)
 
 estimator_vars = np.zeros((7, budgets.shape[0]))
 
-l2_reg, rcond = 1e-6, 1e-8 
+l2_reg, rcond = 0e-6, 1e-16 
 
 rmfmc = RMFMC(
     evaluators = [lf, mf, hf], 
     l2_reg = l2_reg, 
     rcond = rcond
 )
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = int(1e7), set_costs = False)
+rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4)
 
 # storing true covariance matrices 
 true_covs = rmfmc.covs 
 
 # re-computing rmfmc pilots with fewer pilot samples
-rmfmc.get_pilots(jrand.PRNGKey(41), n_pilots = int(1e7), set_costs = False) 
+rmfmc.get_pilots(jrand.PRNGKey(41), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4) 
 pilot_covs = rmfmc.covs
 
 mfmc = MFMC(
@@ -114,6 +90,8 @@ mlmc = MLMC(evaluators = [lf, mf, hf])
 mlmc.covs = rmfmc.covs 
 hfmc = HFMC(evaluators = [lf, mf, hf])
 hfmc.covs = rmfmc.covs 
+
+
 
 for i, budget in tqdm(enumerate(budgets), total = budgets.shape[0]):
     vars = [] 
@@ -171,7 +149,7 @@ for i, budget in tqdm(enumerate(budgets), total = budgets.shape[0]):
     rmfmc.covs = true_covs 
     rmfmc._get_info_coefs() 
     # ms = rmfmc.budget_alloc(budget, warm_start = False) 
-    ms = rmfmc.budget_alloc(budget, warm_start = False) 
+    ms = rmfmc.budget_alloc(budget, warm_start = True) 
     vars.append(rmfmc._get_variance(ms)) 
 
 
@@ -196,7 +174,7 @@ rcParams.update(
     }
 )
 
-labels = ["HFMC (baseline)", "MLMC", "MFMC", "R-MFMC w/ matrix coefs.", "R-MFMC w/ vector coefs.", "R-MFMC w/ scalar coefs.", "R-MFMC w/ greedy sample alloc."]
+labels = ["HFMC (baseline)", "MLMC", "MFMC", "E-MFMC w/ matrix coefs.", "E-MFMC w/ vector coefs.", "E-MFMC w/ scalar coefs.", "E-MFMC w/ greedy sample alloc."]
 markers = ['.', "D", "P", '*', 's', "^", (6,2,0)]
 # the three RMFMC variants share a blue family (dark -> light, richest -> simplest
 # coefficients), while HFMC/MFMC/MLMC each get a distinct matplotlib default color
@@ -212,3 +190,4 @@ ylabel("Trace of estimator covariance matrix")
 title("Convergence Comparison for Multivariate Monte Carlo Estimators")
 savefig("figs\\analytical_multivariate_benchmark.png")
 tight_layout() 
+# %%

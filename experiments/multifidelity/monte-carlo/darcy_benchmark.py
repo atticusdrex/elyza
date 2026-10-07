@@ -1,6 +1,6 @@
 # %% importing evaluators and dependencies
-import os
-os.environ["JAX_PLATFORMS"] = "cpu"
+# import os
+# os.environ["JAX_PLATFORMS"] = "cpu"
 
 from elyza.benchmarks.pde.darcy2d import GRFInput, DarcyFlowEvaluator 
 
@@ -123,7 +123,7 @@ rmfmc = RMFMC(
     rcond = 1e-8
 )
 
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 10000, set_costs = True)
+rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 10000, set_costs = False)
 true_covs = rmfmc.covs 
 
 #%%
@@ -172,12 +172,6 @@ hf_ms
 # %% 
 from matplotlib import colors
 
-# Define norm with custom min (-10), center (0), and max (80)
-
-# 2. Create the continuous colormap
-
-# norm = colors.TwoSlopeNorm(vcenter=1.0, vmin=0, vmax=(hfmc_var / rmfmc_var).max())
-
 figure(figsize=(16,4), dpi = 300)
 subplot(1,3,1)
 imshow(jnp.diag(true_covs[-1][-1]).reshape(HF_DIM, HF_DIM) / jnp.diag(true_covs[-1][-1]).max(), cmap = "Blues", vmin=0.0, vmax = 1.0)
@@ -188,12 +182,12 @@ xticks([]); yticks([])
 subplot(1,3,2)
 imshow(hfmc_var / unreg_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
-title("R-MFMC Variance Reduction\nWithout Regularization")
+title("E-MFMC Variance Reduction\nWithout Regularization")
 xticks([]); yticks([])
 
 subplot(1,3,3)
 imshow(hfmc_var / rmfmc_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
 colorbar()
-title("R-MFMC Variance Reduction\nwith Regularization")
+title("E-MFMC Variance Reduction\nwith Regularization")
 xticks([]); yticks([])
 # %%

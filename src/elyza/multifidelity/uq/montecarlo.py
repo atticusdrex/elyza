@@ -488,26 +488,32 @@ class RMFMC(MultifidelityMonteCarlo):
         # assessing that they're all positive
         assert (jnp.diff(ratios) < 0).all(), "levels of fidelities are out of order; ai/ci must be strictly decreasing: \n" + str(ratios)
 
-    def budget_alloc(self, budget : float, warm_start : bool = True) -> list[float]:
+    def budget_alloc(self, budget : float, warm_start : bool = True) -> list[int]:
         """Compute the (integer, nested) per-level sample allocation for a budget.
 
-        Greedily increments the sample size of whichever level offers the
-        best marginal variance reduction per unit cost, subject to the
-        nesting constraint (``ms[level] >= ms[level + 1]``) and the budget.
+        Starting from a feasible nested allocation, greedily increments the
+        sample size of whichever level offers the largest marginal variance
+        reduction per unit cost, among the levels whose increment is
+        affordable and keeps the nesting strictly ordered
+        (``ms[level] < ms[level - 1]``).
 
         Args:
             budget: Total evaluation budget.
-            warm_start: If ``True``, start from the (feasible, rounded-down)
-                fractional-relaxation solution; otherwise start from the
-                smallest valid nested allocation.
+            warm_start: If ``True``, start from the floored fractional-relaxation
+                solution (re-solved for the lower levels with one high-fidelity
+                sample's cost removed if the relaxation gives the high-fidelity
+                level fewer than one sample), raised where needed to keep the
+                nesting strictly ordered (falling back to the minimal
+                allocation if that exceeds the budget); otherwise start from
+                the smallest valid nested allocation.
 
         Returns:
-            list[float]: Per-level integer sample allocations.
+            list[int]: Per-level integer sample allocations. If ``budget`` is
+            too small for the minimal allocation, the minimal allocation is
+            returned.
 
         Raises:
-            AssertionError: If coefficients haven't been computed yet, the
-                fidelity ordering is invalid, or ``budget`` is too small for
-                even the minimal allocation.
+            AssertionError: If coefficients haven't been computed yet.
         """
         assert self._coefs is not None, "must compute coefficients first!"
 
@@ -515,54 +521,73 @@ class RMFMC(MultifidelityMonteCarlo):
         if self._info_coefs is None:
             self._get_info_coefs()
 
-        # check the ordering
-        self._check_order()
+        # pulling the budget, coefficients and costs to host floats so the
+        # greedy loop doesn't trigger a device sync on every iteration
+        budget = float(budget)
+        info_coefs = [float(a) for a in self._info_coefs]
+        costs = [float(c) for c in self._costs]
 
-        # warm start by rounding down the fractional allocation
+        # initialize the sample sizes to the smallest set of feasible values
+        ms = [self._K - level for level in range(self._K)]
+
+        # warm start by flooring the fractional allocation, working down from
+        # the high-fidelity level so each level stays above the one after it
         if warm_start:
-            # solving the lagrangian relaxation problem
-            relaxed_ms = self._budget_fractional_alloc(budget)
+            relaxed_ms = [float(m) for m in self._budget_fractional_alloc(budget)]
 
-            # initializing the sample allocs and last sample alloc
-            last_m, ms = 0, []
-            # flooring and ensuring feasibility
-            for m in relaxed_ms[::-1]:
-                ms.append(int(jnp.maximum(last_m + 1, jnp.floor(m))))
-                last_m = ms[-1]
+            # the high-fidelity level needs at least one sample; if the relaxation
+            # gives it fewer, pin it to one and re-solve the relaxation for the
+            # lower levels with the budget that remains
+            if not relaxed_ms[-1] >= 1:
+                remaining = budget - costs[-1]
+                roots = [math.sqrt(max(a, 0.0) / c) for a, c in zip(info_coefs[:-1], costs[:-1])]
+                denom = sum(r * c for r, c in zip(roots, costs[:-1]))
+                if remaining > 0 and denom > 0:
+                    relaxed_ms = [remaining * r / denom for r in roots] + [1.0]
 
-            # reversing the list
-            ms.reverse()
-        else:
-            # just starting at the smallest possible sample allocation
-            ms = [i + 1 for i in range(self._K)][::-1]
+            # non-finite relaxed sizes (e.g. from a negative info coefficient) floor to zero
+            floored = [math.floor(m) if math.isfinite(m) else 0 for m in relaxed_ms]
 
-        # compute initial budget
-        current_budget = jnp.inner(jnp.array(ms), self._costs)
+            warm_ms = [0] * self._K
+            warm_ms[-1] = max(floored[-1], 1)
+            for level in range(self._K - 2, -1, -1):
+                warm_ms[level] = max(floored[level], warm_ms[level + 1] + 1)
 
-        # checking that the budget is large enough
-        assert current_budget <= budget, "budget is too small! try setting warm_start = False"
+            # only keep the warm start if it is within budget
+            if sum(c * m for c, m in zip(costs, warm_ms)) <= budget:
+                ms = warm_ms
 
-        # initialize deltas
-        deltas = [ai / mi - ai / (mi + 1) for ai, mi in zip(self._info_coefs, ms)]
+        # compute the potential reduction in variance
+        deltas = [a / m - a / (m + 1) for a, m in zip(info_coefs, ms)]
 
-        # loop through and increment sample sizes
-        while any(d > 0 for d in deltas):
-            # finding the maximum ratio of variance reduction to cost
-            level = jnp.argmax(jnp.array(deltas) / self._costs)
+        # compute the total budget used so far
+        current_budget = sum(c * m for c, m in zip(costs, ms))
 
-            # checking if feasible
-            budget_valid = current_budget + self._costs[level] <= budget
-            order_valid = level == self._K-1 or (ms[level] > ms[level+1])
+        # budget too small; returning cheapest feasible allocation
+        if current_budget >= budget:
+            return ms
 
-            # increment sample size if valid
-            if  budget_valid:
-                # updating the sample size, delta, and budget used
-                ms[level] += 1
-                deltas[level] = self._info_coefs[level] * (1/ms[level] - 1/(ms[level] + 1))
-                current_budget += self._costs[level]
-            elif not budget_valid:
-                # if we can't afford to increment this level anymore we take its candidacy away
-                deltas[level] = -1
+        # find affordable increments that do not violate the ordering
+        def feasible_levels():
+            return [
+                level for level in range(self._K)
+                if deltas[level] > 0
+                and current_budget + costs[level] <= budget
+                and (level == 0 or ms[level] + 1 < ms[level - 1])
+            ]
+
+        candidates = feasible_levels()
+        while candidates:
+            # choose the feasible level with maximum delta / cost
+            level = max(candidates, key = lambda l: deltas[l] / costs[l])
+
+            # updating the budget used, sample size, and delta
+            current_budget += costs[level]
+            ms[level] += 1
+            deltas[level] = info_coefs[level] / ms[level] - info_coefs[level] / (ms[level] + 1)
+
+            # recompute candidates
+            candidates = feasible_levels()
 
         return ms
 
