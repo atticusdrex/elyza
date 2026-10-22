@@ -6,13 +6,13 @@ kernelspec:
 
 # Multifidelity Monte Carlo Methods
 
-{mod}`elyza.multifidelity.montecarlo` provides four estimators for approximating the expectation of an expensive {class}`~elyza.core.evaluator.Evaluator` using low-fidelity models. All four estimators share a
+{mod}`elyza.multifidelity.uq.montecarlo` provides four estimators for approximating the expectation of an expensive {class}`~elyza.core.evaluator.Evaluator` using low-fidelity models. All four estimators share a
 common interface (`get_pilots`, `budget_alloc`, `get_entry_variance`, `evaluate`) inherited from
-{class}`~elyza.multifidelity.montecarlo.MultifidelityMonteCarlo`. This page introduces them in order of sophistication: the standard high-fidelity
-baseline ({class}`~elyza.multifidelity.montecarlo.HFMC`),
-multilevel MC ({class}`~elyza.multifidelity.montecarlo.MLMC`), classic
-multifidelity MC ({class}`~elyza.multifidelity.montecarlo.MFMC`), and
-finally {class}`~elyza.multifidelity.montecarlo.RMFMC` -- Recursive
+{class}`~elyza.multifidelity.uq.montecarlo.MultifidelityMonteCarlo`. This page introduces them in order of sophistication: the standard high-fidelity
+baseline ({class}`~elyza.multifidelity.uq.montecarlo.HFMC`),
+multilevel MC ({class}`~elyza.multifidelity.uq.montecarlo.MLMC`), classic
+multifidelity MC ({class}`~elyza.multifidelity.uq.montecarlo.MFMC`), and
+finally {class}`~elyza.multifidelity.uq.montecarlo.EMFMC` -- Recursive
 Multifidelity Monte Carlo, a generalized estimator original to `elyza`.
 
 Each multifidelity Monte Carlo estimator is fully generalized and works with *vector-valued functions*; we also use a novel greedy algorithms to allocate integer-valued sample allocations given a fixed computational budget.
@@ -73,10 +73,10 @@ budget = 200.0
 
 ## 2. Baseline: high-fidelity-only Monte Carlo (HFMC)
 
-{class}`~elyza.multifidelity.montecarlo.HFMC` is the naive estimator which ignores every lower-fidelity level and spends the entire budget on evaluating `hf`. {meth}`~elyza.multifidelity.montecarlo.HFMC.budget_alloc` puts the whole budget toward `hf` (zero for every lower level), and {meth}`~elyza.multifidelity.montecarlo.HFMC.get_entry_variance` reports the resulting estimator variance:
+{class}`~elyza.multifidelity.uq.montecarlo.HFMC` is the naive estimator which ignores every lower-fidelity level and spends the entire budget on evaluating `hf`. {meth}`~elyza.multifidelity.uq.montecarlo.HFMC.budget_alloc` puts the whole budget toward `hf` (zero for every lower level), and {meth}`~elyza.multifidelity.uq.montecarlo.HFMC.get_entry_variance` reports the resulting estimator variance:
 
 ```{code-cell} python
-from elyza.multifidelity.montecarlo import HFMC
+from elyza.multifidelity.uq.montecarlo import HFMC
 
 # 1. define
 hfmc = HFMC(evaluators=[lf, hf])
@@ -95,10 +95,10 @@ print("variance:", var_hfmc)
 
 ## 3. MLMC: telescoping multilevel Monte Carlo
 
-{class}`~elyza.multifidelity.montecarlo.MLMC` (Giles, 2015 [^giles2015]) takes a different approach from the estimators below it: rather than regression coefficients, it sums independent telescoping corrections `E[f_l] - E[f_{l-1}]` between adjacent levels, plus the lowest level's own mean. Each level's correction is estimated from its own independent batch of samples -- unlike `MFMC`/`RMFMC` below, there is no nesting constraint between levels. {meth}`~elyza.multifidelity.montecarlo.MLMC.budget_alloc` allocates an independent per-level sample count, weighing each level's cost (`lf` alone at level 0, `lf` and `hf` together at level 1) against its variance reduction:
+{class}`~elyza.multifidelity.uq.montecarlo.MLMC` (Giles, 2015 [^giles2015]) takes a different approach from the estimators below it: rather than regression coefficients, it sums independent telescoping corrections `E[f_l] - E[f_{l-1}]` between adjacent levels, plus the lowest level's own mean. Each level's correction is estimated from its own independent batch of samples -- unlike `MFMC`/`EMFMC` below, there is no nesting constraint between levels. {meth}`~elyza.multifidelity.uq.montecarlo.MLMC.budget_alloc` allocates an independent per-level sample count, weighing each level's cost (`lf` alone at level 0, `lf` and `hf` together at level 1) against its variance reduction:
 
 ```{code-cell} python
-from elyza.multifidelity.montecarlo import MLMC
+from elyza.multifidelity.uq.montecarlo import MLMC
 
 # 1. define
 mlmc = MLMC(evaluators=[lf, hf])
@@ -117,13 +117,13 @@ print("variance:", var_mlmc)
 
 ## 4. MFMC: multifidelity Monte Carlo
 
-{class}`~elyza.multifidelity.montecarlo.MFMC` (Peherstorfer, Willcox, &
+{class}`~elyza.multifidelity.uq.montecarlo.MFMC` (Peherstorfer, Willcox, &
 Gunzburger, 2016 [^peherstorfer2016]) instead treats each lower-fidelity
 level as a control variate: it computes a single regression coefficient
-tying that level's covariance to `hf` and forms a nested correction. Unlike MLMC's independent batches, MFMC's levels are sampled with a *nested* design -- level 0's batch is reused by every level above it. Pilot samples estimate the cross-level covariance, which {meth}`~elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs` converts into regression coefficients before the budget can be allocated:
+tying that level's covariance to `hf` and forms a nested correction. Unlike MLMC's independent batches, MFMC's levels are sampled with a *nested* design -- level 0's batch is reused by every level above it. Pilot samples estimate the cross-level covariance, which {meth}`~elyza.multifidelity.uq.montecarlo.MFMC.get_matrix_coefs` converts into regression coefficients before the budget can be allocated:
 
 ```{code-cell} python
-from elyza.multifidelity.montecarlo import MFMC
+from elyza.multifidelity.uq.montecarlo import MFMC
 
 # 1. define
 mfmc = MFMC(evaluators=[lf, hf])
@@ -143,7 +143,7 @@ print("variance:", var_mfmc)
 
 ## 5. R-MFMC: Recursive Multifidelity Monte Carlo
 
-{class}`~elyza.multifidelity.montecarlo.RMFMC` -- Recursive Multifidelity
+{class}`~elyza.multifidelity.uq.montecarlo.EMFMC` -- Recursive Multifidelity
 Monte Carlo -- is the flagship estimator in `elyza`, a generalized
 estimator developed by the author as part of PhD thesis research. Where
 MFMC ties each lower-fidelity level to a single control-variate
@@ -155,28 +155,28 @@ not just each level's individual correlation with `hf`. R-MFMC is original
 to `elyza`, and this is its first public release.
 
 ```{code-cell} python
-from elyza.multifidelity.montecarlo import RMFMC
+from elyza.multifidelity.uq.montecarlo import EMFMC
 
 # 1. define
-rmfmc = RMFMC(evaluators=[lf, hf])   # index 0 is lowest-fidelity
+emfmc = EMFMC(evaluators=[lf, hf])   # index 0 is lowest-fidelity
 
 # 2. pilot samples
-rmfmc.get_pilots(jrand.PRNGKey(0), n_pilots=n_pilots, set_costs=False)
-rmfmc.get_matrix_coefs()
+emfmc.get_pilots(jrand.PRNGKey(0), n_pilots=n_pilots, set_costs=False)
+emfmc.get_matrix_coefs()
 
 # 3. allocate the budget
-ms_rmfmc = rmfmc.budget_alloc(budget=budget)
-print("budget allocation:", ms_rmfmc)
+ms_emfmc = emfmc.budget_alloc(budget=budget)
+print("budget allocation:", ms_emfmc)
 
 # 4. analytical estimator variance
-var_rmfmc = rmfmc.get_entry_variance(ms_rmfmc)
-print("variance:", var_rmfmc)
+var_emfmc = emfmc.get_entry_variance(ms_emfmc)
+print("variance:", var_emfmc)
 ```
 
 For evaluators that all share the same output dimension,
-{meth}`~elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs` and
-{meth}`~elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs` are cheaper
-alternatives to {meth}`~elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs`,
+{meth}`~elyza.multifidelity.uq.montecarlo.EMFMC.get_vector_coefs` and
+{meth}`~elyza.multifidelity.uq.montecarlo.EMFMC.get_scalar_coefs` are cheaper
+alternatives to {meth}`~elyza.multifidelity.uq.montecarlo.EMFMC.get_matrix_coefs`,
 restricting the regression coefficients to a diagonal or scalar multiple of
 the identity, respectively. `MFMC` inherits these too, though only
 `get_matrix_coefs` is overridden to enforce the single-coefficient-per-level
@@ -193,7 +193,7 @@ results = [
     ("HFMC", var_hfmc),
     ("MLMC", var_mlmc),
     ("MFMC", var_mfmc),
-    ("RMFMC", var_rmfmc),
+    ("EMFMC", var_emfmc),
 ]
 
 print(f"{'estimator':<10}{'variance':>15}")

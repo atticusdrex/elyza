@@ -220,7 +220,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.uq module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
 </ul>
 </details></li>
@@ -393,46 +393,18 @@
 </li>
       <li><a href="elyza.surrogate.linear.linreg.html#elyza.surrogate.linear.linreg.Ridge._beta">_beta (elyza.surrogate.linear.linreg.Ridge attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC._betas">_betas (elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-</li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess._calibrated">_calibrated (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures._centers">_centers (elyza.util.preprocessing.KernelFeatures attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC._coefs">_coefs (elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC._costs">_costs (elyza.multifidelity.montecarlo.HFMC attribute)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC._costs">(elyza.multifidelity.montecarlo.MLMC attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC._costs">(elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler._eps">_eps (elyza.util.preprocessing.StandardScaler attribute)</a>
 </li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._f">_f (elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator attribute)</a>
 </li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator._h">_h (elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._hf_dim">_hf_dim (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC._info_coefs">_info_coefs (elyza.multifidelity.montecarlo.MLMC attribute)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC._info_coefs">(elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo._K">_K (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate._K">(elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures._k_params">_k_params (elyza.util.preprocessing.KernelFeatures attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess._kernel">_kernel (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 
       <ul>
@@ -441,8 +413,8 @@
       </ul></li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess._L">_L (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC._level_costs">_level_costs (elyza.multifidelity.montecarlo.MLMC attribute)</a>
-</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.KernelFeatures._mapping_func">_mapping_func (elyza.util.preprocessing.KernelFeatures attribute)</a>
 </li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess._mean">_mean (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
@@ -463,13 +435,9 @@
       </ul></li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures._powers">_powers (elyza.util.preprocessing.PolynomialFeatures attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate._pred_kwargs">_pred_kwargs (elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
-</li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput._scaled_eigvecs">_scaled_eigvecs (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.StandardScaler._stds">_stds (elyza.util.preprocessing.StandardScaler attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate._surrogates">_surrogates (elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
 </li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess._X">_X (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
@@ -519,20 +487,12 @@
       </ul></li>
       <li><a href="elyza.optim.abstract.html#elyza.optim.abstract.BatchGradientOptimizer">BatchGradientOptimizer (class in elyza.optim.abstract)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.beta1">beta1 (elyza.optim.adam.ADAMOptions attribute)</a>
 </li>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.beta2">beta2 (elyza.optim.adam.ADAMOptions attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.budget_alloc">budget_alloc() (elyza.multifidelity.montecarlo.HFMC method)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.budget_alloc">(elyza.multifidelity.montecarlo.MLMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.budget_alloc">(elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.build_image_source">build_image_source() (in module elyza.benchmarks.pde.darcy2d)</a>
 </li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.build_kl_basis">build_kl_basis() (in module elyza.benchmarks.pde.darcy2d)</a>
@@ -555,10 +515,10 @@
 </li>
       <li><a href="elyza.util.helpers.html#elyza.util.helpers.cholesky_KL_div">cholesky_KL_div() (in module elyza.util.helpers)</a>
 </li>
-      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset.concatenate_inputs">concatenate_inputs() (elyza.surrogate.abstract.SupervisedDataset method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset.concatenate_inputs">concatenate_inputs() (elyza.surrogate.abstract.SupervisedDataset method)</a>
+</li>
       <li><a href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.Constant">Constant (class in elyza.surrogate.gp.mean)</a>
 </li>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.constraints">constraints (elyza.optim.adam.ADAMOptions attribute)</a>
@@ -567,11 +527,7 @@
         <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions.constraints">(elyza.optim.lbfgs.LBFGSOptions attribute)</a>
 </li>
       </ul></li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.corrs">corrs (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
-</li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.cost">cost (elyza.core.evaluator.Evaluator attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.covs">covs (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -581,14 +537,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.DarcyFlowEvaluator">DarcyFlowEvaluator (class in elyza.benchmarks.pde.darcy2d)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate.data">data (elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
-</li>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures.degree">degree (elyza.util.preprocessing.PolynomialFeatures attribute)</a>
 </li>
       <li><a href="elyza.core.data.html#elyza.core.data.Variable.dim">dim (elyza.core.data.Variable attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.core.data.html#elyza.core.data.Variable.dtype">dtype (elyza.core.data.Variable attribute)</a>
 
       <ul>
@@ -678,17 +630,17 @@
 </li>
       </ul></li>
       <li>
-    elyza.multifidelity.montecarlo
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.montecarlo">module</a>
-</li>
-      </ul></li>
-      <li>
     elyza.multifidelity.surrogate
 
       <ul>
         <li><a href="elyza.multifidelity.surrogate.html#module-elyza.multifidelity.surrogate">module</a>
+</li>
+      </ul></li>
+      <li>
+    elyza.multifidelity.uq
+
+      <ul>
+        <li><a href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.uq">module</a>
 </li>
       </ul></li>
       <li>
@@ -754,6 +706,8 @@
         <li><a href="elyza.surrogate.gp.html#module-elyza.surrogate.gp">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     elyza.surrogate.gp.gp
 
@@ -761,8 +715,6 @@
         <li><a href="elyza.surrogate.gp.gp.html#module-elyza.surrogate.gp.gp">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     elyza.surrogate.gp.kernel
 
@@ -866,12 +818,6 @@
       <ul>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.evaluate">(elyza.core.evaluator.Evaluator method)</a>
 </li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.evaluate">(elyza.multifidelity.montecarlo.HFMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.evaluate">(elyza.multifidelity.montecarlo.MLMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.evaluate">(elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
       </ul></li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.evaluate_timed">evaluate_timed() (elyza.core.evaluator.Evaluator method)</a>
 </li>
@@ -879,12 +825,6 @@
 </li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator">Evaluator (class in elyza.core.evaluator)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.evaluators">evaluators (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate.evaluators">(elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -893,11 +833,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.optim.abstract.html#elyza.optim.abstract.fill_pytree_spec">fill_pytree_spec() (in module elyza.optim.abstract)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.fit">fit() (elyza.multifidelity.surrogate.MAGPI method)</a>
+      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.fit">fit() (elyza.surrogate.abstract.Surrogate method)</a>
 
       <ul>
-        <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.fit">(elyza.surrogate.abstract.Surrogate method)</a>
-</li>
         <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.fit">(elyza.surrogate.dnn.dnn.MLPRegressor method)</a>
 </li>
         <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.fit">(elyza.surrogate.gp.gp.GaussianProcess method)</a>
@@ -931,34 +869,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess">GaussianProcess (class in elyza.surrogate.gp.gp)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.get_entry_variance">get_entry_variance() (elyza.multifidelity.montecarlo.HFMC method)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.get_entry_variance">(elyza.multifidelity.montecarlo.MLMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_entry_variance">(elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
-      </ul></li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.get_field">get_field() (in module elyza.benchmarks.pde.darcy2d)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs">get_matrix_coefs() (elyza.multifidelity.montecarlo.MFMC method)</a>
-
-      <ul>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs">(elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
-      </ul></li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.get_pilots">get_pilots() (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs">get_scalar_coefs() (elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs">get_vector_coefs() (elyza.multifidelity.montecarlo.RMFMC method)</a>
 </li>
       <li><a href="elyza.util.helpers.html#elyza.util.helpers.greedy_k_center">greedy_k_center() (in module elyza.util.helpers)</a>
 </li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.grf_mean">grf_mean (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.grf_std">grf_std (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput">GRFInput (class in elyza.benchmarks.pde.darcy2d)</a>
@@ -975,13 +893,7 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC">HFMC (class in elyza.multifidelity.montecarlo)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.hidden_dims">hidden_dims (elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate">HierarchicalSurrogate (class in elyza.multifidelity.surrogate)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1051,11 +963,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.l1_reg">l1_reg (elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.l2_reg">l2_reg (elyza.multifidelity.montecarlo.RMFMC attribute)</a>
+      <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.l2_reg">l2_reg (elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
 
       <ul>
-        <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.l2_reg">(elyza.surrogate.dnn.dnn.MLPRegressor attribute)</a>
-</li>
         <li><a href="elyza.surrogate.linear.linreg.html#elyza.surrogate.linear.linreg.Ridge.l2_reg">(elyza.surrogate.linear.linreg.Ridge attribute)</a>
 </li>
       </ul></li>
@@ -1065,13 +975,9 @@
 </li>
       <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions">LBFGSOptions (class in elyza.optim.lbfgs)</a>
 </li>
-      <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale">length_scale (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_mean">level_mean() (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.level_sum">level_sum() (elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
+      <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.length_scale">length_scale (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
       <li><a href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.Linear">Linear (class in elyza.surrogate.gp.mean)</a>
 </li>
@@ -1095,8 +1001,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions.m">m (elyza.optim.lbfgs.LBFGSOptions attribute)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI">MAGPI (class in elyza.multifidelity.surrogate)</a>
-</li>
       <li><a href="elyza.util.helpers.html#elyza.util.helpers.matrix_corr">matrix_corr() (in module elyza.util.helpers)</a>
 </li>
       <li><a href="elyza.util.helpers.html#elyza.util.helpers.matrix_cov">matrix_cov() (in module elyza.util.helpers)</a>
@@ -1106,10 +1010,6 @@
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.max_cond">max_cond (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
 </li>
       <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.mean_cls">mean_cls (elyza.surrogate.gp.gp.GaussianProcess attribute)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC">MFMC (class in elyza.multifidelity.montecarlo)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC">MLMC (class in elyza.multifidelity.montecarlo)</a>
 </li>
       <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor">MLPRegressor (class in elyza.surrogate.dnn.dnn)</a>
 </li>
@@ -1121,20 +1021,6 @@
         <li><a href="elyza.core.data.html#elyza.core.data.Variable.model_config">(elyza.core.data.Variable attribute)</a>
 </li>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.model_config">(elyza.core.evaluator.Evaluator attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.model_config">(elyza.multifidelity.montecarlo.HFMC attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC.model_config">(elyza.multifidelity.montecarlo.MFMC attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.model_config">(elyza.multifidelity.montecarlo.MLMC attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_config">(elyza.multifidelity.montecarlo.MultifidelityMonteCarlo attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.model_config">(elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate.model_config">(elyza.multifidelity.surrogate.HierarchicalSurrogate attribute)</a>
-</li>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.model_config">(elyza.multifidelity.surrogate.MAGPI attribute)</a>
 </li>
         <li><a href="elyza.optim.abstract.html#elyza.optim.abstract.BatchGradientOptimizer.model_config">(elyza.optim.abstract.BatchGradientOptimizer attribute)</a>
 </li>
@@ -1194,20 +1080,6 @@
 </li>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.model_post_init">(elyza.core.evaluator.Evaluator method)</a>
 </li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.model_post_init">(elyza.multifidelity.montecarlo.HFMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC.model_post_init">(elyza.multifidelity.montecarlo.MFMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.model_post_init">(elyza.multifidelity.montecarlo.MLMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.model_post_init">(elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.model_post_init">(elyza.multifidelity.montecarlo.RMFMC method)</a>
-</li>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.HierarchicalSurrogate.model_post_init">(elyza.multifidelity.surrogate.HierarchicalSurrogate method)</a>
-</li>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.model_post_init">(elyza.multifidelity.surrogate.MAGPI method)</a>
-</li>
         <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAM.model_post_init">(elyza.optim.adam.ADAM method)</a>
 </li>
         <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.model_post_init">(elyza.optim.adam.ADAMOptions method)</a>
@@ -1259,9 +1131,9 @@
 </li>
         <li><a href="elyza.multifidelity.html#module-elyza.multifidelity">elyza.multifidelity</a>
 </li>
-        <li><a href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.montecarlo">elyza.multifidelity.montecarlo</a>
-</li>
         <li><a href="elyza.multifidelity.surrogate.html#module-elyza.multifidelity.surrogate">elyza.multifidelity.surrogate</a>
+</li>
+        <li><a href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.uq">elyza.multifidelity.uq</a>
 </li>
         <li><a href="elyza.optim.html#module-elyza.optim">elyza.optim</a>
 </li>
@@ -1300,8 +1172,6 @@
         <li><a href="elyza.util.preprocessing.html#module-elyza.util.preprocessing">elyza.util.preprocessing</a>
 </li>
       </ul></li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo">MultifidelityMonteCarlo (class in elyza.multifidelity.montecarlo)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1382,21 +1252,19 @@
         <li><a href="elyza.surrogate.gp.mean.html#elyza.surrogate.gp.mean.Zero.p_dim">(elyza.surrogate.gp.mean.Zero property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.optim.adam.html#elyza.optim.adam.ADAMOptions.p_init">p_init (elyza.optim.adam.ADAMOptions attribute)</a>
 
       <ul>
         <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions.p_init">(elyza.optim.lbfgs.LBFGSOptions attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.PolynomialFeatures">PolynomialFeatures (class in elyza.util.preprocessing)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.predict">predict() (elyza.multifidelity.surrogate.MAGPI method)</a>
+      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.predict">predict() (elyza.surrogate.abstract.Surrogate method)</a>
 
       <ul>
-        <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.predict">(elyza.surrogate.abstract.Surrogate method)</a>
-</li>
         <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.predict">(elyza.surrogate.dnn.dnn.MLPRegressor method)</a>
 </li>
         <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.predict">(elyza.surrogate.gp.gp.GaussianProcess method)</a>
@@ -1408,8 +1276,6 @@
 
       <ul>
         <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.print">(elyza.core.evaluator.Evaluator method)</a>
-</li>
-        <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo.print">(elyza.multifidelity.montecarlo.MultifidelityMonteCarlo method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1428,19 +1294,13 @@
       </ul></li>
       <li><a href="elyza.surrogate.gp.kernel.html#elyza.surrogate.gp.kernel.RBF">RBF (class in elyza.surrogate.gp.kernel)</a>
 </li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.rcond">rcond (elyza.multifidelity.montecarlo.RMFMC attribute)</a>
-
-      <ul>
-        <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler.rcond">(elyza.util.preprocessing.OrthonormalScaler attribute)</a>
+      <li><a href="elyza.util.preprocessing.html#elyza.util.preprocessing.OrthonormalScaler.rcond">rcond (elyza.util.preprocessing.OrthonormalScaler attribute)</a>
 </li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.reference_grid_dim">reference_grid_dim (elyza.benchmarks.pde.darcy2d.GRFInput attribute)</a>
 </li>
       <li><a href="elyza.surrogate.linear.linreg.html#elyza.surrogate.linear.linreg.Ridge">Ridge (class in elyza.surrogate.linear.linreg)</a>
-</li>
-      <li><a href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC">RMFMC (class in elyza.multifidelity.montecarlo)</a>
 </li>
       <li><a href="elyza.optim.abstract.html#elyza.optim.abstract.Optimizer.run">run() (elyza.optim.abstract.Optimizer method)</a>
 
@@ -1459,8 +1319,6 @@
       <li><a href="elyza.benchmarks.pde.darcy2d.html#elyza.benchmarks.pde.darcy2d.GRFInput.sample">sample() (elyza.benchmarks.pde.darcy2d.GRFInput method)</a>
 
       <ul>
-        <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.sample">(elyza.multifidelity.surrogate.MAGPI method)</a>
-</li>
         <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.sample">(elyza.surrogate.abstract.Surrogate method)</a>
 </li>
         <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.sample">(elyza.surrogate.dnn.dnn.MLPRegressor method)</a>
@@ -1474,11 +1332,9 @@
 </li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.set_cost">set_cost() (elyza.core.evaluator.Evaluator method)</a>
 </li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.set_optimizer">set_optimizer() (elyza.multifidelity.surrogate.MAGPI method)</a>
+      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.set_optimizer">set_optimizer() (elyza.surrogate.abstract.Surrogate method)</a>
 
       <ul>
-        <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.set_optimizer">(elyza.surrogate.abstract.Surrogate method)</a>
-</li>
         <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.set_optimizer">(elyza.surrogate.dnn.dnn.MLPRegressor method)</a>
 </li>
         <li><a href="elyza.surrogate.gp.gp.html#elyza.surrogate.gp.gp.GaussianProcess.set_optimizer">(elyza.surrogate.gp.gp.GaussianProcess method)</a>
@@ -1488,8 +1344,6 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.set_surrogate">set_surrogate() (elyza.multifidelity.surrogate.MAGPI method)</a>
-</li>
       <li><a href="elyza.util.helpers.html#elyza.util.helpers.sigmoid">sigmoid() (in module elyza.util.helpers)</a>
 </li>
       <li><a href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator.single_eval">single_eval() (elyza.core.evaluator.Evaluator method)</a>
@@ -1534,11 +1388,9 @@
         <li><a href="elyza.optim.lbfgs.html#elyza.optim.lbfgs.LBFGSOptions.unroll">(elyza.optim.lbfgs.LBFGSOptions attribute)</a>
 </li>
       </ul></li>
-      <li><a href="elyza.multifidelity.surrogate.html#elyza.multifidelity.surrogate.MAGPI.update">update() (elyza.multifidelity.surrogate.MAGPI method)</a>
+      <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset.update">update() (elyza.surrogate.abstract.SupervisedDataset method)</a>
 
       <ul>
-        <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.SupervisedDataset.update">(elyza.surrogate.abstract.SupervisedDataset method)</a>
-</li>
         <li><a href="elyza.surrogate.abstract.html#elyza.surrogate.abstract.Surrogate.update">(elyza.surrogate.abstract.Surrogate method)</a>
 </li>
         <li><a href="elyza.surrogate.dnn.dnn.html#elyza.surrogate.dnn.dnn.MLPRegressor.update">(elyza.surrogate.dnn.dnn.MLPRegressor method)</a>

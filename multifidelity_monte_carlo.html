@@ -225,7 +225,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="elyza.multifidelity.html">elyza.multifidelity package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.montecarlo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.montecarlo.html">elyza.multifidelity.uq module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="elyza.multifidelity.surrogate.html">elyza.multifidelity.surrogate module</a></li>
 </ul>
 </details></li>
@@ -424,13 +424,13 @@
                   
   <section id="multifidelity-monte-carlo-methods">
 <h1>Multifidelity Monte Carlo Methods<a class="headerlink" href="#multifidelity-monte-carlo-methods" title="Link to this heading">#</a></h1>
-<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#module-elyza.multifidelity.montecarlo" title="elyza.multifidelity.montecarlo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.multifidelity.montecarlo</span></code></a> provides four estimators for approximating the expectation of an expensive <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> using low-fidelity models. All four estimators share a
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">elyza.multifidelity.uq.montecarlo</span></code> provides four estimators for approximating the expectation of an expensive <a class="reference internal" href="elyza.core.evaluator.html#elyza.core.evaluator.Evaluator" title="elyza.core.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a> using low-fidelity models. All four estimators share a
 common interface (<code class="docutils literal notranslate"><span class="pre">get_pilots</span></code>, <code class="docutils literal notranslate"><span class="pre">budget_alloc</span></code>, <code class="docutils literal notranslate"><span class="pre">get_entry_variance</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluate</span></code>) inherited from
-<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MultifidelityMonteCarlo" title="elyza.multifidelity.montecarlo.MultifidelityMonteCarlo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code></a>. This page introduces them in order of sophistication: the standard high-fidelity
-baseline (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a>),
-multilevel MC (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a>), classic
-multifidelity MC (<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a>), and
-finally <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> – Recursive
+<code class="xref py py-class docutils literal notranslate"><span class="pre">MultifidelityMonteCarlo</span></code>. This page introduces them in order of sophistication: the standard high-fidelity
+baseline (<code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code>),
+multilevel MC (<code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code>), classic
+multifidelity MC (<code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code>), and
+finally <code class="xref py py-class docutils literal notranslate"><span class="pre">EMFMC</span></code> – Recursive
 Multifidelity Monte Carlo, a generalized estimator original to <code class="docutils literal notranslate"><span class="pre">elyza</span></code>.</p>
 <p>Each multifidelity Monte Carlo estimator is fully generalized and works with <em>vector-valued functions</em>; we also use a novel greedy algorithms to allocate integer-valued sample allocations given a fixed computational budget.</p>
 <p>Every estimator below follows the same four-step workflow:</p>
@@ -493,10 +493,10 @@ model. We’ll draw a million pilot samples (so the covariance estimates are acc
 </section>
 <section id="baseline-high-fidelity-only-monte-carlo-hfmc">
 <h2>2. Baseline: high-fidelity-only Monte Carlo (HFMC)<a class="headerlink" href="#baseline-high-fidelity-only-monte-carlo-hfmc" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC" title="elyza.multifidelity.montecarlo.HFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code></a> is the naive estimator which ignores every lower-fidelity level and spends the entire budget on evaluating <code class="docutils literal notranslate"><span class="pre">hf</span></code>. <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.budget_alloc" title="elyza.multifidelity.montecarlo.HFMC.budget_alloc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code></a> puts the whole budget toward <code class="docutils literal notranslate"><span class="pre">hf</span></code> (zero for every lower level), and <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.HFMC.get_entry_variance" title="elyza.multifidelity.montecarlo.HFMC.get_entry_variance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_entry_variance()</span></code></a> reports the resulting estimator variance:</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">HFMC</span></code> is the naive estimator which ignores every lower-fidelity level and spends the entire budget on evaluating <code class="docutils literal notranslate"><span class="pre">hf</span></code>. <code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code> puts the whole budget toward <code class="docutils literal notranslate"><span class="pre">hf</span></code> (zero for every lower level), and <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_entry_variance()</span></code> reports the resulting estimator variance:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFMC</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.uq.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFMC</span>
 
 <span class="c1"># 1. define</span>
 <span class="n">hfmc</span> <span class="o">=</span> <span class="n">HFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
@@ -516,16 +516,17 @@ model. We’ll draw a million pilot samples (so the covariance estimates are acc
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 1.5458e-01 (s)
-Per-evaluation time: 1.5458e-07 (s)
+Total time: 1.3972e-01 (s)
+Per-evaluation time: 1.3972e-07 (s)
 
 high-fidelity :
-Total time: 1.4380e-02 (s)
-Per-evaluation time: 1.4380e-08 (s)
+Total time: 2.2910e-02 (s)
+Per-evaluation time: 2.2910e-08 (s)
+
+budget allocation: [0, 200]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [0, 200]
-variance: [0.00250107]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>variance: [0.00250107]
 </pre></div>
 </div>
 </div>
@@ -533,10 +534,10 @@ variance: [0.00250107]
 </section>
 <section id="mlmc-telescoping-multilevel-monte-carlo">
 <h2>3. MLMC: telescoping multilevel Monte Carlo<a class="headerlink" href="#mlmc-telescoping-multilevel-monte-carlo" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC" title="elyza.multifidelity.montecarlo.MLMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code></a> (Giles, 2015 <a class="footnote-reference brackets" href="#giles2015" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>) takes a different approach from the estimators below it: rather than regression coefficients, it sums independent telescoping corrections <code class="docutils literal notranslate"><span class="pre">E[f_l]</span> <span class="pre">-</span> <span class="pre">E[f_{l-1}]</span></code> between adjacent levels, plus the lowest level’s own mean. Each level’s correction is estimated from its own independent batch of samples – unlike <code class="docutils literal notranslate"><span class="pre">MFMC</span></code>/<code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> below, there is no nesting constraint between levels. <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MLMC.budget_alloc" title="elyza.multifidelity.montecarlo.MLMC.budget_alloc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code></a> allocates an independent per-level sample count, weighing each level’s cost (<code class="docutils literal notranslate"><span class="pre">lf</span></code> alone at level 0, <code class="docutils literal notranslate"><span class="pre">lf</span></code> and <code class="docutils literal notranslate"><span class="pre">hf</span></code> together at level 1) against its variance reduction:</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">MLMC</span></code> (Giles, 2015 <a class="footnote-reference brackets" href="#giles2015" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>) takes a different approach from the estimators below it: rather than regression coefficients, it sums independent telescoping corrections <code class="docutils literal notranslate"><span class="pre">E[f_l]</span> <span class="pre">-</span> <span class="pre">E[f_{l-1}]</span></code> between adjacent levels, plus the lowest level’s own mean. Each level’s correction is estimated from its own independent batch of samples – unlike <code class="docutils literal notranslate"><span class="pre">MFMC</span></code>/<code class="docutils literal notranslate"><span class="pre">EMFMC</span></code> below, there is no nesting constraint between levels. <code class="xref py py-meth docutils literal notranslate"><span class="pre">budget_alloc()</span></code> allocates an independent per-level sample count, weighing each level’s cost (<code class="docutils literal notranslate"><span class="pre">lf</span></code> alone at level 0, <code class="docutils literal notranslate"><span class="pre">lf</span></code> and <code class="docutils literal notranslate"><span class="pre">hf</span></code> together at level 1) against its variance reduction:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLMC</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.uq.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLMC</span>
 
 <span class="c1"># 1. define</span>
 <span class="n">mlmc</span> <span class="o">=</span> <span class="n">MLMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
@@ -556,12 +557,12 @@ variance: [0.00250107]
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 2.6481e-02 (s)
-Per-evaluation time: 2.6481e-08 (s)
+Total time: 3.6306e-02 (s)
+Per-evaluation time: 3.6306e-08 (s)
 
 high-fidelity :
-Total time: 1.5712e-02 (s)
-Per-evaluation time: 1.5712e-08 (s)
+Total time: 1.9597e-02 (s)
+Per-evaluation time: 1.9597e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5153, 147]
@@ -573,13 +574,13 @@ variance: [0.00041165]
 </section>
 <section id="mfmc-multifidelity-monte-carlo">
 <h2>4. MFMC: multifidelity Monte Carlo<a class="headerlink" href="#mfmc-multifidelity-monte-carlo" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC" title="elyza.multifidelity.montecarlo.MFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code></a> (Peherstorfer, Willcox, &amp;
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">MFMC</span></code> (Peherstorfer, Willcox, &amp;
 Gunzburger, 2016 <a class="footnote-reference brackets" href="#peherstorfer2016" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>) instead treats each lower-fidelity
 level as a control variate: it computes a single regression coefficient
-tying that level’s covariance to <code class="docutils literal notranslate"><span class="pre">hf</span></code> and forms a nested correction. Unlike MLMC’s independent batches, MFMC’s levels are sampled with a <em>nested</em> design – level 0’s batch is reused by every level above it. Pilot samples estimate the cross-level covariance, which <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.MFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code></a> converts into regression coefficients before the budget can be allocated:</p>
+tying that level’s covariance to <code class="docutils literal notranslate"><span class="pre">hf</span></code> and forms a nested correction. Unlike MLMC’s independent batches, MFMC’s levels are sampled with a <em>nested</em> design – level 0’s batch is reused by every level above it. Pilot samples estimate the cross-level covariance, which <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code> converts into regression coefficients before the budget can be allocated:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MFMC</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.uq.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">MFMC</span>
 
 <span class="c1"># 1. define</span>
 <span class="n">mfmc</span> <span class="o">=</span> <span class="n">MFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>
@@ -600,12 +601,12 @@ tying that level’s covariance to <code class="docutils literal notranslate"><s
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 2.7384e-02 (s)
-Per-evaluation time: 2.7384e-08 (s)
+Total time: 4.7110e-02 (s)
+Per-evaluation time: 4.7110e-08 (s)
 
 high-fidelity :
-Total time: 1.6575e-02 (s)
-Per-evaluation time: 1.6575e-08 (s)
+Total time: 2.4602e-02 (s)
+Per-evaluation time: 2.4602e-08 (s)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]
@@ -617,7 +618,7 @@ variance: [0.00036665]
 </section>
 <section id="r-mfmc-recursive-multifidelity-monte-carlo">
 <h2>5. R-MFMC: Recursive Multifidelity Monte Carlo<a class="headerlink" href="#r-mfmc-recursive-multifidelity-monte-carlo" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC" title="elyza.multifidelity.montecarlo.RMFMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMFMC</span></code></a> – Recursive Multifidelity
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">EMFMC</span></code> – Recursive Multifidelity
 Monte Carlo – is the flagship estimator in <code class="docutils literal notranslate"><span class="pre">elyza</span></code>, a generalized
 estimator developed by the author as part of PhD thesis research. Where
 MFMC ties each lower-fidelity level to a single control-variate
@@ -629,45 +630,44 @@ not just each level’s individual correlation with <code class="docutils litera
 to <code class="docutils literal notranslate"><span class="pre">elyza</span></code>, and this is its first public release.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMFMC</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">elyza.multifidelity.uq.montecarlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMFMC</span>
 
 <span class="c1"># 1. define</span>
-<span class="n">rmfmc</span> <span class="o">=</span> <span class="n">RMFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>   <span class="c1"># index 0 is lowest-fidelity</span>
+<span class="n">emfmc</span> <span class="o">=</span> <span class="n">EMFMC</span><span class="p">(</span><span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">lf</span><span class="p">,</span> <span class="n">hf</span><span class="p">])</span>   <span class="c1"># index 0 is lowest-fidelity</span>
 
 <span class="c1"># 2. pilot samples</span>
-<span class="n">rmfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">rmfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
+<span class="n">emfmc</span><span class="o">.</span><span class="n">get_pilots</span><span class="p">(</span><span class="n">jrand</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">n_pilots</span><span class="o">=</span><span class="n">n_pilots</span><span class="p">,</span> <span class="n">set_costs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">emfmc</span><span class="o">.</span><span class="n">get_matrix_coefs</span><span class="p">()</span>
 
 <span class="c1"># 3. allocate the budget</span>
-<span class="n">ms_rmfmc</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_rmfmc</span><span class="p">)</span>
+<span class="n">ms_emfmc</span> <span class="o">=</span> <span class="n">emfmc</span><span class="o">.</span><span class="n">budget_alloc</span><span class="p">(</span><span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"budget allocation:"</span><span class="p">,</span> <span class="n">ms_emfmc</span><span class="p">)</span>
 
 <span class="c1"># 4. analytical estimator variance</span>
-<span class="n">var_rmfmc</span> <span class="o">=</span> <span class="n">rmfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_rmfmc</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_rmfmc</span><span class="p">)</span>
+<span class="n">var_emfmc</span> <span class="o">=</span> <span class="n">emfmc</span><span class="o">.</span><span class="n">get_entry_variance</span><span class="p">(</span><span class="n">ms_emfmc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance:"</span><span class="p">,</span> <span class="n">var_emfmc</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>low-fidelity :
-Total time: 2.8403e-02 (s)
-Per-evaluation time: 2.8403e-08 (s)
+Total time: 4.2415e-02 (s)
+Per-evaluation time: 4.2415e-08 (s)
 
 high-fidelity :
-Total time: 1.5144e-02 (s)
-Per-evaluation time: 1.5144e-08 (s)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>budget allocation: [5100, 149]
+Total time: 2.2431e-02 (s)
+Per-evaluation time: 2.2431e-08 (s)
+
+budget allocation: [5100, 149]
 variance: [0.00036665]
 </pre></div>
 </div>
 </div>
 </div>
 <p>For evaluators that all share the same output dimension,
-<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_vector_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_vector_coefs()</span></code></a> and
-<a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_scalar_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_scalar_coefs()</span></code></a> are cheaper
-alternatives to <a class="reference internal" href="elyza.multifidelity.montecarlo.html#elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs" title="elyza.multifidelity.montecarlo.RMFMC.get_matrix_coefs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code></a>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_vector_coefs()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_scalar_coefs()</span></code> are cheaper
+alternatives to <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_matrix_coefs()</span></code>,
 restricting the regression coefficients to a diagonal or scalar multiple of
 the identity, respectively. <code class="docutils literal notranslate"><span class="pre">MFMC</span></code> inherits these too, though only
 <code class="docutils literal notranslate"><span class="pre">get_matrix_coefs</span></code> is overridden to enforce the single-coefficient-per-level
@@ -684,7 +684,7 @@ better:</p>
     <span class="p">(</span><span class="s2">"HFMC"</span><span class="p">,</span> <span class="n">var_hfmc</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"MLMC"</span><span class="p">,</span> <span class="n">var_mlmc</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"MFMC"</span><span class="p">,</span> <span class="n">var_mfmc</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"RMFMC"</span><span class="p">,</span> <span class="n">var_rmfmc</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"EMFMC"</span><span class="p">,</span> <span class="n">var_emfmc</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'estimator'</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}{</span><span class="s1">'variance'</span><span class="si">:</span><span class="s2">&gt;15</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -698,7 +698,7 @@ better:</p>
 HFMC         2.501072e-03
 MLMC         4.116549e-04
 MFMC         3.666516e-04
-RMFMC        3.666516e-04
+EMFMC        3.666516e-04
 </pre></div>
 </div>
 </div>
