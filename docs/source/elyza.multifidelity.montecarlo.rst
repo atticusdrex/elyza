@@ -1,6 +1,6 @@
-elyza.multifidelity.montecarlo module
+elyza.multifidelity.uq module
 =====================================
 
-.. automodule:: elyza.multifidelity.montecarlo
+.. automodule:: elyza.multifidelity.uq
    :members:
    :show-inheritance:

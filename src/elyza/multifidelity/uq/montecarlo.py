@@ -1,9 +1,9 @@
 """Multifidelity Monte Carlo estimators.
 
 Defines the :class:`MultifidelityMonteCarlo` base class and four concrete
-estimators built on top of it: :class:`RMFMC` (regression-based
+estimators built on top of it: :class:`EMFMC` (regression-based
 multifidelity MC, with matrix/vector/scalar coefficient variants),
-:class:`MFMC` (a single-coefficient-per-level special case of RMFMC),
+:class:`MFMC` (a single-coefficient-per-level special case of EMFMC),
 :class:`MLMC` (telescoping multilevel MC), and :class:`HFMC` (plain
 high-fidelity-only MC, used as a baseline). Each estimator combines
 :class:`~elyza.core.evaluator.Evaluator` samples across fidelity levels into
@@ -109,7 +109,7 @@ class MultifidelityMonteCarlo(BaseModel):
         """Refresh cached cost arrays from the evaluators' ``.cost`` fields.
 
         No-op by default; overridden by subclasses that cache derived cost
-        arrays (e.g. ``RMFMC._costs``, ``MLMC._level_costs``).
+        arrays (e.g. ``EMFMC._costs``, ``MLMC._level_costs``).
         """
         pass
 
@@ -156,8 +156,8 @@ class MultifidelityMonteCarlo(BaseModel):
         for evaluator in self.evaluators:
             evaluator.print()
 
-class RMFMC(MultifidelityMonteCarlo):
-    """Regression-based multifidelity Monte Carlo (RMFMC) estimator.
+class EMFMC(MultifidelityMonteCarlo):
+    """Extended multifidelity Monte Carlo (EMFMC) estimator.
 
     Combines nested samples across fidelity levels using regression
     coefficients computed from the pilot covariances (see
@@ -168,6 +168,7 @@ class RMFMC(MultifidelityMonteCarlo):
     Attributes:
         l2_reg: Regularization parameter for the least-squares coefficient solve.
         rcond: Relative condition number for the least-squares coefficient solve.
+        W: Output weight matrix weighted Monte Carlo estimation.  
         _betas: Nested per-(sample level, fidelity level) coefficients used
             by :meth:`evaluate`, derived from ``_coefs`` and the sample sizes.
         _info_coefs: Per-level variance-reduction "information" coefficients,
@@ -178,6 +179,8 @@ class RMFMC(MultifidelityMonteCarlo):
     """
     l2_reg : float = Field(default = 0.0, description = "regularization parameter for least-squares solve")
     rcond : float = Field(default = 1e-12, description = "relative condition number for least squares solve")
+    W : jax.Array | None = Field(default = None, description = "output weight matrix")
+
 
     _betas : list[list[jax.Array]] | None = PrivateAttr(default = None)
     _info_coefs : list[float] | None = PrivateAttr(default = None)
@@ -193,6 +196,12 @@ class RMFMC(MultifidelityMonteCarlo):
         for level in range(self._K):
             self._betas.append([None for _ in range(level + 1)])
 
+        # initializing the output weight matrix 
+        if self.W is None: 
+            self.W = jnp.eye(self.evaluators[-1].output_dim) # setting to identity 
+        else:
+            assert self.W.shape[1] == self.evaluators[-1].output_dim, "output weight matrix dimension is incompatible with high-fidelity output dimension"
+
         # initializing the costs
         self._costs = jnp.array([eval.cost for eval in self.evaluators])
 
@@ -200,8 +209,8 @@ class RMFMC(MultifidelityMonteCarlo):
         """Recompute ``_costs`` from the evaluators' (possibly just-calibrated) ``.cost``."""
         self._costs = jnp.array([eval.cost for eval in self.evaluators])
 
-    def evaluate(self, key, sample_sizes : list[int]) -> jax.Array:
-        """Compute the RMFMC estimate of the high-fidelity mean.
+    def evaluate(self, key, sample_sizes : list[int], with_weights = False) -> jax.Array:
+        """Compute the EMFMC estimate of the high-fidelity mean.
 
         Args:
             key: A JAX PRNG key, split across fidelity levels for sampling.
@@ -209,7 +218,7 @@ class RMFMC(MultifidelityMonteCarlo):
                 ordered from lowest to highest fidelity.
 
         Returns:
-            jax.Array: The RMFMC estimate, shape ``(hf_dim,)``.
+            jax.Array: The EMFMC estimate, shape ``(hf_dim,)``.
 
         Raises:
             AssertionError: If coefficients have not been computed yet (see
@@ -232,7 +241,11 @@ class RMFMC(MultifidelityMonteCarlo):
                 # evaluate this specific level of fidelity on this specific set of inputs with this specific parameter
                 estimate += self._betas[sample_level][fidelity_level] @ self.level_sum(level_keys[sample_level], fidelity_level, sample_sizes[sample_level])
 
-        return estimate
+        # returning the estimate with weights if specified
+        if with_weights:
+            return self.W @ estimate 
+        else: 
+            return estimate 
 
     def _get_level_trace(self, level):
         """Compute the trace term used for the information coefficient at ``level``.
@@ -252,9 +265,9 @@ class RMFMC(MultifidelityMonteCarlo):
             C_level = jnp.block([self.covs[-1][i] for i in range(level+1)])
 
             # compute the trace term
-            return jnp.trace(A_level @ V_level @ A_level.T - 2 * C_level @ A_level.T)
+            return jnp.trace(self.W @ A_level @ V_level @ A_level.T - 2 * C_level @ A_level.T @ self.W.T)
         else:
-            return jnp.trace(self.covs[-1][-1])
+            return jnp.trace(self.W @ self.covs[-1][-1] @ self.W.T)
 
     def _get_variance(self, ms : jax.Array):
         """Compute the estimator variance for given per-level sample sizes.
@@ -277,7 +290,7 @@ class RMFMC(MultifidelityMonteCarlo):
         # reset the current _coefs list
         self._coefs = []
 
-        # computing the rmfmc coefficients at each level of fidelity
+        # computing the EMFMC coefficients at each level of fidelity
         for level in range(self._K-1):
             # obtain the covariance matrix
             V_level = jnp.block([row[0:level+1] for row in self.covs[0:level+1]])
@@ -325,7 +338,7 @@ class RMFMC(MultifidelityMonteCarlo):
         # reset the current _coefs list
         self._coefs = []
 
-        # computing the rmfmc coefficients at each level of fidelity
+        # computing the EMFMC coefficients at each level of fidelity
         for level in range(self._K-1):
             # obtain the covariance matrix
             V_level = []
@@ -380,7 +393,7 @@ class RMFMC(MultifidelityMonteCarlo):
         # reset the current _coefs list
         self._coefs = []
 
-        # computing the rmfmc coefficients at each level of fidelity
+        # computing the EMFMC coefficients at each level of fidelity
         for level in range(self._K-1):
             # obtain the covariance matrix
             V_level = []
@@ -476,7 +489,7 @@ class RMFMC(MultifidelityMonteCarlo):
         return ms
 
     def _check_order(self):
-        """Check whether the fidelity ordering is valid for RMFMC.
+        """Check whether the fidelity ordering is valid for EMFMC.
 
         Raises:
             AssertionError: If ``info_coef / cost`` is not strictly
@@ -655,10 +668,10 @@ class RMFMC(MultifidelityMonteCarlo):
 
 
 
-class MFMC(RMFMC):
+class MFMC(EMFMC):
     """Multifidelity Monte Carlo (MFMC) estimator.
 
-    A special case of :class:`RMFMC` in which each level's regression
+    A special case of :class:`EMFMC` in which each level's regression
     coefficient is derived only from its own covariance/cross-covariance
     with the high-fidelity level, rather than the full joint covariance of
     all lower levels.
@@ -688,14 +701,14 @@ class MFMC(RMFMC):
     def get_matrix_coefs(self):
             """Compute the per-level MFMC regression coefficients.
 
-            Unlike :meth:`RMFMC.get_matrix_coefs`, each level's coefficient
+            Unlike :meth:`EMFMC.get_matrix_coefs`, each level's coefficient
             depends only on its own covariance/cross-covariance with the
             high-fidelity level. Populates ``self._coefs``.
             """
             # reset the current _coefs list
             self._coefs = []
 
-            # computing the rmfmc coefficients at each level of fidelity
+            # computing the EMFMC coefficients at each level of fidelity
             for level in range(self._K-1):
                 # only level-specific changes for MFMC
                 V_level = self.covs[level][level]
@@ -869,7 +882,7 @@ class MLMC(MultifidelityMonteCarlo):
     def budget_alloc(self, budget : float, warm_start : bool = True) -> list[float]:
         """Compute the per-level sample allocation for a given budget.
 
-        MLMC levels use independent batches, so (unlike RMFMC/MFMC) there
+        MLMC levels use independent batches, so (unlike EMFMC/MFMC) there
         is no nesting/ordering constraint between sample sizes.
 
         Args:
@@ -889,7 +902,7 @@ class MLMC(MultifidelityMonteCarlo):
             self._get_info_coefs()
 
         # MLMC levels use independent batches, so there is no nesting/ordering
-        # constraint between sample sizes (unlike RMFMC/MFMC)
+        # constraint between sample sizes (unlike EMFMC/MFMC)
         if warm_start:
             ns = self._budget_fractional_alloc(budget)
         else:

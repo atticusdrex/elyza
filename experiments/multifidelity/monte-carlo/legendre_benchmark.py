@@ -2,7 +2,7 @@
 from elyza.core import Uniform 
 from elyza.core.evaluator import Evaluator 
 
-from elyza.multifidelity.uq.montecarlo import RMFMC, MFMC, MLMC, HFMC
+from elyza.multifidelity.uq.montecarlo import EMFMC, MFMC, MLMC, HFMC
 
 import jax.random as jrand 
 import jax.numpy as jnp
@@ -65,31 +65,31 @@ estimator_vars = np.zeros((7, budgets.shape[0]))
 
 l2_reg, rcond = 0e-6, 1e-16 
 
-rmfmc = RMFMC(
+emfmc = EMFMC(
     evaluators = [lf, mf, hf], 
     l2_reg = l2_reg, 
     rcond = rcond
 )
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4)
+emfmc.get_pilots(jrand.PRNGKey(42), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4)
 
 # storing true covariance matrices 
-true_covs = rmfmc.covs 
+true_covs = emfmc.covs 
 
-# re-computing rmfmc pilots with fewer pilot samples
-rmfmc.get_pilots(jrand.PRNGKey(41), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4) 
-pilot_covs = rmfmc.covs
+# re-computing emfmc pilots with fewer pilot samples
+emfmc.get_pilots(jrand.PRNGKey(41), n_pilots = int(1e7), set_costs = False, noise_std = 1e-4) 
+pilot_covs = emfmc.covs
 
 mfmc = MFMC(
     evaluators = [lf, mf, hf], 
     l2_reg = l2_reg, 
     rcond = rcond
 )
-mfmc.covs = rmfmc.covs
+mfmc.covs = emfmc.covs
 
 mlmc = MLMC(evaluators = [lf, mf, hf])
-mlmc.covs = rmfmc.covs 
+mlmc.covs = emfmc.covs 
 hfmc = HFMC(evaluators = [lf, mf, hf])
-hfmc.covs = rmfmc.covs 
+hfmc.covs = emfmc.covs 
 
 
 
@@ -116,41 +116,41 @@ for i, budget in tqdm(enumerate(budgets), total = budgets.shape[0]):
     ms = mfmc._budget_fractional_alloc(budget) 
     vars.append(mfmc._get_variance(ms)) 
 
-    # rmfmc with matrix coefficients 
-    rmfmc.covs = pilot_covs  
-    rmfmc.get_matrix_coefs()
-    rmfmc.covs = true_covs 
-    rmfmc._get_info_coefs() 
-    # ms = rmfmc.budget_alloc(budget, warm_start = False) 
-    ms = rmfmc._budget_fractional_alloc(budget) 
-    vars.append(rmfmc._get_variance(ms)) 
+    # emfmc with matrix coefficients 
+    emfmc.covs = pilot_covs  
+    emfmc.get_matrix_coefs()
+    emfmc.covs = true_covs 
+    emfmc._get_info_coefs() 
+    # ms = emfmc.budget_alloc(budget, warm_start = False) 
+    ms = emfmc._budget_fractional_alloc(budget) 
+    vars.append(emfmc._get_variance(ms)) 
 
-    # rmfmc with vector coefficients 
-    rmfmc.covs = pilot_covs
-    rmfmc.get_vector_coefs()
-    rmfmc.covs = true_covs
-    rmfmc._get_info_coefs() 
-    # ms = rmfmc.budget_alloc(budget, warm_start = False) 
-    ms = rmfmc._budget_fractional_alloc(budget) 
-    vars.append(rmfmc._get_variance(ms)) 
+    # emfmc with vector coefficients 
+    emfmc.covs = pilot_covs
+    emfmc.get_vector_coefs()
+    emfmc.covs = true_covs
+    emfmc._get_info_coefs() 
+    # ms = emfmc.budget_alloc(budget, warm_start = False) 
+    ms = emfmc._budget_fractional_alloc(budget) 
+    vars.append(emfmc._get_variance(ms)) 
 
-    # rmfmc with scalar coefficients 
-    rmfmc.covs = pilot_covs
-    rmfmc.get_scalar_coefs()
-    rmfmc.covs = true_covs
-    rmfmc._get_info_coefs() 
-    # ms = rmfmc.budget_alloc(budget, warm_start = False) 
-    ms = rmfmc._budget_fractional_alloc(budget)
-    vars.append(rmfmc._get_variance(ms)) 
+    # emfmc with scalar coefficients 
+    emfmc.covs = pilot_covs
+    emfmc.get_scalar_coefs()
+    emfmc.covs = true_covs
+    emfmc._get_info_coefs() 
+    # ms = emfmc.budget_alloc(budget, warm_start = False) 
+    ms = emfmc._budget_fractional_alloc(budget)
+    vars.append(emfmc._get_variance(ms)) 
 
-    # rmfmc with matrix coefs and integer sample allocations 
-    rmfmc.covs = pilot_covs  
-    rmfmc.get_matrix_coefs()
-    rmfmc.covs = true_covs 
-    rmfmc._get_info_coefs() 
-    # ms = rmfmc.budget_alloc(budget, warm_start = False) 
-    ms = rmfmc.budget_alloc(budget, warm_start = True) 
-    vars.append(rmfmc._get_variance(ms)) 
+    # emfmc with matrix coefs and integer sample allocations 
+    emfmc.covs = pilot_covs  
+    emfmc.get_matrix_coefs()
+    emfmc.covs = true_covs 
+    emfmc._get_info_coefs() 
+    # ms = emfmc.budget_alloc(budget, warm_start = False) 
+    ms = emfmc.budget_alloc(budget, warm_start = True) 
+    vars.append(emfmc._get_variance(ms)) 
 
 
     # storing the estimator variances for the specific budget
@@ -176,7 +176,7 @@ rcParams.update(
 
 labels = ["HFMC (baseline)", "MLMC", "MFMC", "E-MFMC w/ matrix coefs.", "E-MFMC w/ vector coefs.", "E-MFMC w/ scalar coefs.", "E-MFMC w/ greedy sample alloc."]
 markers = ['.', "D", "P", '*', 's', "^", (6,2,0)]
-# the three RMFMC variants share a blue family (dark -> light, richest -> simplest
+# the three EMFMC variants share a blue family (dark -> light, richest -> simplest
 # coefficients), while HFMC/MFMC/MLMC each get a distinct matplotlib default color
 colors = ['#7f7f7f', '#2ca02c', '#ff7f0e', '#08306b', '#4292c6', '#9ecae1', "#870000"]
 
@@ -188,6 +188,6 @@ legend()
 xlabel("Computational budget")
 ylabel("Trace of estimator covariance matrix")
 title("Convergence Comparison for Multivariate Monte Carlo Estimators")
-savefig("figs\\analytical_multivariate_benchmark.png")
+savefig("figs/analytical_multivariate_benchmark.png")
 tight_layout() 
 # %%

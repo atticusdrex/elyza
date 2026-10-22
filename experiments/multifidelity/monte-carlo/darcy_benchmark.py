@@ -4,7 +4,7 @@
 
 from elyza.benchmarks.pde.darcy2d import GRFInput, DarcyFlowEvaluator 
 
-from elyza.multifidelity.uq.montecarlo import RMFMC, MFMC, MLMC, HFMC
+from elyza.multifidelity.uq.montecarlo import EMFMC, MFMC, MLMC, HFMC
 
 import jax.random as jrand 
 import jax.numpy as jnp
@@ -117,50 +117,50 @@ for col, im in enumerate([im_perm, im_force, im_press]):
 
 # %% running R-MFMC on the darcy flow 
 
-rmfmc = RMFMC(
+emfmc = EMFMC(
     evaluators = [lf_darcy, mf_darcy, hf_darcy], 
     l2_reg = 1e-8, 
     rcond = 1e-8
 )
 
-rmfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 10000, set_costs = False)
-true_covs = rmfmc.covs 
+emfmc.get_pilots(jrand.PRNGKey(42), n_pilots = 10000, set_costs = False)
+true_covs = emfmc.covs 
 
 #%%
-rmfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 200, set_costs = False, noise_std = 1e-10)
-bad_covs = rmfmc.covs 
+emfmc.get_pilots(jrand.PRNGKey(43), n_pilots = 200, set_costs = False, noise_std = 1e-10)
+bad_covs = emfmc.covs 
 
 # %% examining regularized least squares solve
 budget = 1.0
 
-rmfmc.l2_reg, rmfmc.rcond = 1e-8, 1e-8
-rmfmc.covs = bad_covs
-rmfmc.get_matrix_coefs() 
-rmfmc._get_info_coefs()
-good_ms = rmfmc.budget_alloc(budget, warm_start = False)
+emfmc.l2_reg, emfmc.rcond = 1e-8, 1e-8
+emfmc.covs = bad_covs
+emfmc.get_matrix_coefs() 
+emfmc._get_info_coefs()
+good_ms = emfmc.budget_alloc(budget, warm_start = False)
 
-rmfmc.covs = true_covs 
-rmfmc._get_info_coefs() 
-rmfmc_var = rmfmc.get_entry_variance(good_ms).reshape(HF_DIM, HF_DIM)
+emfmc.covs = true_covs 
+emfmc._get_info_coefs() 
+emfmc_var = emfmc.get_entry_variance(good_ms).reshape(HF_DIM, HF_DIM)
 print(good_ms)
 
 #%%  examining unregularized least squares solve 
-rmfmc.l2_reg, rmfmc.rcond = 3e-16, 1e-300
-rmfmc.covs = bad_covs
-rmfmc.get_matrix_coefs() 
-rmfmc._get_info_coefs()
-bad_ms = rmfmc.budget_alloc(budget, warm_start = False)
+emfmc.l2_reg, emfmc.rcond = 3e-16, 1e-300
+emfmc.covs = bad_covs
+emfmc.get_matrix_coefs() 
+emfmc._get_info_coefs()
+bad_ms = emfmc.budget_alloc(budget, warm_start = False)
 print(bad_ms) 
-rmfmc.covs = true_covs
-rmfmc._get_info_coefs() 
-unreg_var = rmfmc.get_entry_variance(bad_ms).reshape(HF_DIM, HF_DIM)
+emfmc.covs = true_covs
+emfmc._get_info_coefs() 
+unreg_var = emfmc.get_entry_variance(bad_ms).reshape(HF_DIM, HF_DIM)
 
 
 
 hfmc = HFMC(
     evaluators = [lf_darcy, hf_darcy]
 )
-hfmc._costs = jnp.copy(rmfmc._costs)
+hfmc._costs = jnp.copy(emfmc._costs)
 
 # copying over covariances so don't have to recompute
 hfmc.covs = true_covs 
@@ -180,13 +180,13 @@ title("High-Fidelity Variance")
 xticks([]); yticks([])
 
 subplot(1,3,2)
-imshow(hfmc_var / unreg_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
+imshow(hfmc_var / unreg_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/emfmc_var).max())
 colorbar()
 title("E-MFMC Variance Reduction\nWithout Regularization")
 xticks([]); yticks([])
 
 subplot(1,3,3)
-imshow(hfmc_var / rmfmc_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/rmfmc_var).max())
+imshow(hfmc_var / emfmc_var, cmap = "turbo", vmin = 1.0, vmax = (hfmc_var/emfmc_var).max())
 colorbar()
 title("E-MFMC Variance Reduction\nwith Regularization")
 xticks([]); yticks([])
