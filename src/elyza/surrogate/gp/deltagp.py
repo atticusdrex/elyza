@@ -123,8 +123,9 @@ class DeltaGP(Surrogate):
         ``model_post_init``), treating ``delta = Y1 - rho * Y2`` (at the
         current, e.g. all-ones, ``rho``) as the effective regression target:
 
-        - kernel bandwidth(s) from the per-dimension input variance
-        - kernel amplitude from the output variance of ``delta``
+        - kernel hyperparameters from :meth:`~elyza.surrogate.gp.kernel.BaseKernel.init_params`
+          (e.g. amplitude from the output variance of ``delta``, bandwidth(s) from the
+          per-dimension input variance)
         - mean function from an ordinary least-squares fit of ``delta`` on
           ``[1, X]``, which reduces to the sample mean of ``delta`` when the
           mean has no linear term (e.g. :class:`~elyza.surrogate.gp.mean.Constant`)
@@ -139,15 +140,8 @@ class DeltaGP(Surrogate):
         input_var = jnp.var(X, axis=0)
         output_var = jnp.var(delta) + self.eps
 
-        # kernel: amplitude from output variance, bandwidth(s) from input variance.
-        # E[(x_i - x_j)^2] = 2*Var(x) for iid x_i, x_j, matching the exp(-d^2/bandwidth) form.
-        n_bandwidth = self._kernel.p_dim - 1
-        if n_bandwidth == input_var.shape[0]:
-            bandwidth = 2.0 * input_var + self.eps
-        else:
-            # kernels with a single shared bandwidth (e.g. RBF) -- use the average
-            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps, dtype=self.dtype)
-        self.p['kernel'] = jnp.concatenate([inv_softplus(output_var).reshape(1), inv_softplus(bandwidth)])
+        # kernel: each kernel knows how to initialize its own parameter layout
+        self.p['kernel'] = self._kernel.init_params(input_var, output_var)
 
         # mean: OLS fit of delta on [1, X] (Linear-style p_dim), or just mean(delta) for a
         # constant-only mean; a Zero mean (p_dim == 0) has nothing to initialize

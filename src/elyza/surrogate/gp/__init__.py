@@ -5,7 +5,10 @@ Exposes :class:`~elyza.surrogate.gp.gp.GaussianProcess` along with the
 :class:`~elyza.surrogate.gp.mean.BaseMean` families it composes.
 """
 from elyza.surrogate.gp.gp import GaussianProcess
-from elyza.surrogate.gp.kernel import BaseKernel, RBF, ARD, Laplace
+from elyza.surrogate.gp.kernel import (
+    BaseKernel, RBF, ARD, Laplace, Matern12, Matern32, Matern52,
+    RationalQuadratic, Periodic,
+)
 from elyza.surrogate.gp.mean import BaseMean, Zero, Constant, Linear
 from elyza.surrogate.gp.sparsegp import SparseGP
 from elyza.surrogate.gp.deltagp import DeltaGP

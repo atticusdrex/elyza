@@ -117,8 +117,9 @@ class SparseGP(Surrogate):
         step (instead of the naive all-ones default from
         ``model_post_init``):
 
-        - kernel bandwidth(s) from the per-dimension input variance
-        - kernel amplitude from the output variance
+        - kernel hyperparameters from :meth:`~elyza.surrogate.gp.kernel.BaseKernel.init_params`
+          (e.g. amplitude from the output variance, bandwidth(s) from the
+          per-dimension input variance)
         - mean function from an ordinary least-squares fit of ``Y`` on
           ``[1, X]``, which reduces to the sample mean of ``Y`` when the
           mean has no linear term (e.g. :class:`~elyza.surrogate.gp.mean.Constant`)
@@ -130,15 +131,8 @@ class SparseGP(Surrogate):
         input_var = jnp.var(X, axis=0)
         output_var = jnp.var(Y) + self.eps
 
-        # kernel: amplitude from output variance, bandwidth(s) from input variance.
-        # E[(x_i - x_j)^2] = 2*Var(x) for iid x_i, x_j, matching the exp(-d^2/bandwidth) form.
-        n_bandwidth = self._kernel.p_dim - 1
-        if n_bandwidth == input_var.shape[0]:
-            bandwidth = 2.0 * input_var + self.eps
-        else:
-            # kernels with a single shared bandwidth (e.g. RBF) -- use the average
-            bandwidth = jnp.full((n_bandwidth,), 2.0 * jnp.mean(input_var) + self.eps, dtype=self.dtype)
-        self.p['kernel'] = jnp.concatenate([inv_softplus(output_var).reshape(1), inv_softplus(bandwidth)])
+        # kernel: each kernel knows how to initialize its own parameter layout
+        self.p['kernel'] = self._kernel.init_params(input_var, output_var)
 
         # mean: OLS fit of Y on [1, X] (Linear-style p_dim), or just mean(Y) for a
         # constant-only mean; a Zero mean (p_dim == 0) has nothing to initialize

@@ -179,7 +179,7 @@ def softplus(x):
     Returns:
         jax.Array: Elementwise softplus of ``x``.
     """
-    return jnp.log(1.0 + jnp.exp(x))
+    return jax.nn.softplus(x) # overflow-safe form of log(1 + exp(x))
 
 def inv_softplus(y):
     """Inverse softplus: maps positive values back to unconstrained space.
@@ -190,7 +190,7 @@ def inv_softplus(y):
     Returns:
         jax.Array: Elementwise inverse softplus of ``y``.
     """
-    return jnp.log(jnp.exp(y) - 1.0)
+    return y + jnp.log(-jnp.expm1(-y)) # overflow-safe form of log(exp(y) - 1)
 
 def softmax(x):
     return jnp.exp(x) / jnp.sum(jnp.exp(x))
