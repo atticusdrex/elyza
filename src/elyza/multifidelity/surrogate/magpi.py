@@ -1,4 +1,6 @@
 from elyza.multifidelity.surrogate.abstract import * 
+from elyza.surrogate.gp.kernel import ARD, BaseKernel
+from elyza.surrogate.gp.mean import Linear, BaseMean
 
 class MAGPI(HierarchicalSurrogate):
     """Multifidelity-augmented Gaussian Process inputs model.
@@ -187,3 +189,80 @@ class MAGPI(HierarchicalSurrogate):
         return self._surrogates[level].sample(
             level_keys[level], features, n_points, **kwargs
         )
+
+from elyza.optim.adam import ADAM, ADAMOptions
+
+class MAGPI_prebuilt(MAGPI):
+    # public fields
+    data : list[SupervisedDataset] = Field(default = None, description = "list of individual supervised datasets")
+    evaluators : list[Evaluator] | None = Field(default = None, description = "list of evaluators in case we want to generate data on the fly")
+    input_dim : int = Field(default = 1, description = "input dimension")
+    kernel_cls : type[BaseKernel] = Field(default = ARD, description = "kernel for GP")
+    mean_cls : type[BaseMean] = Field(default = Linear, description = "mean function class for GP")
+    eps : float = Field(default = 1e-12, description = "floating point error") 
+    max_cond : float = Field(default = 1e5, description = "maximum condition number on the kernel matrix") 
+    verbose : bool = Field(default = False, description = "whether or not to display training progress")
+    calibrate_noise : bool = Field(default = True, description = "whether or not to calibrate the noise variance in the declarion of the GP models")
+    inputs_in_mean : bool = Field(default = False, description = "whether or not to include the system inputs in the evaluation of the mean funciton; can cause unstable extrapolation")
+
+    _optimizer_opts : list[OptimizerOptions]
+    def model_post_init(self, __context):
+        # evaluating the parent class 
+        super().model_post_init(__context) 
+
+        # declaring the GP surrogate models
+        for level in range(self._K):
+            self._surrogates[level] = GaussianProcess(
+                input_dim = self.input_dim + level, 
+                kernel_cls = self.kernel_cls, 
+                mean_cls = self.mean_cls, 
+                noise_var = self.data[level].noise_var, 
+                eps = self.eps, 
+                max_cond = self.max_cond, 
+                verbose = self.verbose, 
+                calibrate_noise = self.calibrate_noise
+            )
+
+            # default (empty) predict/sample keyword arguments, as set_surrogate() would assign
+            self._pred_kwargs[level] = {}
+            self._samp_kwargs[level] = {}
+
+    def fit(
+        self, 
+        level : int, 
+        lr : float = 1e-3,
+        epochs : int = 100,
+        batch_size : int | None = None, 
+        beta1 : float = 0.9, 
+        beta2 : float = 0.999, 
+        active_params = {'mean':True, 'kernel':True, 'noise':False}, 
+        constraints = None, 
+        random_state : int = 42, 
+        unroll : int = 25
+    ): 
+        # filtering out the system inputs using the constraints 
+        if self.mean_cls == Linear and not self.inputs_in_mean and level > 0: 
+            # copying the constraints dict (or creating it) so the caller's dict isn't mutated
+            constraints = dict(constraints) if constraints is not None else {}
+
+            constraints['mean'] = lambda phi: phi.at[1:1+self.input_dim].set(0.0)
+        
+        # declaring the ADAM optimizer options 
+        adam_opts = ADAMOptions(
+            lr = lr, 
+            epochs = epochs, 
+            batch_size = batch_size, 
+            beta1 = beta1, 
+            beta2 = beta2, 
+            active_params = active_params, 
+            constraints = constraints, 
+            verbose = self.verbose, 
+            eps = self.eps, 
+            random_state = random_state, 
+            unroll = unroll
+        )
+
+        self._surrogates[level].set_optimizer(ADAM, adam_opts)
+
+        # using the inherited MAGPI logic to fit the model
+        super().fit(level) 
