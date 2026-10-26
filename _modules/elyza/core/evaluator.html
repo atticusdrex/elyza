@@ -451,7 +451,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">eval_vmap</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_func</span><span class="p">,</span> <span class="n">in_axes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">input_vals</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">eval_vmap</span><span class="p">(</span><span class="o">*</span><span class="n">input_vals</span><span class="p">)</span><span class="o">.</span><span class="n">block_until_ready</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">eval_vmap</span><span class="p">(</span><span class="o">*</span><span class="n">input_vals</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Evaluator.print">
