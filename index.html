@@ -476,7 +476,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li><p><code class="docutils literal notranslate"><span class="pre">HFMC</span></code> — plain high-fidelity-only Monte Carlo (baseline).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MLMC</span></code> — multilevel Monte Carlo, telescoping sums across fidelity levels.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MFMC</span></code> — multifidelity Monte Carlo with optimal per-level control-variate coefficients.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">RMFMC</span></code> — recursive multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EMFMC</span></code> — extended multifidelity Monte Carlo, a more general variant of MFMC using least-squares control-variate coefficients over the full joint covariance of the lower-fidelity levels.</p></li>
 </ul>
 <p>These estimators use pilot samples to estimate cross-fidelity covariances, then allocate sampling budgets across fidelity levels to minimize estimator variance for a fixed computational cost.</p>
 </li>
@@ -512,10 +512,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <!-- citation-start -->
 <div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@software</span><span class="p">{</span><span class="nl">rex2026elyza</span><span class="p">,</span>
 <span class="w">  </span><span class="na">author</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="s">{Rex, Atticus}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">title</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{elyza: A jax-based library for efficient multifidelity surrogate modeling and uncertainty quantification}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{elyza: A jax-based library for scientific computing}</span><span class="p">,</span>
 <span class="w">  </span><span class="na">year</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{2026}</span><span class="p">,</span>
 <span class="w">  </span><span class="na">url</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="s">{https://github.com/atticusdrex/elyza}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{0.1.3}</span>
+<span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{0.1.4}</span>
 <span class="p">}</span>
 </pre></div>
 </div>

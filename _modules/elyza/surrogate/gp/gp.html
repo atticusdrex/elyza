@@ -477,8 +477,9 @@
 <span class="sd">        step (instead of the naive all-ones default from</span>
 <span class="sd">        ``model_post_init``):</span>
 
-<span class="sd">        - kernel bandwidth(s) from the per-dimension input variance</span>
-<span class="sd">        - kernel amplitude from the output variance</span>
+<span class="sd">        - kernel hyperparameters from :meth:`~elyza.surrogate.gp.kernel.BaseKernel.init_params`</span>
+<span class="sd">          (e.g. amplitude from the output variance, bandwidth(s) from the</span>
+<span class="sd">          per-dimension input variance)</span>
 <span class="sd">        - mean function from an ordinary least-squares fit of ``Y`` on</span>
 <span class="sd">          ``[1, X]``, which reduces to the sample mean of ``Y`` when the</span>
 <span class="sd">          mean has no linear term (e.g. :class:`~elyza.surrogate.gp.mean.Constant`)</span>
@@ -490,15 +491,8 @@
         <span class="n">input_var</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">output_var</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span>
 
-        <span class="c1"># kernel: amplitude from output variance, bandwidth(s) from input variance.</span>
-        <span class="c1"># E[(x_i - x_j)^2] = 2*Var(x) for iid x_i, x_j, matching the exp(-d^2/bandwidth) form.</span>
-        <span class="n">n_bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="o">.</span><span class="n">p_dim</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">n_bandwidth</span> <span class="o">==</span> <span class="n">input_var</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">input_var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># kernels with a single shared bandwidth (e.g. RBF) -- use the average</span>
-            <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_bandwidth</span><span class="p">,),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">input_var</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">'kernel'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">inv_softplus</span><span class="p">(</span><span class="n">output_var</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">inv_softplus</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">)])</span>
+        <span class="c1"># kernel: each kernel knows how to initialize its own parameter layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">'kernel'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">input_var</span><span class="p">,</span> <span class="n">output_var</span><span class="p">)</span>
 
         <span class="c1"># mean: OLS fit of Y on [1, X] (Linear-style p_dim), or just mean(Y) for a</span>
         <span class="c1"># constant-only mean; a Zero mean (p_dim == 0) has nothing to initialize</span>
