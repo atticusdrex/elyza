@@ -687,7 +687,7 @@ class MFMC(EMFMC):
         """
         if level < self._K - 1:
             # define the block matrix coefficients
-            A_level  = self._coefs[level]
+            A_level  = self._coefs[level][level]
 
             # obtain the covariance matrix
             V_level = self.covs[level][level]
@@ -703,7 +703,9 @@ class MFMC(EMFMC):
 
             Unlike :meth:`EMFMC.get_matrix_coefs`, each level's coefficient
             depends only on its own covariance/cross-covariance with the
-            high-fidelity level. Populates ``self._coefs``.
+            high-fidelity level. Populates ``self._coefs`` in the same nested
+            ``_coefs[level][fidelity]`` layout as EMFMC, with zero blocks for
+            every fidelity other than ``level``.
             """
             # reset the current _coefs list
             self._coefs = []
@@ -718,10 +720,17 @@ class MFMC(EMFMC):
                 V_level += self.l2_reg * jnp.eye(V_level.shape[0])
 
                 # compute the optimal block matrix coefficients
-                self._coefs.append(ls(V_level, C_level.T, rcond = self.rcond).T)
+                A_level = ls(V_level, C_level.T, rcond = self.rcond).T
+
+                # zero-pad the other fidelities so the nested layout matches EMFMC
+                self._coefs.append([
+                    A_level if l == level else jnp.zeros((self._hf_dim, self.evaluators[l].output_dim))
+                    for l in range(level + 1)
+                ])
 
             # setting the high-fidelity coefficients for unbiasedness
-            self._coefs.append(jnp.eye(self._hf_dim))
+            self._coefs.append([jnp.zeros((self._hf_dim, dim)) for dim in [eval.output_dim for eval in self.evaluators]])
+            self._coefs[-1][-1] = jnp.eye(self._hf_dim)
 
 
 class MLMC(MultifidelityMonteCarlo):

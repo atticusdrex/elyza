@@ -85,7 +85,7 @@ class Evaluator(BaseModel):
         else:
             eval_vmap = vmap(self.evaluation_func, in_axes = [0]*len(input_vals))
 
-        return eval_vmap(*input_vals).block_until_ready().reshape(-1,self.output_dim)
+        return eval_vmap(*input_vals).reshape(-1,self.output_dim)
 
     def print(self):
         """Print the evaluator's name, output dimension, cost, and inputs."""
