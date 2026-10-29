@@ -37,6 +37,12 @@ class BaseKernel(BaseModel):
     epsilon: float = 1e-12
     dtype: ScalarMeta = Field(default = jnp.float64, description = "datatype eval() casts its inputs/outputs to")
 
+    def __hash__(self):
+        """Hash on the kernel type and field values (consistent with pydantic's ``__eq__``) so
+        kernels can be passed as static arguments to jit-compiled functions like
+        :func:`~elyza.util.helpers.kernel_mat`."""
+        return hash((type(self), tuple(self.__dict__.items())))
+
     def init_params(self, input_var, output_var):
         """Data-driven initial raw parameters for a ``[amplitude, bandwidth(s)]`` layout.
 

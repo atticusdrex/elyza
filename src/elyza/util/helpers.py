@@ -6,6 +6,7 @@ selection, elementwise activation functions and their inverses, and a
 vectorized kernel-matrix evaluator.
 """
 from elyza.util.imports import *
+from functools import partial
 
 
 def matrix_cov(Y1: jax.Array, Y2: jax.Array):
@@ -195,6 +196,7 @@ def inv_softplus(y):
 def softmax(x):
     return jnp.exp(x) / jnp.sum(jnp.exp(x))
 
+@partial(jit, static_argnames=("kernel",))
 def kernel_mat(X1, X2, kernel, kernel_params):
     """Compute the full kernel matrix between two point sets.
 
@@ -202,7 +204,8 @@ def kernel_mat(X1, X2, kernel, kernel_params):
         X1: First set of points, shape ``(n1, input_dim)``.
         X2: Second set of points, shape ``(n2, input_dim)``.
         kernel: A kernel object exposing ``eval(x, y, kernel_params)`` for a
-            single pair of points.
+            single pair of points. Treated as a static argument to ``jit``, so it
+            must be hashable; one compilation is cached per distinct kernel.
         kernel_params: Parameter array passed through to ``kernel.eval``.
 
     Returns:
