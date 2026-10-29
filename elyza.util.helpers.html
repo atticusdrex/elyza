@@ -545,7 +545,8 @@ unchanged.</p>
 <li><p><strong>X1</strong> – First set of points, shape <code class="docutils literal notranslate"><span class="pre">(n1,</span> <span class="pre">input_dim)</span></code>.</p></li>
 <li><p><strong>X2</strong> – Second set of points, shape <code class="docutils literal notranslate"><span class="pre">(n2,</span> <span class="pre">input_dim)</span></code>.</p></li>
 <li><p><strong>kernel</strong> – A kernel object exposing <code class="docutils literal notranslate"><span class="pre">eval(x,</span> <span class="pre">y,</span> <span class="pre">kernel_params)</span></code> for a
-single pair of points.</p></li>
+single pair of points. Treated as a static argument to <code class="docutils literal notranslate"><span class="pre">jit</span></code>, so it
+must be hashable; one compilation is cached per distinct kernel.</p></li>
 <li><p><strong>kernel_params</strong> – Parameter array passed through to <code class="docutils literal notranslate"><span class="pre">kernel.eval</span></code>.</p></li>
 </ul>
 </dd>

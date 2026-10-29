@@ -395,6 +395,12 @@
     <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">ScalarMeta</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">"datatype eval() casts its inputs/outputs to"</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Hash on the kernel type and field values (consistent with pydantic's ``__eq__``) so</span>
+<span class="sd">        kernels can be passed as static arguments to jit-compiled functions like</span>
+<span class="sd">        :func:`~elyza.util.helpers.kernel_mat`."""</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
+
 <div class="viewcode-block" id="BaseKernel.init_params">
 <a class="viewcode-back" href="../../../../elyza.surrogate.gp.kernel.html#elyza.surrogate.gp.kernel.BaseKernel.init_params">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_var</span><span class="p">,</span> <span class="n">output_var</span><span class="p">):</span>

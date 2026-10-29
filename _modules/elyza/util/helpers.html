@@ -362,6 +362,7 @@
 <span class="sd">vectorized kernel-matrix evaluator.</span>
 <span class="sd">"""</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">elyza.util.imports</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
 
 <div class="viewcode-block" id="matrix_cov">
@@ -583,6 +584,7 @@
 
 <div class="viewcode-block" id="kernel_mat">
 <a class="viewcode-back" href="../../../elyza.util.helpers.html#elyza.util.helpers.kernel_mat">[docs]</a>
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">(</span><span class="s2">"kernel"</span><span class="p">,))</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kernel_mat</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">kernel_params</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Compute the full kernel matrix between two point sets.</span>
 
@@ -590,7 +592,8 @@
 <span class="sd">        X1: First set of points, shape ``(n1, input_dim)``.</span>
 <span class="sd">        X2: Second set of points, shape ``(n2, input_dim)``.</span>
 <span class="sd">        kernel: A kernel object exposing ``eval(x, y, kernel_params)`` for a</span>
-<span class="sd">            single pair of points.</span>
+<span class="sd">            single pair of points. Treated as a static argument to ``jit``, so it</span>
+<span class="sd">            must be hashable; one compilation is cached per distinct kernel.</span>
 <span class="sd">        kernel_params: Parameter array passed through to ``kernel.eval``.</span>
 
 <span class="sd">    Returns:</span>
