@@ -908,7 +908,8 @@ degree 1).</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="elyza.util.preprocessing.StandardScaler._eps">
 <span class="sig-name descname"><span class="pre">_eps</span></span><a class="headerlink" href="#elyza.util.preprocessing.StandardScaler._eps" title="Link to this definition">#</a></dt>
-<dd><p>Small constant added to the scale to avoid division by zero.</p>
+<dd><p>Columns whose standard deviation is at most this value are
+treated as constant and transformed to ones (preserving a bias column).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>

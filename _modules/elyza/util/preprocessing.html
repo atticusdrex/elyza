@@ -375,7 +375,8 @@
 <span class="sd">    Attributes:</span>
 <span class="sd">        _mean: Per-feature mean computed by :meth:`fit`, shape ``(1, n_features)``.</span>
 <span class="sd">        _stds: Per-feature scale computed by :meth:`fit`, shape ``(1, n_features)``.</span>
-<span class="sd">        _eps: Small constant added to the scale to avoid division by zero.</span>
+<span class="sd">        _eps: Columns whose standard deviation is at most this value are</span>
+<span class="sd">            treated as constant and transformed to ones (preserving a bias column).</span>
 <span class="sd">    """</span>
     <span class="n">_mean</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">_stds</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
@@ -411,7 +412,10 @@
 <span class="sd">            AssertionError: If :meth:`fit` has not been called yet.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"you must call StandardScaler.fit or StandardScaler.fit_transform before transforming new data"</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stds</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps</span><span class="p">)</span></div>
+        <span class="c1"># zero-variance (constant) columns, e.g. a bias column, are set to one</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stds</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps</span>
+        <span class="n">scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">constant</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">constant</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">scaled</span><span class="p">),</span> <span class="n">scaled</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StandardScaler.fit_transform">
