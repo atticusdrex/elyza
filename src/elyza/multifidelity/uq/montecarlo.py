@@ -265,7 +265,7 @@ class EMFMC(MultifidelityMonteCarlo):
             C_level = jnp.block([self.covs[-1][i] for i in range(level+1)])
 
             # compute the trace term
-            return jnp.trace(self.W @ A_level @ V_level @ A_level.T - 2 * C_level @ A_level.T @ self.W.T)
+            return jnp.trace(self.W @ (A_level @ V_level @ A_level.T - 2 * C_level @ A_level.T) @ self.W.T)
         else:
             return jnp.trace(self.W @ self.covs[-1][-1] @ self.W.T)
 

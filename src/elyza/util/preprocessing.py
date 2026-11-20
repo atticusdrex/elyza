@@ -17,7 +17,8 @@ class StandardScaler(BaseModel):
     Attributes:
         _mean: Per-feature mean computed by :meth:`fit`, shape ``(1, n_features)``.
         _stds: Per-feature scale computed by :meth:`fit`, shape ``(1, n_features)``.
-        _eps: Small constant added to the scale to avoid division by zero.
+        _eps: Columns whose standard deviation is at most this value are
+            treated as constant and transformed to ones (preserving a bias column).
     """
     _mean : jax.Array | None = PrivateAttr(default = None)
     _stds : jax.Array | None = PrivateAttr(default = None)
@@ -48,7 +49,10 @@ class StandardScaler(BaseModel):
             AssertionError: If :meth:`fit` has not been called yet.
         """
         assert self._mean is not None, "you must call StandardScaler.fit or StandardScaler.fit_transform before transforming new data"
-        return (X - self._mean) / (self._stds + self._eps)
+        # zero-variance (constant) columns, e.g. a bias column, are set to one
+        constant = self._stds <= self._eps
+        scaled = (X - self._mean) / jnp.where(constant, 1.0, self._stds)
+        return jnp.where(constant, jnp.ones_like(scaled), scaled)
 
     def fit_transform(self, X):
         """Fit to ``X`` and return the standardized result in one call.
